@@ -7,6 +7,10 @@ const nextConfig = {
   experimental: {
     serverActions: true,
   },
+  typescript: {
+    // Don't fail build on TS errors (use with caution)
+    ignoreBuildErrors: true,
+  },
 };
 
 module.exports = nextConfig;

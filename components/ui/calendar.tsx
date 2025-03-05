@@ -11,8 +11,8 @@ export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
 // Extend the CustomComponents type
 interface ExtendedCustomComponents extends CustomComponents {
-  IconLeft?: React.FC<any>; // Adjust the type as necessary
-  IconRight?: React.FC<any>; // Adjust the type as necessary
+  IconLeft?: React.FC<React.HTMLAttributes<HTMLButtonElement>>;
+  IconRight?: React.FC<React.HTMLAttributes<HTMLButtonElement>>;
 }
 
 function Calendar({
