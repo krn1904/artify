@@ -60,35 +60,36 @@ function LoginPage() {
   async function onSubmit(values: LoginFormData) {
     setIsLoading(true)
     try {
-      // Attempt to sign in using NextAuth credentials provider
       const result = await signIn("credentials", {
         redirect: false,
-        email: values.email,
+        email: values.email.toLowerCase(),
         password: values.password,
       })
 
-      if (result?.error) {
-        // Show error message if login fails
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: result.error,
-        })
-      } else {
-        // Show success message and redirect to dashboard
-        toast({
-          title: "Success",
-          description: "Logged in successfully",
-        })
-        router.push("/dashboard")
-        router.refresh()
+      if (!result) {
+        throw new Error('Authentication failed')
       }
+
+      if (result.error) {
+        throw new Error(result.error)
+      }
+
+      toast({
+        title: "Success",
+        description: "Logged in successfully",
+      })
+
+      // Add a small delay to ensure session is set
+      await new Promise(resolve => setTimeout(resolve, 100))
+      router.push("/dashboard")
+      router.refresh()
+
     } catch (error) {
-      // Handle unexpected errors
+      console.error('Login error:', error)
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Something went wrong",
+        title: "Login Failed",
+        description: error instanceof Error ? error.message : "Authentication failed",
       })
     } finally {
       setIsLoading(false)

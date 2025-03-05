@@ -5,13 +5,9 @@ if (!process.env.MONGODB_URI) {
 }
 
 const uri = process.env.MONGODB_URI;
-const options = {
-  maxPoolSize: 10,
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
-};
+const options = {};
 
-let client: MongoClient;
+let client;
 let clientPromise: Promise<MongoClient>;
 
 if (process.env.NODE_ENV === 'development') {
@@ -23,21 +19,13 @@ if (process.env.NODE_ENV === 'development') {
 
   if (!globalWithMongo._mongoClientPromise) {
     client = new MongoClient(uri, options);
-    globalWithMongo._mongoClientPromise = client.connect()
-      .catch(err => {
-        console.error('Failed to connect to MongoDB:', err);
-        throw err;
-      });
+    globalWithMongo._mongoClientPromise = client.connect();
   }
   clientPromise = globalWithMongo._mongoClientPromise;
 } else {
   // In production mode, it's best to not use a global variable.
   client = new MongoClient(uri, options);
-  clientPromise = client.connect()
-    .catch(err => {
-      console.error('Failed to connect to MongoDB:', err);
-      throw err;
-    });
+  clientPromise = client.connect();
 }
 
 export default clientPromise;

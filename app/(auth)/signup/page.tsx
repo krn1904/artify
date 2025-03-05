@@ -75,7 +75,6 @@ function SignUpPage() {
   async function onSubmit(values: SignUpFormData) {
     setIsLoading(true)
     try {
-      // Send registration request to the API
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -88,7 +87,6 @@ function SignUpPage() {
         throw new Error(data.error || 'Something went wrong')
       }
 
-      // Show success message and redirect to login page
       toast({
         title: "Success",
         description: "Account created successfully",
@@ -96,7 +94,6 @@ function SignUpPage() {
       
       router.push('/login')
     } catch (error) {
-      // Handle registration errors
       toast({
         variant: "destructive",
         title: "Error",

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import { registerSchema } from '@/lib/auth/validation';
-import { rateLimit } from '@/lib/auth/rate-limit';
-import { generateToken } from '@/lib/auth/tokens';
 import clientPromise from '@/lib/db';
 import { sanitizeInput } from '@/lib/utils';
 
@@ -10,15 +8,6 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    // Apply rate limiting
-    const rateLimitPass = await rateLimit(request);
-    if (!rateLimitPass) {
-      return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        { status: 429 }
-      );
-    }
-
     // Parse and validate request body
     const body = await request.json();
     const validationResult = registerSchema.safeParse(body);
@@ -66,13 +55,6 @@ export async function POST(request: NextRequest) {
         updatedAt: new Date()
       });
 
-      // Generate authentication token
-      const token = await generateToken({
-        userId: result.insertedId.toString(),
-        email: sanitizedEmail,
-        role
-      });
-
       // Return success response
       return NextResponse.json(
         {
@@ -82,8 +64,7 @@ export async function POST(request: NextRequest) {
             name: sanitizedName,
             email: sanitizedEmail,
             role
-          },
-          token
+          }
         },
         { 
           status: 201,
