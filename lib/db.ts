@@ -5,27 +5,31 @@ if (!process.env.MONGODB_URI) {
 }
 
 const uri = process.env.MONGODB_URI;
-const options = {};
 
-let client;
-let clientPromise: Promise<MongoClient>;
+let client: MongoClient | undefined;
+let clientPromise: Promise<MongoClient> | undefined;
 
-if (process.env.NODE_ENV === 'development') {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  let globalWithMongo = global as typeof globalThis & {
-    _mongoClientPromise?: Promise<MongoClient>;
-  };
+// Lazily create the connection only when requested, to avoid DB calls during build.
+export default async function getMongoClient(): Promise<MongoClient> {
+  if (client && clientPromise) return clientPromise;
 
-  if (!globalWithMongo._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    globalWithMongo._mongoClientPromise = client.connect();
+  if (process.env.NODE_ENV === 'development') {
+    const globalWithMongo = global as typeof globalThis & {
+      _mongoClientPromise?: Promise<MongoClient>;
+      _mongoClient?: MongoClient;
+    };
+    if (!globalWithMongo._mongoClientPromise) {
+  client = new MongoClient(uri);
+      globalWithMongo._mongoClient = client;
+      globalWithMongo._mongoClientPromise = client.connect();
+    }
+    client = globalWithMongo._mongoClient as MongoClient;
+    clientPromise = globalWithMongo._mongoClientPromise as Promise<MongoClient>;
+    return clientPromise;
   }
-  clientPromise = globalWithMongo._mongoClientPromise;
-} else {
-  // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
 
-export default clientPromise;
+  // Production: no globals
+  client = new MongoClient(uri);
+  clientPromise = client.connect();
+  return clientPromise;
+}

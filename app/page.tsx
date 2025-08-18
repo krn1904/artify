@@ -1,8 +1,13 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Palette, Sparkles, Users } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
+  const { data: session } = useSession();
+
   return (
     <div className="flex flex-col items-center">
       {/* Hero Section */}
@@ -18,15 +23,26 @@ export default function Home() {
               </p>
             </div>
             <div className="space-x-4">
-              <Button asChild size="lg">
-                <Link href="/explore">
-                  Explore Artwork
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link href="/artists">Find Artists</Link>
-              </Button>
+              {session ? (
+                <Button asChild size="lg">
+                  <Link href="/dashboard">
+                    Go to Dashboard
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              ) : (
+                <>
+                  <Button asChild size="lg">
+                    <Link href="/login">
+                      Login
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="lg" asChild>
+                    <Link href="/signup">Sign Up</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

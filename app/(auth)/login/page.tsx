@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { signIn } from "next-auth/react"
+import { signIn, signOut } from "next-auth/react"
 import { Palette } from "lucide-react"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
+import { loginSchema } from "@/lib/auth/validation"
 
 // Define form validation schema using Zod
 const formSchema = z.object({
@@ -46,7 +47,7 @@ function LoginPage() {
 
   // Initialize form with validation schema and default values
   const form = useForm<LoginFormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -81,7 +82,7 @@ function LoginPage() {
 
       // Add a small delay to ensure session is set
       await new Promise(resolve => setTimeout(resolve, 100))
-      router.push("/dashboard")
+      router.push("/explore")
       router.refresh()
 
     } catch (error) {
@@ -95,6 +96,11 @@ function LoginPage() {
       setIsLoading(false)
     }
   }
+
+  // Logout handler
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' }); // Redirect to home after logout
+  };
 
   return (
     <div className="space-y-6">
@@ -149,6 +155,11 @@ function LoginPage() {
           </Button>
         </form>
       </Form>
+
+      {/* Logout Button */}
+      <Button className="w-full" onClick={handleLogout}>
+        Logout
+      </Button>
 
       {/* Sign up link for new users */}
       <div className="text-center text-sm">
