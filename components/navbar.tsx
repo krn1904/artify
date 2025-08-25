@@ -75,22 +75,20 @@ export default function Navbar() {
                   <Link href="/commissions" className="text-sm font-medium transition-colors hover:text-primary">
                     Commissions
                   </Link>
-                  <Button variant="outline" asChild className="w-full">
-                    {session ? (
-                      <Button variant="outline" onClick={() => signOut({ callbackUrl: '/' })}>
-                        Logout
+                  {session ? (
+                    <Button variant="outline" className="w-full" onClick={() => signOut({ callbackUrl: '/' })}>
+                      Logout
+                    </Button>
+                  ) : (
+                    <>
+                      <Button variant="outline" asChild className="w-full">
+                        <Link href="/login">Login</Link>
                       </Button>
-                    ) : (
-                      <Link href="/login">Login</Link>
-                    )}
-                  </Button>
-                  <Button asChild className="w-full">
-                    {session ? (
-                      <Link href="/signup">Sign Up</Link>
-                    ) : (
-                      <Link href="/signup">Sign Up</Link>
-                    )}
-                  </Button>
+                      <Button asChild className="w-full">
+                        <Link href="/signup">Sign Up</Link>
+                      </Button>
+                    </>
+                  )}
                 </nav>
               </SheetContent>
             </Sheet>

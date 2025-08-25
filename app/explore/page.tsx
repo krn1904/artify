@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, Share2 } from "lucide-react";
@@ -50,10 +51,13 @@ export default function ExplorePage() {
         {artworks.map((artwork) => (
           <Card key={artwork.id} className="overflow-hidden">
             <div className="aspect-square relative">
-              <img
+              <Image
                 src={artwork.image}
                 alt={artwork.title}
-                className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover hover:scale-105 transition-transform duration-300"
+                priority={artwork.id === 1}
               />
             </div>
             <CardContent className="p-4">

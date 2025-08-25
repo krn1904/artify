@@ -1,7 +1,2 @@
-import { PrismaClient } from '@prisma/client';
-
-declare global {
-  var prisma: PrismaClient | undefined;
-}
-
-export {}; 
+// Prisma removed; preserve module shape for TS without adding globals.
+export {};
