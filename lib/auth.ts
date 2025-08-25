@@ -1,5 +1,5 @@
 import { hash, compare } from 'bcryptjs';
-import clientPromise from './db';
+import getMongoClient from './db';
 
 // Function to hash password
 export async function hashPassword(password: string) {
@@ -14,7 +14,7 @@ export async function verifyPassword(password: string, hashedPassword: string) {
 // Function to get user by email
 export async function getUserByEmail(email: string) {
   try {
-    const client = await clientPromise;
+  const client = await getMongoClient();
     const db = client.db();
     return await db.collection('users').findOne({ email });
   } catch (error) {
@@ -27,7 +27,7 @@ export async function getUserByEmail(email: string) {
 export async function createUser(name: string, email: string, password: string, role: 'CUSTOMER' | 'ARTIST') {
   try {
     const hashedPassword = await hashPassword(password);
-    const client = await clientPromise;
+  const client = await getMongoClient();
     const db = client.db();
     
     const result = await db.collection('users').insertOne({

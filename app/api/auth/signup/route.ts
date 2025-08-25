@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import { registerSchema } from '@/lib/auth/validation';
-import clientPromise from '@/lib/db';
+import getMongoClient from '@/lib/db';
 import { sanitizeInput } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     try {
       // Connect to MongoDB
-      const client = await clientPromise;
+  const client = await getMongoClient();
       const db = client.db('artify');
       const usersCollection = db.collection('users');
 

@@ -7,6 +7,7 @@ import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { registerSchema } from "@/lib/auth/validation"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -26,17 +27,15 @@ import {
 } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 
-// Define form validation schema using Zod
-const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  confirmPassword: z.string(),
-  role: z.enum(["CUSTOMER", "ARTIST"]),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-})
+// Define form validation schema using the same rules as the server, plus confirmPassword check
+const formSchema = registerSchema
+  .extend({
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  })
 
 // Type for form data based on the schema
 type SignUpFormData = z.infer<typeof formSchema>
@@ -75,15 +74,43 @@ function SignUpPage() {
   async function onSubmit(values: SignUpFormData) {
     setIsLoading(true)
     try {
+      // Prepare payload expected by the API (exclude confirmPassword; lowercase email)
+      const payload = {
+        name: values.name,
+        email: values.email.toLowerCase(),
+        password: values.password,
+        role: values.role,
+      }
+
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
+        // If server-side Zod validation failed, surface field-specific messages
+        if (response.status === 400 && Array.isArray(data?.details)) {
+          const genericMessages: string[] = []
+          for (const err of data.details) {
+            const path = Array.isArray(err?.path) ? (err.path as string[]) : []
+            const field = path[0] as keyof Pick<SignUpFormData, 'name' | 'email' | 'password' | 'role' | 'confirmPassword'> | undefined
+            if (field && ["name", "email", "password", "role", "confirmPassword"].includes(field)) {
+              // Map server error to the matching form field
+              form.setError(field, { type: 'server', message: err.message || 'Invalid value' })
+            } else if (err?.message) {
+              genericMessages.push(err.message)
+            }
+          }
+          if (genericMessages.length) {
+            throw new Error(genericMessages.join("\n"))
+          }
+          // If all errors were mapped to fields, show a small toast and return
+          throw new Error(data.error || 'Validation failed')
+        }
+
         throw new Error(data.error || 'Something went wrong')
       }
 
@@ -93,7 +120,7 @@ function SignUpPage() {
       })
       
       router.push('/login')
-    } catch (error) {
+  } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",

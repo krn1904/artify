@@ -1,13 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-
-declare global {
-  var prisma: PrismaClient | undefined;
-}
-
-const prisma = global.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV !== 'production') {
-  global.prisma = prisma;
-}
-
-export default prisma; 
+// Deprecated: Prisma is no longer used in this project.
+// This file is kept as a stub to avoid import errors during cleanup.
+export {};

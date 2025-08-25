@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
-import clientPromise from './db';
+import getMongoClient from './db';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -17,7 +17,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const client = await clientPromise;
+          const client = await getMongoClient();
           const db = client.db('artify');
           
           const user = await db.collection('users').findOne({ 
