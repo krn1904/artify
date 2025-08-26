@@ -94,8 +94,10 @@ function LoginPage() {
           if (url.origin === window.location.origin) {
             target = url.pathname + url.search + url.hash
           }
-        } catch {
-          // If it's a relative path that starts with '/', allow it (avoid open redirect via //)
+        } catch (err) {
+          // Failed to parse as absolute URL; allow safe relative paths (avoid open redirect via //)
+          // Optional: enable for debugging
+          // console.debug('Callback URL parsing error:', err)
           if (cb.startsWith('/') && !cb.startsWith('//')) {
             target = cb
           }

@@ -21,7 +21,12 @@ export async function GET() {
       }
     )
   } catch (error) {
-    console.error('Health check failed:', error)
+    // Log sanitized error to avoid leaking sensitive details
+    const message =
+      error && typeof error === 'object' && 'message' in (error as any)
+        ? (error as any).message
+        : String(error)
+    console.error('Health check failed:', message)
     return NextResponse.json(
       { status: 'error' },
       {
