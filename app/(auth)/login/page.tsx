@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { signIn, signOut } from "next-auth/react"
 import { Palette } from "lucide-react"
 import Link from "next/link"
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { loginSchema } from "@/lib/auth/validation"
 
 // Define form validation schema using Zod
@@ -43,6 +44,7 @@ function LoginPage() {
   
   // Hooks for navigation and toast notifications
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { toast } = useToast()
 
   // Initialize form with validation schema and default values
@@ -82,7 +84,24 @@ function LoginPage() {
 
       // Add a small delay to ensure session is set
       await new Promise(resolve => setTimeout(resolve, 100))
-      router.push("/explore")
+
+      // Determine redirect target from callbackUrl (if same-origin), else fall back to /explore
+      const cb = searchParams.get('callbackUrl')
+      let target = "/explore"
+      if (cb) {
+        try {
+          const url = new URL(cb, window.location.origin)
+          if (url.origin === window.location.origin) {
+            target = url.pathname + url.search + url.hash
+          }
+        } catch {
+          // If it's a relative path that starts with '/', allow it (avoid open redirect via //)
+          if (cb.startsWith('/') && !cb.startsWith('//')) {
+            target = cb
+          }
+        }
+      }
+      router.push(target)
       router.refresh()
 
     } catch (error) {
@@ -104,6 +123,13 @@ function LoginPage() {
 
   return (
     <div className="space-y-6">
+      {/* Auth required banner */}
+      {searchParams.get('reason') === 'auth' && (
+        <Alert>
+          <AlertTitle>Authentication required</AlertTitle>
+          <AlertDescription>Please log in to continue.</AlertDescription>
+        </Alert>
+      )}
       {/* Header section with logo and welcome message */}
       <div className="flex flex-col items-center space-y-2 text-center">
         <Link href="/" className="flex items-center space-x-2">
