@@ -22,6 +22,21 @@ import { useToast } from "@/hooks/use-toast"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { loginSchema } from "@/lib/auth/validation"
 
+// Ensure redirect paths are safe (avoid open redirects and path traversal)
+function isSafeRedirectPath(path: string) {
+  if (!path || typeof path !== 'string') return false
+  if (!path.startsWith('/') || path.startsWith('//')) return false
+  // Normalize and disallow traversal attempts
+  try {
+    const url = new URL(path, 'http://example.com')
+    const normalized = url.pathname
+    if (normalized.includes('..')) return false
+  } catch {
+    return false
+  }
+  return true
+}
+
 // Define form validation schema using Zod
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -95,10 +110,8 @@ function LoginPage() {
             target = url.pathname + url.search + url.hash
           }
         } catch (err) {
-          // Failed to parse as absolute URL; allow safe relative paths (avoid open redirect via //)
-          // Optional: enable for debugging
-          // console.debug('Callback URL parsing error:', err)
-          if (cb.startsWith('/') && !cb.startsWith('//')) {
+          // Failed to parse as absolute URL; allow only validated relative paths
+          if (isSafeRedirectPath(cb)) {
             target = cb
           }
         }

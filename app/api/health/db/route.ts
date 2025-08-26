@@ -22,10 +22,7 @@ export async function GET() {
     )
   } catch (error) {
     // Log sanitized error to avoid leaking sensitive details
-    const message =
-      error && typeof error === 'object' && 'message' in (error as any)
-        ? (error as any).message
-        : String(error)
+    const message = error instanceof Error ? error.message : String(error)
     console.error('Health check failed:', message)
     return NextResponse.json(
       { status: 'error' },
