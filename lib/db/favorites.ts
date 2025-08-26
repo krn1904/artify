@@ -32,3 +32,45 @@ export async function ensureFavoritesIndexes(col?: Collection<FavoriteDoc>) {
     { key: { artworkId: 1 }, name: 'artworkId_asc' },
   ])
 }
+
+/** Toggle favorite: add if missing, remove if exists. Returns true if now favorited. */
+export async function toggleFavorite(userId: string | ObjectId, artworkId: string | ObjectId) {
+  const col = await getFavoritesCollection()
+  const _userId = typeof userId === 'string' ? new ObjectId(userId) : userId
+  const _artworkId = typeof artworkId === 'string' ? new ObjectId(artworkId) : artworkId
+  const exists = await col.findOne({ userId: _userId, artworkId: _artworkId })
+  if (exists) {
+    await col.deleteOne({ _id: exists._id })
+    return false
+  }
+  await col.insertOne({ userId: _userId, artworkId: _artworkId, createdAt: new Date() })
+  return true
+}
+
+/** List a user's favorites, newest first, with pagination. */
+export async function listFavoritesByUser(userId: string | ObjectId, page = 1, pageSize = 12) {
+  const col = await getFavoritesCollection()
+  const _userId = typeof userId === 'string' ? new ObjectId(userId) : userId
+  const skip = (page - 1) * pageSize
+  const [items, total] = await Promise.all([
+    col.find({ userId: _userId }).sort(new Map([[ 'createdAt', -1 as const ]])).skip(skip).limit(pageSize).toArray(),
+    col.countDocuments({ userId: _userId }),
+  ])
+  return { items, total, page, pageSize }
+}
+
+/** Count how many users have favorited a given artwork. */
+export async function countFavoritesForArtwork(artworkId: string | ObjectId) {
+  const col = await getFavoritesCollection()
+  const _artworkId = typeof artworkId === 'string' ? new ObjectId(artworkId) : artworkId
+  return col.countDocuments({ artworkId: _artworkId })
+}
+
+/** Returns true if the user has favorited the artwork. */
+export async function isFavorited(userId: string | ObjectId, artworkId: string | ObjectId) {
+  const col = await getFavoritesCollection()
+  const _userId = typeof userId === 'string' ? new ObjectId(userId) : userId
+  const _artworkId = typeof artworkId === 'string' ? new ObjectId(artworkId) : artworkId
+  const doc = await col.findOne({ userId: _userId, artworkId: _artworkId }, { projection: { _id: 1 } })
+  return !!doc
+}

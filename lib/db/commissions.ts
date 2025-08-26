@@ -45,3 +45,58 @@ export async function ensureCommissionIndexes(col?: Collection<CommissionDoc>) {
     { key: { customerId: 1, createdAt: -1 }, name: 'customer_createdAt' },
   ])
 }
+
+/**
+ * Create a commission request. Defaults to status REQUESTED.
+ * Returns the inserted document with `_id`.
+ */
+export async function createCommission(input: Omit<CommissionDoc, '_id' | 'createdAt' | 'updatedAt' | 'status'> & { status?: CommissionStatus }) {
+  const col = await getCommissionsCollection()
+  const now = new Date()
+  const doc: CommissionDoc = { ...input, status: input.status ?? 'REQUESTED', createdAt: now, updatedAt: now }
+  const res = await col.insertOne(doc)
+  return { ...doc, _id: res.insertedId }
+}
+
+/** Get a single commission by id. */
+export async function getCommissionById(id: string | ObjectId) {
+  const col = await getCommissionsCollection()
+  const _id = typeof id === 'string' ? (ObjectId.isValid(id) ? new ObjectId(id) : undefined) : id
+  if (!_id) return null
+  return col.findOne({ _id })
+}
+
+/** List commissions for an artist, optionally filtered by status, newest first. */
+export async function listArtistCommissions(artistId: string | ObjectId, status?: CommissionStatus, page = 1, pageSize = 12) {
+  const col = await getCommissionsCollection()
+  const _artistId = typeof artistId === 'string' ? new ObjectId(artistId) : artistId
+  const query: any = { artistId: _artistId }
+  if (status) query.status = status
+  const skip = (page - 1) * pageSize
+  const [items, total] = await Promise.all([
+    col.find(query).sort(new Map([[ 'createdAt', -1 as const ]])).skip(skip).limit(pageSize).toArray(),
+    col.countDocuments(query),
+  ])
+  return { items, total, page, pageSize }
+}
+
+/** List commissions created by a customer, newest first. */
+export async function listCustomerCommissions(customerId: string | ObjectId, page = 1, pageSize = 12) {
+  const col = await getCommissionsCollection()
+  const _customerId = typeof customerId === 'string' ? new ObjectId(customerId) : customerId
+  const query = { customerId: _customerId }
+  const skip = (page - 1) * pageSize
+  const [items, total] = await Promise.all([
+    col.find(query).sort(new Map([[ 'createdAt', -1 as const ]])).skip(skip).limit(pageSize).toArray(),
+    col.countDocuments(query),
+  ])
+  return { items, total, page, pageSize }
+}
+
+/** Update commission status and touch updatedAt. */
+export async function updateCommissionStatus(id: string | ObjectId, status: CommissionStatus) {
+  const col = await getCommissionsCollection()
+  const _id = typeof id === 'string' ? (ObjectId.isValid(id) ? new ObjectId(id) : undefined) : id
+  if (!_id) return { matchedCount: 0, modifiedCount: 0 }
+  return col.updateOne({ _id }, { $set: { status, updatedAt: new Date() } })
+}
