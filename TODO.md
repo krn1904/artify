@@ -9,12 +9,12 @@
 
 
 2) Data layer (MongoDB via `lib/db.ts`)
-- [ ] Define collections + indexes:
+- [x] Define collections + indexes:
   - `artworks` (title, description, price, imageUrl, artistId, tags[], createdAt)
   - `commissions` (customerId, artistId, brief, budget, status, createdAt, updatedAt)
   - `favorites` (userId, artworkId, createdAt)
-- [ ] Seed script for demo content: ~20 artworks, ~6 artists (users with role=ARTIST)
-- [ ] Minimal typed helpers for CRUD using `mongodb` driver (no ORM)
+- [x] Seed demo data: imported ~20 artworks and ~6 artists via Atlas/Compass (manual import)
+- [x] Minimal typed helpers for CRUD using `mongodb` driver (no ORM)
 
 3) Public pages wired to DB
 - [ ] Explore page: fetch paginated artworks from DB (replace mock data), add basic filters (tag, price range)
