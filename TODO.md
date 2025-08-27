@@ -17,8 +17,8 @@
 - [x] Minimal typed helpers for CRUD using `mongodb` driver (no ORM)
 
 3) Public pages wired to DB
-- [ ] Explore page: fetch paginated artworks from DB (replace mock data), add basic filters (tag, price range)
-- [ ] Artists page (`app/artists/page.tsx`): list users with role=ARTIST with simple filters
+- [x] Explore page: fetch paginated artworks from DB (replace mock data)
+- [ ] Artists page (`app/artists/page.tsx`): list users with role=ARTIST (no filters in MVP)
 - [ ] Artwork detail (`app/artwork/[id]/page.tsx`): show image, description, artist, price, favorite button
 - [ ] Artist profile (`app/artist/[id]/page.tsx`): bio from user, portfolio grid (their artworks), “Request commission” CTA
 
@@ -69,7 +69,8 @@
 
 ## P1 — Portfolio polish (free-friendly)
 - [ ] Favorites/likes with optimistic UI; list “My favorites” under dashboard
-- [ ] Search + basic filters powered by Mongo queries and indexes
+- [ ] Search + basic filters powered by Mongo queries and indexes (post-launch)
+- [ ] Add filters to Explore (tags, price) and Artists (role/keyword) pages
 - [ ] Demo users + README walkthrough with screenshots
 - [ ] Accessibility sweep (landmarks, alt text, keyboard, color contrast)
 
