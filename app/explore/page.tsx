@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Heart, Share2, SearchX } from 'lucide-react'
 import { listArtworks } from '@/lib/db/artworks'
+import { ArtworkQuickView } from '@/components/artwork-quick-view'
 
 export const dynamic = 'force-dynamic'
 
@@ -112,18 +113,40 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map((art) => (
               <Card key={String(art._id)} className="overflow-hidden">
-                <div className="aspect-square relative">
-                  <Image
-                    src={art.imageUrl}
-                    alt={art.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover hover:scale-105 transition-transform duration-300"
-                    priority={false}
-                  />
-                </div>
+                <ArtworkQuickView
+                  id={String(art._id)}
+                  title={art.title}
+                  imageUrl={art.imageUrl}
+                  price={art.price}
+                  description={art.description}
+                  tags={art.tags}
+                  artistId={String(art.artistId)}
+                  trigger={
+                    <div className="aspect-square relative cursor-pointer">
+                      <Image
+                        src={art.imageUrl}
+                        alt={art.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover hover:scale-105 transition-transform duration-300"
+                        priority={false}
+                      />
+                    </div>
+                  }
+                />
                 <CardContent className="p-4">
-                  <h3 className="font-semibold text-lg">{art.title}</h3>
+                  <h3 className="font-semibold text-lg">
+                    <ArtworkQuickView
+                      id={String(art._id)}
+                      title={art.title}
+                      imageUrl={art.imageUrl}
+                      price={art.price}
+                      description={art.description}
+                      tags={art.tags}
+                      artistId={String(art.artistId)}
+                      trigger={<span className="cursor-pointer underline-offset-4 hover:underline">{art.title}</span>}
+                    />
+                  </h3>
                   <p className="font-bold mt-2">${art.price}</p>
                   {art.tags?.length ? (
                     <p className="text-xs text-muted-foreground mt-1">{art.tags.join(', ')}</p>
@@ -134,10 +157,12 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
                     <Heart className="h-4 w-4 mr-2" />
                     Favorite
                   </Button>
-                  <Button variant="outline" size="sm">
-                    <Share2 className="h-4 w-4 mr-2" />
-                    Share
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm">
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Share
+                    </Button>
+                  </div>
                 </CardFooter>
               </Card>
             ))}
