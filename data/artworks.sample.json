@@ -1,0 +1,202 @@
+[
+	{
+		"title": "Sunset Over Hills",
+		"description": "Warm palette landscape painting.",
+		"price": 120,
+		"imageUrl": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["painting"],
+		"artistId": {"$oid": "64a000000000000000000001"},
+		"createdAt": {"$date": "2025-07-01T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-01T12:00:00.000Z"}
+	},
+	{
+		"title": "Neon Dreams",
+		"description": "Bold neon shapes in a digital composition.",
+		"price": 80,
+		"imageUrl": "https://images.unsplash.com/photo-1517697471339-4aa32003c11a?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["digital"],
+		"artistId": {"$oid": "64a000000000000000000002"},
+		"createdAt": {"$date": "2025-07-02T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-02T12:00:00.000Z"}
+	},
+	{
+		"title": "City Reflections",
+		"description": "Street photography in the rain.",
+		"price": 95,
+		"imageUrl": "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["photography"],
+		"artistId": {"$oid": "64a000000000000000000003"},
+		"createdAt": {"$date": "2025-07-03T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-03T12:00:00.000Z"}
+	},
+	{
+		"title": "Marble Gaze",
+		"description": "Classic sculpture study.",
+		"price": 350,
+		"imageUrl": "https://images.unsplash.com/photo-1580130754098-cb7a91ae0f5d?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["sculpture"],
+		"artistId": {"$oid": "64a000000000000000000004"},
+		"createdAt": {"$date": "2025-07-04T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-04T12:00:00.000Z"}
+	},
+	{
+		"title": "Forest Whisper",
+		"description": "Impressionist foliage.",
+		"price": 140,
+		"imageUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["painting"],
+		"artistId": {"$oid": "64a000000000000000000001"},
+		"createdAt": {"$date": "2025-07-05T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-05T12:00:00.000Z"}
+	},
+	{
+		"title": "Retro Grid",
+		"description": "80s vaporwave vibes.",
+		"price": 60,
+		"imageUrl": "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["digital"],
+		"artistId": {"$oid": "64a000000000000000000002"},
+		"createdAt": {"$date": "2025-07-06T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-06T12:00:00.000Z"}
+	},
+	{
+		"title": "Golden Hour Portrait",
+		"description": "Soft backlight portrait.",
+		"price": 110,
+		"imageUrl": "https://images.unsplash.com/photo-1503342452485-86ff0a8bddd6?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["photography"],
+		"artistId": {"$oid": "64a000000000000000000003"},
+		"createdAt": {"$date": "2025-07-07T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-07T12:00:00.000Z"}
+	},
+	{
+		"title": "Bronze Movement",
+		"description": "Dynamic modern sculpture.",
+		"price": 420,
+		"imageUrl": "https://images.unsplash.com/photo-1460317442991-0ec209397118?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["sculpture"],
+		"artistId": {"$oid": "64a000000000000000000004"},
+		"createdAt": {"$date": "2025-07-08T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-08T12:00:00.000Z"}
+	},
+	{
+		"title": "Blue Midnight",
+		"description": "Moody digital composition in deep blues.",
+		"price": 75,
+		"imageUrl": "https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["digital"],
+		"artistId": {"$oid": "64a000000000000000000002"},
+		"createdAt": {"$date": "2025-07-09T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-09T12:00:00.000Z"}
+	},
+	{
+		"title": "Ocean Mist",
+		"description": "Coastal painting with soft hues.",
+		"price": 150,
+		"imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["painting"],
+		"artistId": {"$oid": "64a000000000000000000001"},
+		"createdAt": {"$date": "2025-07-10T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-10T12:00:00.000Z"}
+	},
+	{
+		"title": "Urban Geometry",
+		"description": "Abstract lines found in cityscapes.",
+		"price": 105,
+		"imageUrl": "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["photography"],
+		"artistId": {"$oid": "64a000000000000000000003"},
+		"createdAt": {"$date": "2025-07-11T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-11T12:00:00.000Z"}
+	},
+	{
+		"title": "Stone Veil",
+		"description": "Veiled figure carved in stone.",
+		"price": 480,
+		"imageUrl": "https://images.unsplash.com/photo-1551334787-21e6bd3ab135?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["sculpture"],
+		"artistId": {"$oid": "64a000000000000000000004"},
+		"createdAt": {"$date": "2025-07-12T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-12T12:00:00.000Z"}
+	},
+	{
+		"title": "Desert Bloom",
+		"description": "Floral forms inspired by arid landscapes.",
+		"price": 99,
+		"imageUrl": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["photography"],
+		"artistId": {"$oid": "64a000000000000000000003"},
+		"createdAt": {"$date": "2025-07-13T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-13T12:00:00.000Z"}
+	},
+	{
+		"title": "Neon Circuit",
+		"description": "Glowing circuitry-inspired digital art.",
+		"price": 85,
+		"imageUrl": "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["digital"],
+		"artistId": {"$oid": "64a000000000000000000002"},
+		"createdAt": {"$date": "2025-07-14T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-14T12:00:00.000Z"}
+	},
+	{
+		"title": "Autumn Pathway",
+		"description": "Golden leaves along a quiet trail.",
+		"price": 130,
+		"imageUrl": "https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["painting"],
+		"artistId": {"$oid": "64a000000000000000000001"},
+		"createdAt": {"$date": "2025-07-15T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-15T12:00:00.000Z"}
+	},
+	{
+		"title": "Echo in Bronze",
+		"description": "Minimalist bronze figure study.",
+		"price": 390,
+		"imageUrl": "https://images.unsplash.com/photo-1549880181-56a44cf4a9a7?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["sculpture"],
+		"artistId": {"$oid": "64a000000000000000000004"},
+		"createdAt": {"$date": "2025-07-16T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-16T12:00:00.000Z"}
+	},
+	{
+		"title": "Silver Skyline",
+		"description": "Monochrome city skyline at dusk.",
+		"price": 115,
+		"imageUrl": "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["photography"],
+		"artistId": {"$oid": "64a000000000000000000003"},
+		"createdAt": {"$date": "2025-07-17T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-17T12:00:00.000Z"}
+	},
+	{
+		"title": "Pixel Cascade",
+		"description": "Flowing patterns of pixelated color.",
+		"price": 70,
+		"imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["digital"],
+		"artistId": {"$oid": "64a000000000000000000002"},
+		"createdAt": {"$date": "2025-07-18T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-18T12:00:00.000Z"}
+	},
+	{
+		"title": "Lavender Fields",
+		"description": "Pastel painting of summer fields.",
+		"price": 145,
+		"imageUrl": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["painting"],
+		"artistId": {"$oid": "64a000000000000000000001"},
+		"createdAt": {"$date": "2025-07-19T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-19T12:00:00.000Z"}
+	},
+	{
+		"title": "Spiral Form",
+		"description": "Contemporary spiral stone sculpture.",
+		"price": 510,
+		"imageUrl": "https://images.unsplash.com/photo-1529070538774-1843cb3265df?q=80&w=1080&auto=format&fit=crop",
+		"tags": ["sculpture"],
+		"artistId": {"$oid": "64a000000000000000000004"},
+		"createdAt": {"$date": "2025-07-20T12:00:00.000Z"},
+		"updatedAt": {"$date": "2025-07-20T12:00:00.000Z"}
+	}
+]
