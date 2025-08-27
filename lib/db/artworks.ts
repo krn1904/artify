@@ -1,4 +1,4 @@
-import { Collection, ObjectId, Sort } from 'mongodb'
+import { Collection, ObjectId, Sort, Filter } from 'mongodb'
 import getMongoClient from '@/lib/db'
 
 /**
@@ -26,15 +26,32 @@ export async function getArtworksCollection(): Promise<Collection<ArtworkDoc>> {
   return col
 }
 
-/** Create indexes used by Explore and profile pages. */
+/**
+ * Ensure indexes on the `artworks` collection used by Explore and profile pages.
+ * Index intent:
+ * - createdAt_desc: fast "newest first" listing
+ * - price_asc: sort and range queries by price
+ * - artistId_asc: fetch by artist for profile pages
+ * - tags_asc: tag-based filtering
+ * If a collection is passed in, reuse it; otherwise open one and create indexes.
+ */
 export async function ensureArtworksIndexes(col?: Collection<ArtworkDoc>) {
+  // Two clear branches keep the collection reference defined at all times.
+  // This avoids null assertions and makes the flow explicit.
   if (!col) {
     const client = await getMongoClient()
     const db = client.db('artify')
-    col = db.collection<ArtworkDoc>('artworks')
+    const c = db.collection<ArtworkDoc>('artworks')
+    await c.createIndexes([
+      { key: { createdAt: -1 }, name: 'createdAt_desc' },
+      { key: { price: 1 }, name: 'price_asc' },
+      { key: { artistId: 1 }, name: 'artistId_asc' },
+      { key: { tags: 1 }, name: 'tags_asc' },
+    ])
+    return
   }
-
-  await col!.createIndexes([
+  const c = col
+  await c.createIndexes([
     { key: { createdAt: -1 }, name: 'createdAt_desc' },
     { key: { price: 1 }, name: 'price_asc' },
     { key: { artistId: 1 }, name: 'artistId_asc' },
@@ -71,7 +88,9 @@ export async function listArtworks(
 ) {
   const col = await getArtworksCollection()
 
-  const query: Record<string, any> = {}
+  // Build a typed MongoDB query. Filter<ArtworkDoc> keeps field names/operators
+  // aligned with the schema, preserving type safety and IDE autocomplete.
+  const query: Filter<ArtworkDoc> = {}
   if (filters.tags && filters.tags.length) {
     query.tags = { $in: filters.tags }
   }
@@ -82,12 +101,18 @@ export async function listArtworks(
     }
   }
   if (filters.artistId) {
-    const id = typeof filters.artistId === 'string' && ObjectId.isValid(filters.artistId)
-      ? new ObjectId(filters.artistId)
-      : filters.artistId
-    query.artistId = id
+    // Convert the incoming artistId to a valid ObjectId so it matches the
+    // stored schema; skip assignment if the string is not a valid ObjectId.
+    const _id =
+      typeof filters.artistId === 'string'
+        ? (ObjectId.isValid(filters.artistId) ? new ObjectId(filters.artistId) : undefined)
+        : filters.artistId
+    if (_id) {
+      query.artistId = _id
+    }
   }
   if (filters.search && filters.search.trim()) {
+    // Case-insensitive partial match on title/description for basic search.
     const r = new RegExp(filters.search.trim(), 'i')
     query.$or = [{ title: r }, { description: r }]
   }

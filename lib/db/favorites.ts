@@ -23,10 +23,16 @@ export async function ensureFavoritesIndexes(col?: Collection<FavoriteDoc>) {
   if (!col) {
     const client = await getMongoClient()
     const db = client.db('artify')
-    col = db.collection<FavoriteDoc>('favorites')
+    const c = db.collection<FavoriteDoc>('favorites')
+    await c.createIndexes([
+      { key: { userId: 1, artworkId: 1 }, name: 'uniq_user_artwork', unique: true },
+      { key: { userId: 1, createdAt: -1 }, name: 'user_createdAt' },
+      { key: { artworkId: 1 }, name: 'artworkId_asc' },
+    ])
+    return
   }
-
-  await col!.createIndexes([
+  const c = col
+  await c.createIndexes([
     { key: { userId: 1, artworkId: 1 }, name: 'uniq_user_artwork', unique: true },
     { key: { userId: 1, createdAt: -1 }, name: 'user_createdAt' },
     { key: { artworkId: 1 }, name: 'artworkId_asc' },
