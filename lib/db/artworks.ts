@@ -38,25 +38,22 @@ export async function getArtworksCollection(): Promise<Collection<ArtworkDoc>> {
 export async function ensureArtworksIndexes(col?: Collection<ArtworkDoc>) {
   // Two clear branches keep the collection reference defined at all times.
   // This avoids null assertions and makes the flow explicit.
-  if (!col) {
-    const client = await getMongoClient()
-    const db = client.db('artify')
-    const c = db.collection<ArtworkDoc>('artworks')
-    await c.createIndexes([
+  const createArtworksIndexes = async (c: Collection<ArtworkDoc>) =>
+    c.createIndexes([
       { key: { createdAt: -1 }, name: 'createdAt_desc' },
       { key: { price: 1 }, name: 'price_asc' },
       { key: { artistId: 1 }, name: 'artistId_asc' },
       { key: { tags: 1 }, name: 'tags_asc' },
     ])
+  if (!col) {
+    const client = await getMongoClient()
+    const db = client.db('artify')
+    const c = db.collection<ArtworkDoc>('artworks')
+    await createArtworksIndexes(c)
     return
   }
   const c = col
-  await c.createIndexes([
-    { key: { createdAt: -1 }, name: 'createdAt_desc' },
-    { key: { price: 1 }, name: 'price_asc' },
-    { key: { artistId: 1 }, name: 'artistId_asc' },
-    { key: { tags: 1 }, name: 'tags_asc' },
-  ])
+  await createArtworksIndexes(c)
 }
 
 /** Sorting presets for exploration. */

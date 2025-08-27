@@ -30,11 +30,8 @@ export async function getCommissionsCollection(): Promise<Collection<CommissionD
 
 /** Indexes supporting common dashboard queries. */
 export async function ensureCommissionIndexes(col?: Collection<CommissionDoc>) {
-  if (!col) {
-    const client = await getMongoClient()
-    const db = client.db('artify')
-    const c = db.collection<CommissionDoc>('commissions')
-    await c.createIndexes([
+  const createCommissionIndexes = async (c: Collection<CommissionDoc>) =>
+    c.createIndexes([
       { key: { createdAt: -1 }, name: 'createdAt_desc' },
       { key: { artistId: 1 }, name: 'artistId_asc' },
       { key: { customerId: 1 }, name: 'customerId_asc' },
@@ -42,17 +39,15 @@ export async function ensureCommissionIndexes(col?: Collection<CommissionDoc>) {
       { key: { artistId: 1, status: 1, createdAt: -1 }, name: 'artist_status_createdAt' },
       { key: { customerId: 1, createdAt: -1 }, name: 'customer_createdAt' },
     ])
+  if (!col) {
+    const client = await getMongoClient()
+    const db = client.db('artify')
+    const c = db.collection<CommissionDoc>('commissions')
+    await createCommissionIndexes(c)
     return
   }
   const c = col
-  await c.createIndexes([
-    { key: { createdAt: -1 }, name: 'createdAt_desc' },
-    { key: { artistId: 1 }, name: 'artistId_asc' },
-    { key: { customerId: 1 }, name: 'customerId_asc' },
-    { key: { status: 1 }, name: 'status_asc' },
-    { key: { artistId: 1, status: 1, createdAt: -1 }, name: 'artist_status_createdAt' },
-    { key: { customerId: 1, createdAt: -1 }, name: 'customer_createdAt' },
-  ])
+  await createCommissionIndexes(c)
 }
 
 /**

@@ -20,23 +20,21 @@ export async function getFavoritesCollection(): Promise<Collection<FavoriteDoc>>
 
 /** Prevent duplicates and support fast lookups/listing. */
 export async function ensureFavoritesIndexes(col?: Collection<FavoriteDoc>) {
-  if (!col) {
-    const client = await getMongoClient()
-    const db = client.db('artify')
-    const c = db.collection<FavoriteDoc>('favorites')
-    await c.createIndexes([
+  const createFavoritesIndexes = async (c: Collection<FavoriteDoc>) =>
+    c.createIndexes([
       { key: { userId: 1, artworkId: 1 }, name: 'uniq_user_artwork', unique: true },
       { key: { userId: 1, createdAt: -1 }, name: 'user_createdAt' },
       { key: { artworkId: 1 }, name: 'artworkId_asc' },
     ])
+  if (!col) {
+    const client = await getMongoClient()
+    const db = client.db('artify')
+    const c = db.collection<FavoriteDoc>('favorites')
+    await createFavoritesIndexes(c)
     return
   }
   const c = col
-  await c.createIndexes([
-    { key: { userId: 1, artworkId: 1 }, name: 'uniq_user_artwork', unique: true },
-    { key: { userId: 1, createdAt: -1 }, name: 'user_createdAt' },
-    { key: { artworkId: 1 }, name: 'artworkId_asc' },
-  ])
+  await createFavoritesIndexes(c)
 }
 
 /** Toggle favorite: add if missing, remove if exists. Returns true if now favorited. */
