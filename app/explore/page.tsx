@@ -7,6 +7,10 @@ import { listArtworks } from '@/lib/db/artworks'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 
 export const dynamic = 'force-dynamic'
+export const metadata = {
+  title: 'Explore Artwork | Artify',
+  description: 'Browse curated artworks across paintings, digital art, photography, and sculpture.',
+}
 
 type SearchParams = {
   page?: string
@@ -48,7 +52,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 min-h-screen flex flex-col">
       <h1 className="text-3xl font-bold mb-6">Explore Artwork</h1>
 
       {/* Category Chips (single-select) */}
@@ -71,8 +75,9 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
         <div className="ml-auto text-sm text-muted-foreground">{total} results</div>
       </div>
 
-      {items.length === 0 ? (
-        <div className="mt-16 flex flex-col items-center text-center gap-4">
+      <div className="flex-1">
+        {items.length === 0 ? (
+          <div className="mt-16 flex flex-col items-center text-center gap-4">
           <div className="rounded-full bg-muted w-16 h-16 flex items-center justify-center">
             <SearchX className="h-8 w-8 text-muted-foreground" />
           </div>
@@ -106,11 +111,11 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
               <Link href="/artists">Browse artists</Link>
             </Button>
           </div>
-        </div>
-      ) : (
-        <>
+          </div>
+        ) : (
+          <>
           {/* Artwork Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
             {items.map((art) => (
               <Card key={String(art._id)} className="overflow-hidden">
                 <ArtworkQuickView
@@ -167,18 +172,21 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
               </Card>
             ))}
           </div>
+          </>
+        )}
+      </div>
 
-          {/* Pagination */}
-          <div className="flex items-center justify-center gap-2 mt-8">
-            <Button asChild variant="outline" disabled={page <= 1}>
-              <Link href={makeHref({ page: String(Math.max(1, page - 1)) })}>Previous</Link>
-            </Button>
-            <span className="text-sm">Page {page} of {totalPages}</span>
-            <Button asChild variant="outline" disabled={page >= totalPages}>
-              <Link href={makeHref({ page: String(Math.min(totalPages, page + 1)) })}>Next</Link>
-            </Button>
-          </div>
-        </>
+      {/* Pagination at bottom */}
+      {total > 0 && (
+        <div className="flex items-center justify-center gap-2 mt-8">
+          <Button asChild variant="outline" disabled={page <= 1}>
+            <Link href={makeHref({ page: String(Math.max(1, page - 1)) })}>Previous</Link>
+          </Button>
+          <span className="text-sm">Page {page} of {totalPages}</span>
+          <Button asChild variant="outline" disabled={page >= totalPages}>
+            <Link href={makeHref({ page: String(Math.min(totalPages, page + 1)) })}>Next</Link>
+          </Button>
+        </div>
       )}
     </div>
   )
