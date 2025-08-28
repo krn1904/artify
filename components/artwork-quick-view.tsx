@@ -7,6 +7,7 @@ import Link from 'next/link'
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Dialog,
   DialogTrigger,
@@ -107,37 +108,53 @@ export function ArtworkQuickView({ id, title, imageUrl, price, description, tags
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-4 px-6 pb-2">
           <div className="relative aspect-square w-full">
-            <Image
-              src={display.imageUrl}
-              alt={display.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-      className="object-cover rounded-md"
-            />
+            {loading ? (
+              <Skeleton className="h-full w-full absolute inset-0" />
+            ) : (
+              <Image
+                src={display.imageUrl}
+                alt={display.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover rounded-md"
+              />
+            )}
           </div>
           <div className="md:pl-2 py-4">
             <div className="flex items-center gap-3">
-              <div className="text-3xl font-semibold">${display.price}</div>
+              {loading ? (
+                <Skeleton className="h-8 w-24" />
+              ) : (
+                <div className="text-3xl font-semibold">${display.price}</div>
+              )}
             </div>
             {display.artistId ? (
               <div className="flex items-center gap-3 mt-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={display.artist?.avatarUrl || ''} alt={display.artist?.name || ''} />
-                  <AvatarFallback>{getInitials(display.artist?.name)}</AvatarFallback>
+                  {loading ? (
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                  ) : (
+                    <>
+                      <AvatarImage src={display.artist?.avatarUrl || ''} alt={display.artist?.name || ''} />
+                      <AvatarFallback>{getInitials(display.artist?.name)}</AvatarFallback>
+                    </>
+                  )}
                 </Avatar>
-                <Link href={`/artist/${display.artistId}`} className="text-sm underline">
-                  {display.artist?.name ? `by ${display.artist.name}` : 'View artist profile'}
-                </Link>
+                {loading ? (
+                  <Skeleton className="h-4 w-40" />
+                ) : (
+                  <Link href={`/artist/${display.artistId}`} className="text-sm underline">
+                    {display.artist?.name ? `by ${display.artist.name}` : 'View artist profile'}
+                  </Link>
+                )}
               </div>
             ) : null}
-            {loading ? (
-              <p className="text-sm text-muted-foreground mt-3">Loading details…</p>
-            ) : error ? (
+            {error ? (
               <p className="text-sm text-destructive mt-3">{error}</p>
             ) : display.description ? (
               <p className="text-sm text-muted-foreground mt-3 leading-relaxed whitespace-pre-line">{display.description}</p>
             ) : (
-              <p className="text-sm text-muted-foreground mt-3">No description provided.</p>
+              <p className="text-sm text-muted-foreground mt-3">{loading ? 'Loading…' : 'No description provided.'}</p>
             )}
           </div>
         </div>

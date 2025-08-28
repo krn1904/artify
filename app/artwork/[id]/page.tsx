@@ -10,6 +10,15 @@ import { CloseBack } from '@/components/close-back'
 
 export const dynamic = 'force-dynamic'
 
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const art = await getArtworkById(params.id)
+  if (!art) return { title: 'Artwork Not Found | Artify' }
+  return {
+    title: `${art.title} | Artify`,
+    description: art.description || 'Artwork details on Artify.',
+  }
+}
+
 interface PageProps {
   params: { id: string }
 }
