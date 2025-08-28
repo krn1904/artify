@@ -1,5 +1,6 @@
 [
   {
+    "_id": {"$oid": "64a000000000000000000001"},
     "name": "Ava Turner",
     "email": "ava.artist@example.com",
   "password": "$2a$10$78yBpjudxklXyGbAT4ztLO6oDJE/ZsU4fLo.Ohd.55FWuIRo0qblS",
@@ -10,6 +11,7 @@
     "updatedAt": {"$date": "2025-06-20T12:00:00.000Z"}
   },
   {
+    "_id": {"$oid": "64a000000000000000000002"},
     "name": "Liam Chen",
     "email": "liam.digital@example.com",
   "password": "$2a$10$78yBpjudxklXyGbAT4ztLO6oDJE/ZsU4fLo.Ohd.55FWuIRo0qblS",
@@ -20,6 +22,7 @@
     "updatedAt": {"$date": "2025-06-21T12:00:00.000Z"}
   },
   {
+    "_id": {"$oid": "64a000000000000000000003"},
     "name": "Maya Singh",
     "email": "maya.photo@example.com",
   "password": "$2a$10$78yBpjudxklXyGbAT4ztLO6oDJE/ZsU4fLo.Ohd.55FWuIRo0qblS",
@@ -30,6 +33,7 @@
     "updatedAt": {"$date": "2025-06-22T12:00:00.000Z"}
   },
   {
+    "_id": {"$oid": "64a000000000000000000004"},
     "name": "Diego Alvarez",
     "email": "diego.sculpt@example.com",
   "password": "$2a$10$78yBpjudxklXyGbAT4ztLO6oDJE/ZsU4fLo.Ohd.55FWuIRo0qblS",
