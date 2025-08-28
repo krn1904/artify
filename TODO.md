@@ -18,9 +18,9 @@
 
 3) Public pages wired to DB
 - [x] Explore page: fetch paginated artworks from DB (replace mock data)
-- [ ] Artists page (`app/artists/page.tsx`): list users with role=ARTIST (no filters in MVP)
-- [ ] Artwork detail (`app/artwork/[id]/page.tsx`): show image, description, artist, price, favorite button
-- [ ] Artist profile (`app/artist/[id]/page.tsx`): bio from user, portfolio grid (their artworks), “Request commission” CTA
+- [x] Artists page (`app/artists/page.tsx`): list users with role=ARTIST (no filters in MVP)
+- [x] Artwork detail (`app/artwork/[id]/page.tsx`): show image, description, artist, price, favorite button
+- [x] Artist profile (`app/artist/[id]/page.tsx`): bio from user, portfolio grid (their artworks), “Request commission” CTA
 
 4) Commission request flow
 - [ ] API: `POST /api/commissions` to create a commission (auth required)
