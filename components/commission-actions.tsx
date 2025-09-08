@@ -3,6 +3,17 @@
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 
 type Status = 'REQUESTED' | 'ACCEPTED' | 'DECLINED' | 'COMPLETED'
 
@@ -32,7 +43,23 @@ export function CommissionActions({ id, status }: { id: string; status?: Status 
   if (status === 'ACCEPTED') {
     return (
       <div className="flex items-center gap-2">
-        <Button size="sm" disabled={isPending} onClick={() => setStatus('COMPLETED' as any)}>Mark as completed</Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button size="sm" disabled={isPending}>Mark as completed</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Mark as completed?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will move the commission to Completed. You can’t change it back.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => setStatus('COMPLETED' as any)}>Confirm</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         {err ? <span className="text-xs text-red-600 ml-2">{err}</span> : null}
       </div>
     )
@@ -43,7 +70,23 @@ export function CommissionActions({ id, status }: { id: string; status?: Status 
   return (
     <div className="flex items-center gap-2">
       <Button size="sm" disabled={isPending} onClick={() => setStatus('ACCEPTED')}>Accept</Button>
-      <Button size="sm" variant="outline" disabled={isPending} onClick={() => setStatus('DECLINED')}>Decline</Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button size="sm" variant="outline" disabled={isPending}>Decline</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Decline this request?</AlertDialogTitle>
+            <AlertDialogDescription>
+              The requester will see this as Declined. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => setStatus('DECLINED')}>Confirm</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       {err ? <span className="text-xs text-red-600 ml-2">{err}</span> : null}
     </div>
   )

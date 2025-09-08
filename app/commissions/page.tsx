@@ -75,10 +75,16 @@ export default async function CommissionsHubPage() {
       <div className="container mx-auto max-w-3xl py-10">
         <h1 className="text-3xl font-bold mb-6">Incoming commissions</h1>
         <Tabs defaultValue="incoming">
-          <TabsList>
-            <TabsTrigger value="incoming">Incoming</TabsTrigger>
-            <TabsTrigger value="archive">Archive</TabsTrigger>
-          </TabsList>
+        <TabsList>
+          <TabsTrigger value="incoming">
+            Incoming
+            {incoming.total > 0 ? <span className="ml-2 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-secondary px-1.5 text-xs font-medium text-secondary-foreground">{incoming.total}</span> : null}
+          </TabsTrigger>
+          <TabsTrigger value="archive">
+            Archive
+            {archive.length > 0 ? <span className="ml-2 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-muted px-1.5 text-xs font-medium text-foreground/80">{archive.length}</span> : null}
+          </TabsTrigger>
+        </TabsList>
           <TabsContent value="incoming" className="mt-4">
             {incoming.total === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-md border py-12 text-center text-muted-foreground">
@@ -138,7 +144,10 @@ export default async function CommissionsHubPage() {
       <h1 className="text-3xl font-bold mb-6">Your commissions</h1>
       <Tabs defaultValue="my">
         <TabsList>
-          <TabsTrigger value="my">My Requests</TabsTrigger>
+          <TabsTrigger value="my">
+            My Requests
+            {my.total > 0 ? <span className="ml-2 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-secondary px-1.5 text-xs font-medium text-secondary-foreground">{my.total}</span> : null}
+          </TabsTrigger>
           <TabsTrigger value="new">New Request</TabsTrigger>
         </TabsList>
         <TabsContent value="my" className="mt-4">

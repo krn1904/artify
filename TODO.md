@@ -29,7 +29,7 @@
  - [x] Commissions hub (`/commissions`): role-aware tabs with SSR lists
    - Customer: “My Requests” + “New Request”
    - Artist: “Incoming” + “Archive”
- - [ ] Status lifecycle: REQUESTED → ACCEPTED/DECLINED → COMPLETED (API + UI actions)
+ - [x] Status lifecycle: REQUESTED → ACCEPTED/DECLINED → COMPLETED (API + UI actions)
  - [x] API for status/detail:
    - [x] `GET /api/commissions/[id]` (authorized)
    - [x] `PATCH /api/commissions/[id]` (artist accept/decline)
