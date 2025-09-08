@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { z } from 'zod'
 import { Card } from '@/components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 type PresetArtist = { id: string; name: string }
 
@@ -151,13 +152,21 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
               <Card className="absolute z-10 mt-1 w-full max-h-64 overflow-auto">
                 <ul>
                   {suggestions.map((s) => (
-                    <li key={s.id} className="px-3 py-2 hover:bg-muted cursor-pointer" onMouseDown={() => {
-                      setArtistId(s.id)
-                      setArtistName(s.name)
-                      setQuery(s.name)
-                      setShowSuggestions(false)
-                    }}>
-                      {s.name}
+                    <li
+                      key={s.id}
+                      className="px-3 py-2 hover:bg-muted cursor-pointer flex items-center gap-3"
+                      onMouseDown={() => {
+                        setArtistId(s.id)
+                        setArtistName(s.name)
+                        setQuery(s.name)
+                        setShowSuggestions(false)
+                      }}
+                    >
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage src={s.avatarUrl || ''} alt={s.name} />
+                        <AvatarFallback>{(s.name?.[0] || 'A').toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm">{s.name}</span>
                     </li>
                   ))}
                 </ul>
@@ -165,6 +174,9 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
             )}
             {/* Keep selected artist id in hidden field to ensure submission */}
             <input type="hidden" value={artistId} />
+            {artistId && artistName && (
+              <div className="mt-2 text-xs text-muted-foreground">Selected artist: <span className="font-medium text-foreground">{artistName}</span></div>
+            )}
           </div>
         )}
       </div>

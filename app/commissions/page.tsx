@@ -5,6 +5,7 @@ import { listArtistCommissions, listCustomerCommissions, type CommissionDoc } fr
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
+import { Inbox, Archive as ArchiveIcon } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -80,7 +81,13 @@ export default async function CommissionsHubPage() {
           </TabsList>
           <TabsContent value="incoming" className="mt-4">
             {incoming.total === 0 ? (
-              <p className="text-sm text-muted-foreground">No new requests yet.</p>
+              <div className="flex flex-col items-center justify-center rounded-md border py-12 text-center text-muted-foreground">
+                <div className="rounded-full bg-muted w-12 h-12 flex items-center justify-center mb-3">
+                  <Inbox className="h-6 w-6" />
+                </div>
+                <div className="font-medium text-foreground">No new requests</div>
+                <p className="text-sm mt-1">You’ll see new commission requests here.</p>
+              </div>
             ) : (
               <div className="divide-y rounded-md border">
                 {incoming.items.map((c) => (
@@ -97,7 +104,13 @@ export default async function CommissionsHubPage() {
           </TabsContent>
           <TabsContent value="archive" className="mt-4">
             {archive.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Nothing in archive yet.</p>
+              <div className="flex flex-col items-center justify-center rounded-md border py-12 text-center text-muted-foreground">
+                <div className="rounded-full bg-muted w-12 h-12 flex items-center justify-center mb-3">
+                  <ArchiveIcon className="h-6 w-6" />
+                </div>
+                <div className="font-medium text-foreground">No archived items</div>
+                <p className="text-sm mt-1">Accept or decline requests to move them here.</p>
+              </div>
             ) : (
               <div className="divide-y rounded-md border">
                 {archive.map((c) => (
@@ -125,7 +138,13 @@ export default async function CommissionsHubPage() {
         </TabsList>
         <TabsContent value="my" className="mt-4">
           {my.total === 0 ? (
-            <p className="text-sm text-muted-foreground">No requests yet. Start a new one.</p>
+            <div className="flex flex-col items-center justify-center rounded-md border py-12 text-center text-muted-foreground">
+              <div className="rounded-full bg-muted w-12 h-12 flex items-center justify-center mb-3">
+                <Inbox className="h-6 w-6" />
+              </div>
+              <div className="font-medium text-foreground">No requests yet</div>
+              <p className="text-sm mt-1">Start a new commission to get the ball rolling.</p>
+            </div>
           ) : (
             <div className="divide-y rounded-md border">
               {my.items.map((c) => (
