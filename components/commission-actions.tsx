@@ -69,7 +69,23 @@ export function CommissionActions({ id, status }: { id: string; status?: Status 
 
   return (
     <div className="flex items-center gap-2">
-      <Button size="sm" disabled={isPending} onClick={() => setStatus('ACCEPTED')}>Accept</Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button size="sm" disabled={isPending}>Accept</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Accept this request?</AlertDialogTitle>
+            <AlertDialogDescription>
+              The requester will see this as Accepted. You can mark it as completed later.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => setStatus('ACCEPTED')}>Confirm</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button size="sm" variant="outline" disabled={isPending}>Decline</Button>
