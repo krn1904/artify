@@ -25,16 +25,17 @@
 4) Commission request flow
  - [x] API: `POST /api/commissions` to create a commission (auth required)
  - [x] Page: commission form (from artwork or artist profile) → creates doc with status `REQUESTED`
-- [ ] Dashboards:
-  - [ ] Customer: “My requests” list in `/dashboard`
-  - [ ] Artist: “Incoming requests” list in `/dashboard`
-- [ ] Status field lifecycle: REQUESTED → ACCEPTED/DECLINED → COMPLETED (simple updates via API)
-- [ ] In-app notifications: use toasts and dashboard badges (no external email)
+ - [ ] Form upgrades (MVP polish): add optional `title`, optional `referenceUrls[]`, optional `dueDate`; add searchable artist picker when not prefilled
+ - [ ] Commissions hub (`/commissions`): role-aware tabs with SSR lists
+   - Customer: “My Requests” + “New Request”
+   - Artist: “Incoming” + “Archive”
+ - [ ] Status lifecycle: REQUESTED → ACCEPTED/DECLINED → COMPLETED (API + UI actions)
+ - [ ] API for status/detail:
+   - `GET /api/commissions/[id]` (authorized)
+   - `PATCH /api/commissions/[id]` (artist accept/decline)
+ - [ ] In-app notifications: use toasts and hub badges (no external email)
 
-- [ ] Decide on `/commissions` route/link:
-  - Keep as role-aware hub (guest explainer; logged-in redirects), or
-  - Redirect both roles to `/dashboard` once lists are live, or
-  - Remove from navbar if redundant post-dashboard
+ - [x] Decide on `/commissions` route/link: keep as role-aware hub (guest explainer; logged-in land on role tab)
 
 5) User profile & settings
 - [ ] Profile settings page (e.g., `/dashboard/profile`): update name, avatarUrl, optional bio; allow switching role if needed
@@ -79,6 +80,10 @@
 - [ ] Demo users + README walkthrough with screenshots
 - [ ] Accessibility sweep (landmarks, alt text, keyboard, color contrast)
 
+## P1.5 — Commission details (nice-to-have)
+- [ ] Commission detail page `/commissions/[id]` with status history and actions
+- [ ] Simple message thread on commission (no realtime)
+
 ## P2 — Optional later (skip paid services)
 - [ ] Social auth (Google/GitHub) via NextAuth if desired (free)
 - [ ] Image uploads: defer until picking a free storage option; continue using seeded remote image URLs
@@ -89,8 +94,8 @@
 ## Acceptance criteria (MVP)
 - [ ] Browse artworks and artists without login
 - [ ] Sign up, log in, update profile
-- [ ] Submit commission requests and view them in dashboard
-- [ ] Artists can view incoming requests
+- [ ] Submit commission requests and view them in the `/commissions` hub
+- [ ] Artists can view incoming requests and accept/decline
 - [ ] `/api/health/db` returns 200 when DB is reachable
 - [ ] Deployed on Vercel with seed data producing visible demo content
 
