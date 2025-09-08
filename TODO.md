@@ -34,6 +34,7 @@
    - [x] `GET /api/commissions/[id]` (authorized)
    - [x] `PATCH /api/commissions/[id]` (artist accept/decline)
  - [ ] In-app notifications: use toasts and hub badges (no external email)
+ - [x] In-app notifications: use toasts and hub badges (no external email)
 
  - [x] Decide on `/commissions` route/link: keep as role-aware hub (guest explainer; logged-in land on role tab)
 
