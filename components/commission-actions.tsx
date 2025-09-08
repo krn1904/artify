@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { toast } from '@/hooks/use-toast'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,7 +23,7 @@ export function CommissionActions({ id, status }: { id: string; status?: Status 
   const [isPending, startTransition] = useTransition()
   const [err, setErr] = useState<string | null>(null)
 
-  async function setStatus(status: 'ACCEPTED' | 'DECLINED') {
+  async function setStatus(status: 'ACCEPTED' | 'DECLINED' | 'COMPLETED') {
     setErr(null)
     try {
       const res = await fetch(`/api/commissions/${id}`, {
@@ -34,6 +35,13 @@ export function CommissionActions({ id, status }: { id: string; status?: Status 
         const data = await res.json().catch(() => ({}))
         throw new Error(data?.error || 'Failed to update')
       }
+      const msg =
+        status === 'ACCEPTED'
+          ? 'Commission accepted'
+          : status === 'DECLINED'
+          ? 'Commission declined'
+          : 'Commission marked as completed'
+      toast({ title: msg })
       startTransition(() => router.refresh())
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Failed to update')

@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { z } from 'zod'
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { toast } from '@/hooks/use-toast'
 
 type PresetArtist = { id: string; name: string }
 
@@ -120,8 +121,9 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
         setError(typeof msg === 'string' ? msg : 'Failed to create commission')
         return
       }
-      // Redirect to dashboard for now; later go to commission detail
-      startTransition(() => router.push('/dashboard'))
+      // Notify and redirect to the commissions hub
+      toast({ title: 'Request sent', description: 'We\'ve notified the artist.' })
+      startTransition(() => router.push('/commissions'))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     }
