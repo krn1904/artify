@@ -4,7 +4,9 @@ import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 
-export function CommissionActions({ id }: { id: string }) {
+type Status = 'REQUESTED' | 'ACCEPTED' | 'DECLINED' | 'COMPLETED'
+
+export function CommissionActions({ id, status }: { id: string; status?: Status }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [err, setErr] = useState<string | null>(null)
@@ -26,6 +28,17 @@ export function CommissionActions({ id }: { id: string }) {
       setErr(e instanceof Error ? e.message : 'Failed to update')
     }
   }
+
+  if (status === 'ACCEPTED') {
+    return (
+      <div className="flex items-center gap-2">
+        <Button size="sm" disabled={isPending} onClick={() => setStatus('COMPLETED' as any)}>Mark as completed</Button>
+        {err ? <span className="text-xs text-red-600 ml-2">{err}</span> : null}
+      </div>
+    )
+  }
+
+  if (status && status !== 'REQUESTED') return null
 
   return (
     <div className="flex items-center gap-2">

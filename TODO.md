@@ -25,14 +25,14 @@
 4) Commission request flow
  - [x] API: `POST /api/commissions` to create a commission (auth required)
  - [x] Page: commission form (from artwork or artist profile) → creates doc with status `REQUESTED`
- - [ ] Form upgrades (MVP polish): add optional `title`, optional `referenceUrls[]`, optional `dueDate`; add searchable artist picker when not prefilled
- - [ ] Commissions hub (`/commissions`): role-aware tabs with SSR lists
+ - [x] Form upgrades (MVP polish): add optional `title`, optional `referenceUrls[]`, optional `dueDate`; add searchable artist picker when not prefilled
+ - [x] Commissions hub (`/commissions`): role-aware tabs with SSR lists
    - Customer: “My Requests” + “New Request”
    - Artist: “Incoming” + “Archive”
  - [ ] Status lifecycle: REQUESTED → ACCEPTED/DECLINED → COMPLETED (API + UI actions)
- - [ ] API for status/detail:
-   - `GET /api/commissions/[id]` (authorized)
-   - `PATCH /api/commissions/[id]` (artist accept/decline)
+ - [x] API for status/detail:
+   - [x] `GET /api/commissions/[id]` (authorized)
+   - [x] `PATCH /api/commissions/[id]` (artist accept/decline)
  - [ ] In-app notifications: use toasts and hub badges (no external email)
 
  - [x] Decide on `/commissions` route/link: keep as role-aware hub (guest explainer; logged-in land on role tab)

@@ -63,6 +63,22 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
     }
 
+    // Enforce valid transitions
+    const from = c.status
+    const allowed: Record<string, Array<'ACCEPTED' | 'DECLINED' | 'COMPLETED' | 'REQUESTED'>> = {
+      REQUESTED: ['ACCEPTED', 'DECLINED'],
+      ACCEPTED: ['COMPLETED'],
+      DECLINED: [],
+      COMPLETED: [],
+    }
+
+    if (status === from) {
+      return NextResponse.json({ ok: true })
+    }
+    if (!allowed[from]?.includes(status)) {
+      return NextResponse.json({ error: `Invalid transition from ${from} to ${status}` }, { status: 400 })
+    }
+
     const res = await updateCommissionStatus(id, status)
     if (res.matchedCount === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     return NextResponse.json({ ok: true })
@@ -71,4 +87,3 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
-

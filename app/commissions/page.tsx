@@ -95,7 +95,7 @@ export default async function CommissionsHubPage() {
                     <CommissionRow c={c} />
                     {/* Actions: include accept/decline client buttons */}
                     <div className="pb-4">
-                      <CommissionActions id={String(c._id)} />
+                      <CommissionActions id={String(c._id)} status={c.status} />
                     </div>
                   </div>
                 ))}
@@ -116,6 +116,11 @@ export default async function CommissionsHubPage() {
                 {archive.map((c) => (
                   <div key={String(c._id)} className="px-4">
                     <CommissionRow c={c} />
+                    {c.status === 'ACCEPTED' ? (
+                      <div className="pb-4">
+                        <CommissionActions id={String(c._id)} status={c.status} />
+                      </div>
+                    ) : null}
                   </div>
                 ))}
               </div>
