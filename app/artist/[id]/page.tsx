@@ -31,6 +31,7 @@ function getInitials(name?: string) {
   return (first + last).toUpperCase() || 'A'
 }
 
+// Artist Profile page: shows bio and a portfolio grid of artworks by artistId.
 export default async function ArtistProfilePage({ params }: PageProps) {
   const artist = await getUserById(params.id)
   if (!artist) return notFound()

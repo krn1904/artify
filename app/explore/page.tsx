@@ -29,6 +29,7 @@ function parseIntOr<T extends number>(value: string | undefined, fallback: T, mi
 
 // no-op helper removed (filters deferred)
 
+// Public Explore page: lists artworks with optional tag filter and pagination.
 export default async function ExplorePage({ searchParams }: { searchParams: SearchParams }) {
   const page = parseIntOr(searchParams.page, 1, 1)
   const pageSize = parseIntOr(searchParams.pageSize, 12, 1, 100)

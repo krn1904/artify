@@ -23,6 +23,7 @@ interface PageProps {
   params: { id: string }
 }
 
+// Artwork detail page: full view for a single artwork.
 export default async function ArtworkDetailPage({ params }: PageProps) {
   const art = await getArtworkById(params.id)
   if (!art) return notFound()
