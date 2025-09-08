@@ -55,7 +55,7 @@
 - [ ] GitHub Actions: install, lint, typecheck, build (tests optional if time-constrained)
 
 9) Cleanup
-- [ ] Remove unused Prisma and Supabase files (project uses Mongo driver)
+- [x] Remove unused Prisma and Supabase files (project uses Mongo driver)
 - [ ] Tighten `next.config.js` later (stop ignoring TS/ESLint errors before production)
 - [ ] Pin dependency versions and run a quick audit
 
