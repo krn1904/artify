@@ -23,13 +23,18 @@
 - [x] Artist profile (`app/artist/[id]/page.tsx`): bio from user, portfolio grid (their artworks), “Request commission” CTA
 
 4) Commission request flow
-- [ ] API: `POST /api/commissions` to create a commission (auth required)
-- [ ] Page: commission form (from artwork or artist profile) → creates doc with status `REQUESTED`
+ - [x] API: `POST /api/commissions` to create a commission (auth required)
+ - [x] Page: commission form (from artwork or artist profile) → creates doc with status `REQUESTED`
 - [ ] Dashboards:
   - [ ] Customer: “My requests” list in `/dashboard`
   - [ ] Artist: “Incoming requests” list in `/dashboard`
 - [ ] Status field lifecycle: REQUESTED → ACCEPTED/DECLINED → COMPLETED (simple updates via API)
 - [ ] In-app notifications: use toasts and dashboard badges (no external email)
+
+- [ ] Decide on `/commissions` route/link:
+  - Keep as role-aware hub (guest explainer; logged-in redirects), or
+  - Redirect both roles to `/dashboard` once lists are live, or
+  - Remove from navbar if redundant post-dashboard
 
 5) User profile & settings
 - [ ] Profile settings page (e.g., `/dashboard/profile`): update name, avatarUrl, optional bio; allow switching role if needed

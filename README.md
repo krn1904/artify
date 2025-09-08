@@ -27,3 +27,8 @@ Use it to quickly confirm environment variables and DB access on local and Verce
 # Optional: quick check
 curl -sS http://localhost:3000/api/health/db | jq
 ```
+
+## Commissions API
+
+- POST /api/commissions — Auth required. Body: `{ artistId: string, brief: string, budget?: number }`. Returns `{ id }` on success.
+- Page: `/commissions/new?artistId=<id>` provides a simple form that posts to the API. Unauthenticated users are redirected to login.
