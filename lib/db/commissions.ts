@@ -12,8 +12,11 @@ export interface CommissionDoc {
   _id?: ObjectId
   customerId: ObjectId
   artistId: ObjectId
+  title?: string
   brief: string
   budget?: number
+  referenceUrls?: string[]
+  dueDate?: Date
   status: CommissionStatus
   createdAt: Date
   updatedAt: Date

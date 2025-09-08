@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { z } from 'zod'
+import { Card } from '@/components/ui/card'
 
 type PresetArtist = { id: string; name: string }
 
@@ -13,13 +14,20 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [artistId, setArtistId] = useState(presetArtist?.id ?? '')
-  const [artistName] = useState(presetArtist?.name ?? '')
+  const [artistName, setArtistName] = useState(presetArtist?.name ?? '')
   const [brief, setBrief] = useState('')
   const [budget, setBudget] = useState<string>('')
+  const [title, setTitle] = useState('')
+  const [referenceText, setReferenceText] = useState('') // one URL per line
+  const [dueDate, setDueDate] = useState('') // yyyy-mm-dd
   const [error, setError] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
+  const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string; avatarUrl: string | null }>>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   const Schema = z.object({
     artistId: z.string().trim().min(1, 'Artist is required'),
+    title: z.string().trim().min(3, 'Title too short').max(120).optional().or(z.literal('')),
     brief: z.string().trim().min(10, 'Please provide a short brief (min 10 chars)').max(2000),
     budget: z
       .preprocess((v) => {
@@ -34,16 +42,64 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
         return undefined
       }, z.number().nonnegative())
       .optional(),
+    referenceUrls: z
+      .preprocess((v) => {
+        if (v == null) return undefined
+        if (typeof v === 'string') {
+          const lines = v
+            .split(/\r?\n/)
+            .map((s) => s.trim())
+            .filter(Boolean)
+          return lines
+        }
+        return v
+      }, z.array(z.string().url()).max(10))
+      .optional(),
+    dueDate: z
+      .preprocess((v) => {
+        if (v == null || v === '') return undefined
+        if (typeof v === 'string') {
+          const d = new Date(v)
+          return Number.isNaN(d.getTime()) ? undefined : d
+        }
+        return v
+      }, z.date())
+      .optional(),
   })
+
+  // Debounced artist suggestions
+  useEffect(() => {
+    let active = true
+    if (!presetArtist && query.trim().length >= 2) {
+      const t = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/artists?q=${encodeURIComponent(query.trim())}&limit=8`)
+          const data = await res.json()
+          if (active) setSuggestions(Array.isArray(data.items) ? data.items : [])
+        } catch {
+          if (active) setSuggestions([])
+        }
+      }, 300)
+      return () => {
+        active = false
+        clearTimeout(t)
+      }
+    } else {
+      setSuggestions([])
+    }
+  }, [query, presetArtist])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
     // Build payload and omit budget when empty so it remains truly optional
     const payloadRaw: Record<string, any> = { artistId, brief }
+    if (title.trim()) payloadRaw.title = title
     if (typeof budget === 'string' ? budget.trim() !== '' : budget != null) {
       payloadRaw.budget = budget
     }
+    if (referenceText.trim()) payloadRaw.referenceUrls = referenceText
+    if (dueDate) payloadRaw.dueDate = dueDate
     const parsed = Schema.safeParse(payloadRaw)
     if (!parsed.success) {
       const flat = parsed.error.flatten()
@@ -81,13 +137,44 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
             <input type="hidden" value={artistId} />
           </>
         ) : (
-          <Input
-            placeholder="Artist ID"
-            value={artistId}
-            onChange={(e) => setArtistId(e.target.value)}
-            required
-          />
+          <div className="relative">
+            <Input
+              placeholder="Search artist by name..."
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value)
+                setShowSuggestions(true)
+              }}
+              onFocus={() => setShowSuggestions(true)}
+            />
+            {showSuggestions && suggestions.length > 0 && (
+              <Card className="absolute z-10 mt-1 w-full max-h-64 overflow-auto">
+                <ul>
+                  {suggestions.map((s) => (
+                    <li key={s.id} className="px-3 py-2 hover:bg-muted cursor-pointer" onMouseDown={() => {
+                      setArtistId(s.id)
+                      setArtistName(s.name)
+                      setQuery(s.name)
+                      setShowSuggestions(false)
+                    }}>
+                      {s.name}
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            )}
+            {/* Keep selected artist id in hidden field to ensure submission */}
+            <input type="hidden" value={artistId} />
+          </div>
         )}
+      </div>
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Title (optional)</label>
+        <Input
+          placeholder="Short title for your commission"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
       </div>
       <div className="space-y-2">
         <label className="text-sm font-medium">Brief</label>
@@ -109,6 +196,24 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
           value={budget}
           onChange={(e) => setBudget(e.target.value)}
           min={0}
+        />
+      </div>
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Reference URLs (optional)</label>
+        <Textarea
+          placeholder="Paste one URL per line"
+          value={referenceText}
+          onChange={(e) => setReferenceText(e.target.value)}
+          rows={3}
+        />
+        <p className="text-xs text-muted-foreground">Up to 10 links. One per line.</p>
+      </div>
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Due date (optional)</label>
+        <Input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
         />
       </div>
       {error ? (
