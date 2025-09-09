@@ -59,3 +59,16 @@ curl -sS http://localhost:3000/api/health/db | jq
 - Fields: Artist (searchable), optional Title, Brief (min 10 chars), optional Budget, optional Reference URLs (one per line), optional Due Date
 - On submit: shows a toast and navigates to the Commissions hub
 - Self‑commission is disabled in UI and rejected server‑side
+
+## Artist Portfolio
+
+- Explore filter: artists can view only their work via `/explore?my=1` or by toggling “My Artworks” on the Explore page. The “Add artwork” button is visible to artists on Explore.
+- Create page: `/dashboard/artworks/new` lets artists add new pieces using a remote image URL (no binary uploads in MVP).
+
+### Artwork API
+
+- GET `/api/my/artworks` — Auth (artist): return current artist’s artworks (paginated in code).
+- POST `/api/my/artworks` — Auth (artist): create artwork.
+  - Body: `{ title: string, imageUrl: string (URL), price: number, description?: string, tags?: string[] (<=5) }`
+  - Validation: title ≥ 3, price ≥ 0; URL must be valid; description is sanitized.
+- DELETE `/api/my/artworks/[id]` — Auth (artist): delete own artwork by id (ownership enforced).

@@ -45,6 +45,16 @@ This guide explains what you can do and how to get around.
 - Artist: “Incoming” shows new requests; “Archive” shows accepted/declined/completed.
 - The page auto‑updates on focus (and for artists every ~15s). Use the Refresh button if needed.
 
+### Adding your artwork (artists)
+- Go to Explore. If you’re logged in as an artist, you’ll see an “Add artwork” button next to the page title.
+- Use the “My Artworks” toggle on Explore to filter to only your pieces.
+- The add page (`/dashboard/artworks/new`) accepts:
+  - Image URL (paste a remote URL, e.g., Unsplash)
+  - Title (≥ 3 chars), Price (≥ 0)
+  - Optional description and comma‑separated tags (up to 5)
+- After saving, you’ll be redirected back to Explore with your filter active.
+- Note: Binary uploads are deferred in MVP; use URL‑based images for now.
+
 ### In‑app notifications
 - The app shows small toast messages for key actions (request created, accepted, declined, completed).
 - Tab badges in the Commissions hub show counts for Incoming and My Requests.
@@ -56,4 +66,3 @@ This guide explains what you can do and how to get around.
 ### Tips
 - If a page asks you to log in, you’ll be redirected back to what you were doing once you finish.
 - You can always return to Explore to keep browsing or visit artist profiles from artwork pages.
-
