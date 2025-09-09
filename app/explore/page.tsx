@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Heart, Share2, SearchX } from 'lucide-react'
 import { listArtworks } from '@/lib/db/artworks'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/authOptions'
 
 export const dynamic = 'force-dynamic'
 export const metadata = {
@@ -16,6 +18,7 @@ type SearchParams = {
   page?: string
   pageSize?: string
   tags?: string | string[]
+  my?: string
 }
 
 function parseIntOr<T extends number>(value: string | undefined, fallback: T, min?: number, max?: number): number {
@@ -31,12 +34,14 @@ function parseIntOr<T extends number>(value: string | undefined, fallback: T, mi
 
 // Public Explore page: lists artworks with optional tag filter and pagination.
 export default async function ExplorePage({ searchParams }: { searchParams: SearchParams }) {
+  const session = await getServerSession(authOptions)
   const page = parseIntOr(searchParams.page, 1, 1)
   const pageSize = parseIntOr(searchParams.pageSize, 12, 1, 100)
   const activeTag = typeof searchParams.tags === 'string' ? searchParams.tags : undefined
+  const myOnly = searchParams.my === '1' && session?.user?.role === 'ARTIST'
 
   const { items, total } = await listArtworks(
-    { tags: activeTag ? [activeTag] : undefined },
+    { tags: activeTag ? [activeTag] : undefined, artistId: myOnly ? session!.user.id : undefined },
     { page, pageSize }
   )
 
@@ -44,17 +49,25 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
 
   const makeHref = (overrides: Partial<SearchParams> = {}) => {
     const sp = new URLSearchParams()
-    const next = { page, pageSize, tags: activeTag, ...overrides }
+    const next = { page, pageSize, tags: activeTag, my: myOnly ? '1' : undefined, ...overrides }
     if (next.page && next.page !== 1) sp.set('page', String(next.page))
     if (next.pageSize && next.pageSize !== 12) sp.set('pageSize', String(next.pageSize))
     if (next.tags) sp.set('tags', String(next.tags))
+    if (next.my === '1') sp.set('my', '1')
     const qs = sp.toString()
     return qs ? `/explore?${qs}` : '/explore'
   }
 
   return (
     <div className="container mx-auto py-8 min-h-screen flex flex-col">
-      <h1 className="text-3xl font-bold mb-6">Explore Artwork</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-3xl font-bold">Explore Artwork</h1>
+        {session?.user?.role === 'ARTIST' ? (
+          <Button asChild>
+            <Link href="/dashboard/artworks/new">Add artwork</Link>
+          </Button>
+        ) : null}
+      </div>
 
       {/* Category Chips (single-select) */}
       <div className="mb-6 flex flex-wrap gap-2">
@@ -65,7 +78,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
           { label: 'Photography', value: 'photography' },
           { label: 'Sculptures', value: 'sculpture' },
         ].map(({ label, value }) => {
-          const href = value ? makeHref({ tags: value, page: '1' }) : '/explore'
+          const href = value ? makeHref({ tags: value, page: '1' }) : makeHref({ tags: undefined, page: '1' })
           const isActive = (!activeTag && value === undefined) || activeTag === value
           return (
             <Button key={label} asChild variant={isActive ? 'default' : 'outline'} size="sm">
@@ -73,6 +86,17 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
             </Button>
           )
         })}
+        {session?.user?.role === 'ARTIST' ? (
+          <Button
+            asChild
+            size="sm"
+            variant={myOnly ? 'default' : 'outline'}
+          >
+            <Link href={myOnly ? makeHref({ my: undefined, page: '1' }) : makeHref({ my: '1', page: '1' })}>
+              My Artworks
+            </Link>
+          </Button>
+        ) : null}
         <div className="ml-auto text-sm text-muted-foreground">{total} results</div>
       </div>
 
@@ -94,7 +118,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
           </div>
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Button asChild>
-              <Link href="/explore">Show all artwork</Link>
+              <Link href={makeHref({ tags: undefined, page: '1' })}>Show all artwork</Link>
             </Button>
             {[
               { label: 'Paintings', value: 'painting' },

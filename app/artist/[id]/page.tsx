@@ -67,9 +67,14 @@ export default async function ArtistProfilePage({ params }: PageProps) {
           )}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {isSelf ? (
-              <Button disabled title="You can’t request a commission from your own profile">
-                Request commission
-              </Button>
+              <>
+                <Button disabled title="You can’t request a commission from your own profile">
+                  Request commission
+                </Button>
+                <Button asChild variant="outline">
+                  <Link href="/dashboard/artworks/new">Add artwork</Link>
+                </Button>
+              </>
             ) : (
               <Button asChild>
                 <Link href={`/commissions/new?artistId=${String(artist._id)}`}>Request commission</Link>

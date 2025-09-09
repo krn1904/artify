@@ -33,6 +33,11 @@ export default function Navbar() {
               <Link href="/commissions" className="text-sm font-medium transition-colors hover:text-primary">
                 Commissions
               </Link>
+              {session?.user?.role === 'ARTIST' ? (
+                <Link href="/explore?my=1" className="text-sm font-medium transition-colors hover:text-primary">
+                  My Artworks
+                </Link>
+              ) : null}
             </nav>
           </div>
 
@@ -75,6 +80,11 @@ export default function Navbar() {
                   <Link href="/commissions" className="text-sm font-medium transition-colors hover:text-primary">
                     Commissions
                   </Link>
+                  {session?.user?.role === 'ARTIST' ? (
+                    <Link href="/explore?my=1" className="text-sm font-medium transition-colors hover:text-primary">
+                      My Artworks
+                    </Link>
+                  ) : null}
                   {session ? (
                     <Button variant="outline" className="w-full" onClick={() => signOut({ callbackUrl: '/' })}>
                       Logout
