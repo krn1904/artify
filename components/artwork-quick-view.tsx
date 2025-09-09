@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
+import { useSession } from 'next-auth/react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -52,6 +53,7 @@ export function ArtworkQuickView({ id, title, imageUrl, price, description, tags
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [data, setData] = React.useState<ArtworkDetailResponse | null>(null)
+  const { data: session } = useSession()
 
   const display = {
     title: data?.artwork.title ?? title,
@@ -62,6 +64,7 @@ export function ArtworkQuickView({ id, title, imageUrl, price, description, tags
     artistId: data?.artwork.artistId ?? artistId,
     artist: data?.artist ?? null,
   }
+  const isSelf = session?.user?.id && display.artistId ? session.user.id === display.artistId : false
 
   // Fallback initials for avatar when no image is available.
   const getInitials = (name?: string) => {
@@ -164,9 +167,13 @@ export function ArtworkQuickView({ id, title, imageUrl, price, description, tags
               <Link href={`/artwork/${id}`}>Open full details</Link>
             </Button>
             {display.artistId ? (
-              <Button asChild>
-                <Link href={`/artist/${display.artistId}`}>Request commission</Link>
-              </Button>
+              isSelf ? (
+                <Button disabled title="You can’t request a commission from your own profile">Request commission</Button>
+              ) : (
+                <Button asChild>
+                  <Link href={`/artist/${display.artistId}`}>Request commission</Link>
+                </Button>
+              )
             ) : null}
           </DialogFooter>
         </div>

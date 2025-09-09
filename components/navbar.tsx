@@ -33,6 +33,7 @@ export default function Navbar() {
               <Link href="/commissions" className="text-sm font-medium transition-colors hover:text-primary">
                 Commissions
               </Link>
+              
             </nav>
           </div>
 
@@ -75,6 +76,7 @@ export default function Navbar() {
                   <Link href="/commissions" className="text-sm font-medium transition-colors hover:text-primary">
                     Commissions
                   </Link>
+                  
                   {session ? (
                     <Button variant="outline" className="w-full" onClick={() => signOut({ callbackUrl: '/' })}>
                       Logout

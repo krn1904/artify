@@ -23,13 +23,19 @@
 - [x] Artist profile (`app/artist/[id]/page.tsx`): bio from user, portfolio grid (their artworks), “Request commission” CTA
 
 4) Commission request flow
-- [ ] API: `POST /api/commissions` to create a commission (auth required)
-- [ ] Page: commission form (from artwork or artist profile) → creates doc with status `REQUESTED`
-- [ ] Dashboards:
-  - [ ] Customer: “My requests” list in `/dashboard`
-  - [ ] Artist: “Incoming requests” list in `/dashboard`
-- [ ] Status field lifecycle: REQUESTED → ACCEPTED/DECLINED → COMPLETED (simple updates via API)
-- [ ] In-app notifications: use toasts and dashboard badges (no external email)
+ - [x] API: `POST /api/commissions` to create a commission (auth required)
+ - [x] Page: commission form (from artwork or artist profile) → creates doc with status `REQUESTED`
+ - [x] Form upgrades (MVP polish): add optional `title`, optional `referenceUrls[]`, optional `dueDate`; add searchable artist picker when not prefilled
+ - [x] Commissions hub (`/commissions`): role-aware tabs with SSR lists
+   - Customer: “My Requests” + “New Request”
+   - Artist: “Incoming” + “Archive”
+ - [x] Status lifecycle: REQUESTED → ACCEPTED/DECLINED → COMPLETED (API + UI actions)
+ - [x] API for status/detail:
+   - [x] `GET /api/commissions/[id]` (authorized)
+   - [x] `PATCH /api/commissions/[id]` (artist accept/decline)
+ - [x] In-app notifications: use toasts and hub badges (no external email)
+
+ - [x] Decide on `/commissions` route/link: keep as role-aware hub (guest explainer; logged-in land on role tab)
 
 5) User profile & settings
 - [ ] Profile settings page (e.g., `/dashboard/profile`): update name, avatarUrl, optional bio; allow switching role if needed
@@ -50,7 +56,7 @@
 - [ ] GitHub Actions: install, lint, typecheck, build (tests optional if time-constrained)
 
 9) Cleanup
-- [ ] Remove unused Prisma and Supabase files (project uses Mongo driver)
+- [x] Remove unused Prisma and Supabase files (project uses Mongo driver)
 - [ ] Tighten `next.config.js` later (stop ignoring TS/ESLint errors before production)
 - [ ] Pin dependency versions and run a quick audit
 
@@ -68,15 +74,30 @@
   - Current usage hint: Explore page uses Unsplash; first host to add would be `images.unsplash.com`.
 
 ## P1 — Portfolio polish (free-friendly)
+ - [x] Artist portfolio management (URL-based uploads, free)
+  - [x] Listing: via Explore “My Artworks” filter for artists (`/explore?my=1`)
+  - [x] Page: `/dashboard/artworks/new` (create)
+  - [x] API: `POST /api/my/artworks` (create), `GET /api/my/artworks` (list), optional `DELETE /api/my/artworks/[id]`
+  - [x] Validation: title ≥ 3, price ≥ 0, `imageUrl` is a valid URL; sanitize description; tags ≤ 5
+  - [x] AuthZ: artist-only; ownership checks per user id
+  - [x] UX: preview image, toasts, loading skeletons; auto-refresh on focus
+  - [x] Note: no binary uploads in P1; paste remote image URLs (Unsplash, etc.)
 - [ ] Favorites/likes with optimistic UI; list “My favorites” under dashboard
 - [ ] Search + basic filters powered by Mongo queries and indexes (post-launch)
 - [ ] Add filters to Explore (tags, price) and Artists (role/keyword) pages
 - [ ] Demo users + README walkthrough with screenshots
 - [ ] Accessibility sweep (landmarks, alt text, keyboard, color contrast)
 
+## P1.5 — Commission details (nice-to-have)
+- [ ] Commission detail page `/commissions/[id]` with status history and actions
+- [ ] Simple message thread on commission (no realtime)
+
 ## P2 — Optional later (skip paid services)
 - [ ] Social auth (Google/GitHub) via NextAuth if desired (free)
-- [ ] Image uploads: defer until picking a free storage option; continue using seeded remote image URLs
+- [ ] Image uploads (binary): pick a free storage option (one):
+  - Vercel Blob (simple, generous free tier) or Cloudinary free plan
+  - Add `POST /api/upload` with signed URLs; persist `imageUrl` of uploaded asset
+  - Update forms to support drag-and-drop; keep URL-paste fallback
 - [ ] Payments: mock checkout flow (no external gateway) for portfolio demo
 - [ ] Email: skip; rely on in-app notifications and dashboard views
 - [ ] Analytics: skip paid services; consider adding later if a free/self-hosted option fits
@@ -84,8 +105,9 @@
 ## Acceptance criteria (MVP)
 - [ ] Browse artworks and artists without login
 - [ ] Sign up, log in, update profile
-- [ ] Submit commission requests and view them in dashboard
-- [ ] Artists can view incoming requests
+- [ ] Submit commission requests and view them in the `/commissions` hub
+- [ ] Artists can view incoming requests and accept/decline
+ - [x] Artists can add artworks via URL (title, price, tags)
 - [ ] `/api/health/db` returns 200 when DB is reachable
 - [ ] Deployed on Vercel with seed data producing visible demo content
 

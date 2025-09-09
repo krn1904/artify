@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/authOptions'
 import { getUserById } from '@/lib/db/users'
 import { listArtworks } from '@/lib/db/artworks'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -9,6 +11,9 @@ import { Button } from '@/components/ui/button'
 import { Heart, Share2, SearchX } from 'lucide-react'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { CloseBack } from '@/components/close-back'
+import NextDynamic from 'next/dynamic'
+
+const MyArtworkDelete = NextDynamic(() => import('@/components/my-artwork-delete'), { ssr: false })
 
 export const dynamic = 'force-dynamic'
 
@@ -31,9 +36,14 @@ function getInitials(name?: string) {
   return (first + last).toUpperCase() || 'A'
 }
 
+// Artist Profile page: shows bio and a portfolio grid of artworks by artistId.
 export default async function ArtistProfilePage({ params }: PageProps) {
-  const artist = await getUserById(params.id)
+  const [session, artist] = await Promise.all([
+    getServerSession(authOptions),
+    getUserById(params.id),
+  ])
   if (!artist) return notFound()
+  const isSelf = session?.user?.id === params.id
 
   const { items: artworks, total } = await listArtworks({ artistId: params.id }, { page: 1, pageSize: 24 })
 
@@ -59,9 +69,20 @@ export default async function ArtistProfilePage({ params }: PageProps) {
             <p className="mt-3 text-sm text-muted-foreground">This artist hasn't added a bio yet.</p>
           )}
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <Button asChild>
-              <Link href={`/commissions/new?artistId=${String(artist._id)}`}>Request commission</Link>
-            </Button>
+            {isSelf ? (
+              <>
+                <Button disabled title="You can’t request a commission from your own profile">
+                  Request commission
+                </Button>
+                <Button asChild variant="outline">
+                  <Link href="/dashboard/artworks/new">Add artwork</Link>
+                </Button>
+              </>
+            ) : (
+              <Button asChild>
+                <Link href={`/commissions/new?artistId=${String(artist._id)}`}>Request commission</Link>
+              </Button>
+            )}
             <Button asChild variant="outline">
               <Link href="/explore">Browse more artwork</Link>
             </Button>
@@ -140,6 +161,7 @@ export default async function ArtistProfilePage({ params }: PageProps) {
                     <Share2 className="h-4 w-4 mr-2" />
                     Share
                   </Button>
+                  {isSelf ? <MyArtworkDelete id={String(art._id)} /> : null}
                 </div>
               </CardFooter>
             </Card>
