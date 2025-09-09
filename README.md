@@ -64,6 +64,7 @@ curl -sS http://localhost:3000/api/health/db | jq
 
 - Explore filter: artists can view only their work via `/explore?my=1` or by toggling “My Artworks” on the Explore page. The “Add artwork” button is visible to artists on Explore.
 - Create page: `/dashboard/artworks/new` lets artists add new pieces using a remote image URL (no binary uploads in MVP).
+- Manage: delete your own artworks from your Artist Profile page (only visible to you on your profile’s portfolio grid).
 
 ### Artwork API
 

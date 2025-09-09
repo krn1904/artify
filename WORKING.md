@@ -55,6 +55,11 @@ This guide explains what you can do and how to get around.
 - After saving, you’ll be redirected back to Explore with your filter active.
 - Note: Binary uploads are deferred in MVP; use URL‑based images for now.
 
+### Deleting an artwork (artists)
+- Open your Artist Profile page (e.g., from an artwork or via the Artists list).
+- When viewing your own profile, each portfolio card shows a Delete button.
+- Confirm the dialog to remove the artwork; the list refreshes automatically.
+
 ### In‑app notifications
 - The app shows small toast messages for key actions (request created, accepted, declined, completed).
 - Tab badges in the Commissions hub show counts for Incoming and My Requests.
