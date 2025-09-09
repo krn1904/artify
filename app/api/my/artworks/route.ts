@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { z } from 'zod'
 import { authOptions } from '@/lib/authOptions'
 import { createArtwork, listArtworks } from '@/lib/db/artworks'
 import { ObjectId } from 'mongodb'
 import { sanitizeInput } from '@/lib/utils'
+import { ArtworkCreateBodySchema } from '@/lib/schemas/artwork'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,31 +17,6 @@ export async function GET() {
   return NextResponse.json(res)
 }
 
-const BodySchema = z.object({
-  title: z.string().trim().min(3, 'Title too short').max(120),
-  imageUrl: z.string().url('Image URL must be a valid URL'),
-  price: z.preprocess((v) => {
-    if (typeof v === 'number') return v
-    if (typeof v === 'string') {
-      const n = Number(v)
-      return Number.isFinite(n) ? n : undefined
-    }
-    return undefined
-  }, z.number().nonnegative('Price must be non-negative')),
-  description: z.string().trim().max(2000).optional(),
-  tags: z
-    .preprocess((v) => {
-      if (Array.isArray(v)) return v
-      if (typeof v === 'string') {
-        return v
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean)
-      }
-      return []
-    }, z.array(z.string()).max(5, 'Up to 5 tags'))
-    .optional(),
-})
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
@@ -50,7 +25,7 @@ export async function POST(req: Request) {
 
   const bodyRaw = await req.json().catch(() => null)
   if (!bodyRaw) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
-  const parsed = BodySchema.safeParse(bodyRaw)
+  const parsed = ArtworkCreateBodySchema.safeParse(bodyRaw)
   if (!parsed.success) {
     const flat = parsed.error.flatten()
     return NextResponse.json({ error: 'Validation failed', details: flat }, { status: 400 })
@@ -67,4 +42,3 @@ export async function POST(req: Request) {
   })
   return NextResponse.json({ id: String(doc._id) }, { status: 201 })
 }
-

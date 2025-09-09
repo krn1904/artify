@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-export function RouteRefresher({
+export default function RouteRefresher({
   intervalMs = 15000,
   onMount = true,
   onFocus = true,
@@ -18,7 +18,6 @@ export function RouteRefresher({
 
   useEffect(() => {
     if (onMount) {
-      // Force a fresh fetch once on mount to avoid any lingering caches
       router.refresh()
     }
 
@@ -40,6 +39,4 @@ export function RouteRefresher({
 
   return null
 }
-
-export default RouteRefresher
 

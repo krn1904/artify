@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { ObjectId } from 'mongodb'
 import { authOptions } from '@/lib/authOptions'
 import { getCommissionById, updateCommissionStatus, type CommissionStatus } from '@/lib/db/commissions'
+import { CommissionStatusSchema } from '@/lib/schemas/commission'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,10 +56,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     const body = await req.json().catch(() => null)
-    if (!body || typeof body.status !== 'string') {
-      return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
-    }
-    const status = body.status as CommissionStatus
+    const parsed = CommissionStatusSchema.safeParse(body)
+    if (!parsed.success) return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
+    const status = parsed.data.status as CommissionStatus
     if (!['ACCEPTED', 'DECLINED', 'COMPLETED', 'REQUESTED'].includes(status)) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
     }
