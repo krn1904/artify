@@ -12,7 +12,9 @@ import { toast } from '@/hooks/use-toast'
 
 type PresetArtist = { id: string; name: string }
 
-export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetArtist }) {
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+
+export function CommissionRequestForm({ presetArtist, viewerId }: { presetArtist?: PresetArtist, viewerId?: string }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [artistId, setArtistId] = useState(presetArtist?.id ?? '')
@@ -94,6 +96,10 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
+    if (viewerId && artistId && viewerId === artistId) {
+      setError("You cannot request a commission from yourself")
+      return
+    }
     // Build payload and omit budget when empty so it remains truly optional
     const payloadRaw: Record<string, any> = { artistId, brief }
     if (title.trim()) payloadRaw.title = title
@@ -131,6 +137,14 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      {viewerId && presetArtist && presetArtist.id === viewerId ? (
+        <Alert variant="destructive">
+          <AlertTitle>Action not allowed</AlertTitle>
+          <AlertDescription>
+            You cannot request a commission from your own artist profile.
+          </AlertDescription>
+        </Alert>
+      ) : null}
       <div className="space-y-2">
         <label className="text-sm font-medium">Artist</label>
         {presetArtist ? (
@@ -158,6 +172,10 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
                       key={s.id}
                       className="px-3 py-2 hover:bg-muted cursor-pointer flex items-center gap-3"
                       onMouseDown={() => {
+                        if (viewerId && s.id === viewerId) {
+                          setError('You cannot select yourself')
+                          return
+                        }
                         setArtistId(s.id)
                         setArtistName(s.name)
                         setQuery(s.name)
@@ -234,7 +252,7 @@ export function CommissionRequestForm({ presetArtist }: { presetArtist?: PresetA
         <p className="text-sm text-red-600">{error}</p>
       ) : null}
       <div className="pt-2">
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" disabled={isPending || (viewerId !== undefined && viewerId === artistId)}>
           {isPending ? 'Submitting…' : 'Submit request'}
         </Button>
       </div>

@@ -24,7 +24,10 @@ export default async function NewCommissionPage({ searchParams }: PageProps) {
       <h1 className="text-3xl font-bold mb-2">Request a commission</h1>
       <p className="text-muted-foreground mb-6">Share your idea and budget. The artist will review and respond.</p>
 
-      <CommissionRequestForm presetArtist={artist ? { id: String(artist._id), name: artist.name } : undefined} />
+      <CommissionRequestForm
+        presetArtist={artist ? { id: String(artist._id), name: artist.name } : undefined}
+        viewerId={session.user.id}
+      />
     </div>
   )
 }

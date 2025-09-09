@@ -81,6 +81,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Artist not found' }, { status: 404 })
     }
 
+    // Prevent self-commission: an artist/customer cannot request themself
+    if (session.user.id === body.data.artistId) {
+      return NextResponse.json({ error: 'You cannot request a commission from yourself' }, { status: 400 })
+    }
+
     const doc = await createCommission({
       artistId: new ObjectId(body.data.artistId),
       customerId: new ObjectId(session.user.id),
