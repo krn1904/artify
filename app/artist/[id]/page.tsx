@@ -11,6 +11,9 @@ import { Button } from '@/components/ui/button'
 import { Heart, Share2, SearchX } from 'lucide-react'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { CloseBack } from '@/components/close-back'
+import NextDynamic from 'next/dynamic'
+
+const MyArtworkDelete = NextDynamic(() => import('@/components/my-artwork-delete'), { ssr: false })
 
 export const dynamic = 'force-dynamic'
 
@@ -158,6 +161,7 @@ export default async function ArtistProfilePage({ params }: PageProps) {
                     <Share2 className="h-4 w-4 mr-2" />
                     Share
                   </Button>
+                  {isSelf ? <MyArtworkDelete id={String(art._id)} /> : null}
                 </div>
               </CardFooter>
             </Card>
