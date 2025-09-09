@@ -28,22 +28,26 @@ This guide explains what you can do and how to get around.
 - Ready to collaborate? Click “Request commission” to contact the artist.
 
 ### Requesting a commission (login required)
-- When you choose “Request commission,” you’ll be asked to log in if you haven’t already.
-- The request form asks for:
-  - The artist (pre-filled if you came from their profile)
-  - A short brief describing what you want
-  - An optional budget
-- Submit the form to send your request. You’ll be taken to your dashboard afterward.
+- Click “Request commission” on an artist profile, or go to the Commissions hub → New Request.
+- The form includes:
+  - Artist (search by name; pre‑filled from profile when applicable)
+  - Title (optional)
+  - Brief (minimum 10 characters)
+  - Budget (optional)
+  - Reference URLs (optional; one link per line)
+  - Due date (optional)
+- After submitting, you’ll see a toast confirmation and be taken to the Commissions hub.
+- Note: You cannot request a commission from your own artist profile.
 
-### Your dashboard (after login)
-- The dashboard is your home base after signing in.
-- It will list your commission activity (incoming for artists, outgoing for customers) as features roll out.
+### Commissions hub
+- Visit `/commissions` to manage requests.
+- Customer: “My Requests” shows your commissions; “New Request” starts a new one.
+- Artist: “Incoming” shows new requests; “Archive” shows accepted/declined/completed.
+- The page auto‑updates on focus (and for artists every ~15s). Use the Refresh button if needed.
 
-### Commissions page
-- If you visit the Commissions page:
-  - As a guest: you’ll see a short explainer with a Login button and a link to browse artists.
-  - As an artist: you’ll be sent to the dashboard to see incoming requests (when available).
-  - As a customer: you’ll be sent to the “New commission” form to start a request.
+### In‑app notifications
+- The app shows small toast messages for key actions (request created, accepted, declined, completed).
+- Tab badges in the Commissions hub show counts for Incoming and My Requests.
 
 ### Signing in and out
 - Use the Login or Sign Up buttons in the navigation when you’re not signed in.
@@ -52,5 +56,4 @@ This guide explains what you can do and how to get around.
 ### Tips
 - If a page asks you to log in, you’ll be redirected back to what you were doing once you finish.
 - You can always return to Explore to keep browsing or visit artist profiles from artwork pages.
-
 

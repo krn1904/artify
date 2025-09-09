@@ -28,7 +28,34 @@ Use it to quickly confirm environment variables and DB access on local and Verce
 curl -sS http://localhost:3000/api/health/db | jq
 ```
 
-## Commissions API
+## Commissions
 
-- POST /api/commissions — Auth required. Body: `{ artistId: string, brief: string, budget?: number }`. Returns `{ id }` on success.
-- Page: `/commissions/new?artistId=<id>` provides a simple form that posts to the API. Unauthenticated users are redirected to login.
+- Hub: `/commissions`
+  - Guest: short explainer with Login/Browse CTAs
+  - Customer: tabs — “My Requests” and “New Request”
+  - Artist: tabs — “Incoming” (REQUESTED) and “Archive” (ACCEPTED/DECLINED/COMPLETED)
+  - Live UX: auto-refresh on focus (artist also every 15s) and in‑app toasts for actions
+
+### API
+
+- POST `/api/commissions` — Auth required
+  - Body: `{ artistId: string, brief: string, title?: string, referenceUrls?: string[], budget?: number, dueDate?: string | Date }`
+  - Validation: `brief` min 10 chars, `budget` ≥ 0, `referenceUrls` are valid URLs
+  - Restriction: self‑commission is blocked (you cannot request from yourself)
+  - Returns: `{ id }`
+
+- GET `/api/commissions/[id]` — Auth required, only artist or customer on the commission
+  - Returns commission details (fields above) with status and timestamps
+
+- PATCH `/api/commissions/[id]` — Artist only
+  - Body: `{ status: 'REQUESTED' | 'ACCEPTED' | 'DECLINED' | 'COMPLETED' }`
+  - Transitions enforced: `REQUESTED→ACCEPTED|DECLINED`, `ACCEPTED→COMPLETED`
+
+- GET `/api/artists?q=<name>&limit=<n>` — Search artists by name for the commission form picker
+
+### New Commission form
+
+- Page: `/commissions/new?artistId=<id>` preselects artist when coming from profile
+- Fields: Artist (searchable), optional Title, Brief (min 10 chars), optional Budget, optional Reference URLs (one per line), optional Due Date
+- On submit: shows a toast and navigates to the Commissions hub
+- Self‑commission is disabled in UI and rejected server‑side
