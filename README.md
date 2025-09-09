@@ -2,6 +2,15 @@
 
 AI-powered custom artwork marketplace built with Next.js App Router, Tailwind, shadcn/ui, and MongoDB.
 
+## Project Structure (high-level)
+
+- `app/*`: route handlers and pages (App Router). Co-located UI under `_components/` within routes where helpful.
+- `lib/db/*`: low-level MongoDB repositories and collection helpers.
+- `lib/schemas/*`: shared zod schemas used by both API routes and client forms (DRY validation).
+- `lib/authz.ts`: small authorization helpers to standardize API guards.
+- `components/shared/*`: shared client utilities (e.g., `route-refresher`, `refresh-hint`).
+- `components/ui/*`: shadcn/ui primitives.
+
 ## Environment
 - Copy `.env.example` to `.env.local` for local dev.
 - On Vercel, set env vars in Project Settings:

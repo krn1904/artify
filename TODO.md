@@ -92,6 +92,14 @@
 - [ ] Commission detail page `/commissions/[id]` with status history and actions
 - [ ] Simple message thread on commission (no realtime)
 
+## Structure & Consistency
+- [ ] Apply `lib/authz` helpers across APIs (reduce inline guards)
+- [ ] Move remaining ad-hoc schemas into `lib/schemas` (e.g., auth register/login)
+- [ ] Co-locate route UI under `app/<route>/_components/*` (e.g., profile CTAs)
+- [ ] Promote shared UI utilities to `components/shared/*` (standardize imports)
+- [ ] Add `error.tsx` to `app/commissions` and `app/explore` for friendlier failures
+- [ ] Add light tests for `lib/schemas/*` and status transition map
+
 ## P2 — Optional later (skip paid services)
 - [ ] Social auth (Google/GitHub) via NextAuth if desired (free)
 - [ ] Image uploads (binary): pick a free storage option (one):
