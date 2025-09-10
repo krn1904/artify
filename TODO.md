@@ -43,9 +43,9 @@
 - [x] Extend guards: ensure settings and commission APIs require session (API handlers validate session)
 
 6) Navigation & UX
-- [ ] Navbar: role-aware links and active state highlighting
-- [ ] Loading skeletons and empty states for lists/detail pages
-- [ ] Friendly error UX: custom `not-found` and `error` pages in `app/`
+ - [x] Navbar: role-aware links and active state highlighting
+ - [x] Loading skeletons and empty states for lists/detail pages
+ - [x] Friendly error UX: custom `not-found` and `error` pages in `app/`
 
 7) SEO & Discoverability (free only)
 - [ ] Per-page metadata (title/description)
