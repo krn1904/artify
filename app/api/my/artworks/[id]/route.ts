@@ -3,13 +3,16 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { ObjectId } from 'mongodb'
 import { getArtworksCollection } from '@/lib/db/artworks'
+import { requireArtist } from '@/lib/authz'
 
 export const dynamic = 'force-dynamic'
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (session.user.role !== 'ARTIST') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  try { requireArtist(session as any) } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Unauthorized'
+    return NextResponse.json({ error: msg }, { status: msg === 'Forbidden' ? 403 : 401 })
+  }
 
   const { id } = params
   if (!ObjectId.isValid(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
@@ -17,7 +20,7 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
 
   // Atomic, ownership-guarded delete to avoid race conditions
   const col = await getArtworksCollection()
-  const res = await col.deleteOne({ _id, artistId: new ObjectId(session.user.id) })
+  const res = await col.deleteOne({ _id, artistId: new ObjectId((session as any).user.id) })
   if (res.deletedCount === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   return NextResponse.json({ ok: true })
 }

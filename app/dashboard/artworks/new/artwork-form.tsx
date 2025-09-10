@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useTransition } from 'react'
-import { z } from 'zod'
+import { ArtworkCreateFormSchema as Schema } from '@/lib/schemas/artwork'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -10,24 +10,7 @@ import { Card } from '@/components/ui/card'
 import Image from 'next/image'
 import { toast } from '@/hooks/use-toast'
 
-const Schema = z.object({
-  title: z.string().trim().min(3, 'Title too short').max(120),
-  imageUrl: z.string().url('Image URL must be a valid URL'),
-  price: z.preprocess((v) => {
-    if (typeof v === 'number') return v
-    if (typeof v === 'string') {
-      const n = Number(v)
-      return Number.isFinite(n) ? n : undefined
-    }
-    return undefined
-  }, z.number().nonnegative('Price must be non-negative')),
-  description: z.string().trim().max(2000).optional().or(z.literal('')),
-  tags: z
-    .string()
-    .trim()
-    .max(200)
-    .transform((s) => s.split(',').map((t) => t.trim()).filter(Boolean).slice(0, 5)),
-})
+// Using shared form schema from lib/schemas
 
 export function ArtworkForm() {
   const router = useRouter()

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 
-export function RefreshHint({ intervalMs = 0 }: { intervalMs?: number }) {
+export default function RefreshHint({ intervalMs = 0 }: { intervalMs?: number }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -20,7 +20,6 @@ export function RefreshHint({ intervalMs = 0 }: { intervalMs?: number }) {
     if (loading) return
     setLoading(true)
     router.refresh()
-    // Give a subtle visual hint; clear shortly after refresh triggers
     timer.current = setTimeout(() => setLoading(false), 600)
   }
 
@@ -40,4 +39,3 @@ export function RefreshHint({ intervalMs = 0 }: { intervalMs?: number }) {
   )
 }
 
-export default RefreshHint

@@ -37,9 +37,14 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-semibold tracking-tight">
           Welcome, {session.user.name}
         </h1>
-        <p className="text-sm text-muted-foreground">
-          This is your dashboard.
-        </p>
+        <p className="text-sm text-muted-foreground">This is your dashboard.</p>
+        <div className="mt-4 flex items-center gap-3">
+          <Link className="underline text-sm" href="/dashboard/profile">Edit profile</Link>
+          {session.user.role === 'ARTIST' ? (
+            <Link className="underline text-sm" href="/explore?my=1">My artworks</Link>
+          ) : null}
+          <Link className="underline text-sm" href="/commissions">Commissions</Link>
+        </div>
       </div>
       {/* Add more dashboard content here */}
     </div>

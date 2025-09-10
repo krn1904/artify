@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { z } from 'zod'
+ 
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from '@/hooks/use-toast'
+import { CommissionCreateSchema } from '@/lib/schemas/commission'
 
 type PresetArtist = { id: string; name: string }
 
@@ -29,47 +30,7 @@ export function CommissionRequestForm({ presetArtist, viewerId }: { presetArtist
   const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string; avatarUrl: string | null }>>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
 
-  const Schema = z.object({
-    artistId: z.string().trim().min(1, 'Artist is required'),
-    title: z.string().trim().min(3, 'Title too short').max(120).optional().or(z.literal('')),
-    brief: z.string().trim().min(10, 'Please provide a short brief (min 10 chars)').max(2000),
-    budget: z
-      .preprocess((v) => {
-        if (v == null) return undefined
-        if (typeof v === 'number') return Number.isFinite(v) ? v : undefined
-        if (typeof v === 'string') {
-          const s = v.trim()
-          if (s === '') return undefined
-          const n = Number(s)
-          return Number.isFinite(n) ? n : undefined
-        }
-        return undefined
-      }, z.number().nonnegative())
-      .optional(),
-    referenceUrls: z
-      .preprocess((v) => {
-        if (v == null) return undefined
-        if (typeof v === 'string') {
-          const lines = v
-            .split(/\r?\n/)
-            .map((s) => s.trim())
-            .filter(Boolean)
-          return lines
-        }
-        return v
-      }, z.array(z.string().url()).max(10))
-      .optional(),
-    dueDate: z
-      .preprocess((v) => {
-        if (v == null || v === '') return undefined
-        if (typeof v === 'string') {
-          const d = new Date(v)
-          return Number.isNaN(d.getTime()) ? undefined : d
-        }
-        return v
-      }, z.date())
-      .optional(),
-  })
+  const Schema = CommissionCreateSchema
 
   // Debounced artist suggestions
   useEffect(() => {

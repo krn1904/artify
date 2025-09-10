@@ -55,6 +55,11 @@ This guide explains what you can do and how to get around.
 - After saving, you’ll be redirected back to Explore with your filter active.
 - Note: Binary uploads are deferred in MVP; use URL‑based images for now.
 
+### Deleting an artwork (artists)
+- Open your Artist Profile page (e.g., from an artwork or via the Artists list).
+- When viewing your own profile, each portfolio card shows a Delete button.
+- Confirm the dialog to remove the artwork; the list refreshes automatically.
+
 ### In‑app notifications
 - The app shows small toast messages for key actions (request created, accepted, declined, completed).
 - Tab badges in the Commissions hub show counts for Incoming and My Requests.
@@ -62,6 +67,10 @@ This guide explains what you can do and how to get around.
 ### Signing in and out
 - Use the Login or Sign Up buttons in the navigation when you’re not signed in.
 - After you sign in, you’ll see a Logout button in the navigation.
+
+### Profile settings
+- Go to `/dashboard/profile` to update your name, avatar image URL, and bio.
+- Role switching is temporarily disabled; it will be available soon.
 
 ### Tips
 - If a page asks you to log in, you’ll be redirected back to what you were doing once you finish.

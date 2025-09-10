@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Inbox, Archive as ArchiveIcon } from 'lucide-react'
-import RouteRefresher from '@/components/route-refresher'
-import RefreshHint from '@/components/refresh-hint'
+import RouteRefresher from '@/components/shared/route-refresher'
+import RefreshHint from '@/components/shared/refresh-hint'
 
 export const dynamic = 'force-dynamic'
 
@@ -200,4 +200,4 @@ export default async function CommissionsHubPage() {
 // Client actions for artist: Accept/Decline
 // Placed at bottom to keep file server by default
 import NextDynamic from 'next/dynamic'
-const CommissionActions = NextDynamic(() => import('@/components/commission-actions'), { ssr: false })
+const CommissionActions = NextDynamic(() => import('./_components/CommissionActions'), { ssr: false })

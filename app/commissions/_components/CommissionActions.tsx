@@ -3,7 +3,6 @@
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
-import { toast } from '@/hooks/use-toast'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,10 +14,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { toast } from '@/hooks/use-toast'
 
 type Status = 'REQUESTED' | 'ACCEPTED' | 'DECLINED' | 'COMPLETED'
 
-export function CommissionActions({ id, status }: { id: string; status?: Status }) {
+export default function CommissionActions({ id, status }: { id: string; status?: Status }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [err, setErr] = useState<string | null>(null)
@@ -116,4 +116,3 @@ export function CommissionActions({ id, status }: { id: string; status?: Status 
   )
 }
 
-export default CommissionActions

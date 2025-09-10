@@ -38,8 +38,9 @@
  - [x] Decide on `/commissions` route/link: keep as role-aware hub (guest explainer; logged-in land on role tab)
 
 5) User profile & settings
-- [ ] Profile settings page (e.g., `/dashboard/profile`): update name, avatarUrl, optional bio; allow switching role if needed
-- [ ] Extend middleware/guards: ensure settings and commission APIs require session
+- [x] Profile settings page (`/dashboard/profile`): update name, avatarUrl, optional bio
+ - [x] Role switching: temporarily disabled; enable later with session refresh strategy
+- [x] Extend guards: ensure settings and commission APIs require session (API handlers validate session)
 
 6) Navigation & UX
 - [ ] Navbar: role-aware links and active state highlighting
@@ -91,6 +92,14 @@
 ## P1.5 — Commission details (nice-to-have)
 - [ ] Commission detail page `/commissions/[id]` with status history and actions
 - [ ] Simple message thread on commission (no realtime)
+
+## Structure & Consistency
+- [x] Apply `lib/authz` helpers across APIs (reduce inline guards)
+- [ ] Move remaining ad-hoc schemas into `lib/schemas` (e.g., auth register/login)
+- [x] Co-locate route UI under `app/<route>/_components/*` (e.g., profile CTAs)
+- [x] Promote shared UI utilities to `components/shared/*` (standardize imports)
+- [x] Add `error.tsx` to `app/commissions` and `app/explore` for friendlier failures
+- [ ] Add light tests for `lib/schemas/*` and status transition map
 
 ## P2 — Optional later (skip paid services)
 - [ ] Social auth (Google/GitHub) via NextAuth if desired (free)

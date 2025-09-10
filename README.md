@@ -2,6 +2,27 @@
 
 AI-powered custom artwork marketplace built with Next.js App Router, Tailwind, shadcn/ui, and MongoDB.
 
+## Project Structure (high-level)
+
+- `app/*`: route handlers and pages (App Router). Co-located UI under `_components/` within routes where helpful.
+- `lib/db/*`: low-level MongoDB repositories and collection helpers.
+- `lib/schemas/*`: shared zod schemas used by both API routes and client forms (DRY validation).
+-   - Includes `commission`, `artwork`, and `auth` (re-exporting existing auth schemas)
+- `lib/authz.ts`: small authorization helpers to standardize API guards.
+- `components/shared/*`: shared client utilities (e.g., `route-refresher`, `refresh-hint`).
+- `components/ui/*`: shadcn/ui primitives.
+
+## Profile & Settings
+
+- Page: `/dashboard/profile` — update name, avatar URL, bio, and role (Customer/Artist).
+- API: `GET /api/me/profile` returns current user details; `PATCH /api/me/profile` updates fields.
+- Notes: Role changes are temporarily disabled (UI disabled and server ignores role updates).
+
+## Error Handling
+
+- Route-level error boundaries provide friendly fallbacks:
+  - `app/commissions/error.tsx` and `app/explore/error.tsx` render retry UIs on failure.
+
 ## Environment
 - Copy `.env.example` to `.env.local` for local dev.
 - On Vercel, set env vars in Project Settings:
@@ -64,6 +85,7 @@ curl -sS http://localhost:3000/api/health/db | jq
 
 - Explore filter: artists can view only their work via `/explore?my=1` or by toggling “My Artworks” on the Explore page. The “Add artwork” button is visible to artists on Explore.
 - Create page: `/dashboard/artworks/new` lets artists add new pieces using a remote image URL (no binary uploads in MVP).
+- Manage: delete your own artworks from your Artist Profile page (only visible to you on your profile’s portfolio grid).
 
 ### Artwork API
 
