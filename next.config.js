@@ -24,13 +24,16 @@ const nextConfig = {
         net: false,
         dns: false,
         child_process: false,
+        timers: false,
       }
       // Avoid optional deps pulled by mongodb from being bundled client-side
       config.resolve.alias = {
         ...(config.resolve.alias || {}),
+        mongodb: false,
         'mongodb-client-encryption': false,
         '@aws-sdk/credential-providers': false,
         aws4: false,
+        'timers/promises': false,
       }
     }
     return config
