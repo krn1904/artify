@@ -87,7 +87,7 @@ export default function ProfileForm({ initial }: Props) {
           <option value="CUSTOMER">Customer</option>
           <option value="ARTIST">Artist</option>
         </select>
-        <p className="text-xs text-muted-foreground">Role changes are disabled right now; coming soon.</p>
+        {/* Intentionally no helper text; see tooltip for details. */}
       </div>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       <div className="pt-2">
