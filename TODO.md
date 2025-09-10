@@ -39,7 +39,7 @@
 
 5) User profile & settings
 - [x] Profile settings page (`/dashboard/profile`): update name, avatarUrl, optional bio
-- [ ] Role switching: temporarily disabled; enable later with session refresh strategy
+ - [x] Role switching: temporarily disabled; enable later with session refresh strategy
 - [x] Extend guards: ensure settings and commission APIs require session (API handlers validate session)
 
 6) Navigation & UX
