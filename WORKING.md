@@ -68,6 +68,10 @@ This guide explains what you can do and how to get around.
 - Use the Login or Sign Up buttons in the navigation when you’re not signed in.
 - After you sign in, you’ll see a Logout button in the navigation.
 
+### Profile settings
+- Go to `/dashboard/profile` to update your name, avatar image URL, and bio.
+- Role switching is temporarily disabled; it will be available soon.
+
 ### Tips
 - If a page asks you to log in, you’ll be redirected back to what you were doing once you finish.
 - You can always return to Explore to keep browsing or visit artist profiles from artwork pages.
