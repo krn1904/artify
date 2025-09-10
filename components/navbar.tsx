@@ -20,8 +20,14 @@ export default function Navbar() {
   }
 
   function linkClass(href: string): string {
-    const base = "text-sm font-medium transition-colors hover:text-primary"
-    return isActive(href) ? base + " text-primary" : base
+    const base = "relative text-sm font-medium transition-colors hover:text-primary"
+    if (isActive(href)) {
+      return (
+        base +
+        " text-foreground after:content-[''] after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-primary"
+      )
+    }
+    return base
   }
 
   return (
