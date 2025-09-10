@@ -43,9 +43,9 @@
 - [x] Extend guards: ensure settings and commission APIs require session (API handlers validate session)
 
 6) Navigation & UX
-- [ ] Navbar: role-aware links and active state highlighting
-- [ ] Loading skeletons and empty states for lists/detail pages
-- [ ] Friendly error UX: custom `not-found` and `error` pages in `app/`
+ - [x] Navbar: role-aware links and active state highlighting
+ - [x] Loading skeletons and empty states for lists/detail pages
+ - [x] Friendly error UX: custom `not-found` and `error` pages in `app/`
 
 7) SEO & Discoverability (free only)
 - [ ] Per-page metadata (title/description)
@@ -110,6 +110,7 @@
 - [ ] Payments: mock checkout flow (no external gateway) for portfolio demo
 - [ ] Email: skip; rely on in-app notifications and dashboard views
 - [ ] Analytics: skip paid services; consider adding later if a free/self-hosted option fits
+ - [ ] Enable role switching: re-open UI, persist change, and refresh session (e.g., call `signIn('credentials', { redirect: false })` or `unstable_update` post-patch) so role applies immediately
 
 ## Acceptance criteria (MVP)
 - [ ] Browse artworks and artists without login

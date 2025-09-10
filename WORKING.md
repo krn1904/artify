@@ -18,6 +18,7 @@ This guide explains what you can do and how to get around.
 - Explore shows a grid of artworks with images, titles, prices, and tags.
 - Use the quick category chips (e.g., Paintings, Digital Art, Photography, Sculptures) to filter.
 - Click an artwork to view its full details.
+ - Tip: The navbar highlights your current section and, if you’re an artist, shows an Add artwork button.
 
 ### Viewing artwork details
 - On an artwork page you’ll see a large image, title, price, tags, and description.
@@ -75,3 +76,6 @@ This guide explains what you can do and how to get around.
 ### Tips
 - If a page asks you to log in, you’ll be redirected back to what you were doing once you finish.
 - You can always return to Explore to keep browsing or visit artist profiles from artwork pages.
+### Errors & loading
+- If something goes wrong, you’ll see a friendly error page with a retry.
+- Lists and forms show loading skeletons while data is fetched.
