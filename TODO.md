@@ -110,6 +110,7 @@
 - [ ] Payments: mock checkout flow (no external gateway) for portfolio demo
 - [ ] Email: skip; rely on in-app notifications and dashboard views
 - [ ] Analytics: skip paid services; consider adding later if a free/self-hosted option fits
+ - [ ] Enable role switching: re-open UI, persist change, and refresh session (e.g., call `signIn('credentials', { redirect: false })` or `unstable_update` post-patch) so role applies immediately
 
 ## Acceptance criteria (MVP)
 - [ ] Browse artworks and artists without login

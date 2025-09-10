@@ -3,6 +3,7 @@
 import type { JSX } from 'react'
 import { Menu, Palette } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Button } from "./ui/button"
 import { ModeToggle } from "./mode-toggle"
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
@@ -11,6 +12,17 @@ import { signOut } from "next-auth/react"
 
 export default function Navbar() {
   const { data: session } = useSession()
+  const pathname = usePathname()
+
+  function isActive(href: string) {
+    if (href === "/") return pathname === "/"
+    return pathname.startsWith(href)
+  }
+
+  function linkClass(href: string): string {
+    const base = "text-sm font-medium transition-colors hover:text-primary"
+    return isActive(href) ? base + " text-primary" : base
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -24,19 +36,24 @@ export default function Navbar() {
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/explore" className="text-sm font-medium transition-colors hover:text-primary">
+              <Link href="/explore" className={linkClass("/explore")}>
                 Explore
               </Link>
-              <Link href="/artists" className="text-sm font-medium transition-colors hover:text-primary">
+              <Link href="/artists" className={linkClass("/artists")}>
                 Artists
               </Link>
-              <Link href="/commissions" className="text-sm font-medium transition-colors hover:text-primary">
+              <Link href="/commissions" className={linkClass("/commissions")}>
                 Commissions
               </Link>
               {session ? (
-                <Link href="/dashboard/profile" className="text-sm font-medium transition-colors hover:text-primary">
+                <Link href="/dashboard/profile" className={linkClass("/dashboard/profile")}>
                   Profile
                 </Link>
+              ) : null}
+              {session?.user?.role === 'ARTIST' ? (
+                <Button asChild size="sm">
+                  <Link href="/dashboard/artworks/new">Add artwork</Link>
+                </Button>
               ) : null}
             </nav>
           </div>
@@ -71,19 +88,24 @@ export default function Navbar() {
               </SheetTrigger>
               <SheetContent side="right">
                 <nav className="flex flex-col space-y-4 mt-6">
-                  <Link href="/explore" className="text-sm font-medium transition-colors hover:text-primary">
+                  <Link href="/explore" className={linkClass("/explore")}>
                     Explore
                   </Link>
-                  <Link href="/artists" className="text-sm font-medium transition-colors hover:text-primary">
+                  <Link href="/artists" className={linkClass("/artists")}>
                     Artists
                   </Link>
-                  <Link href="/commissions" className="text-sm font-medium transition-colors hover:text-primary">
+                  <Link href="/commissions" className={linkClass("/commissions")}>
                     Commissions
                   </Link>
                   {session ? (
-                    <Link href="/dashboard/profile" className="text-sm font-medium transition-colors hover:text-primary">
+                    <Link href="/dashboard/profile" className={linkClass("/dashboard/profile")}>
                       Profile
                     </Link>
+                  ) : null}
+                  {session?.user?.role === 'ARTIST' ? (
+                    <Button asChild>
+                      <Link href="/dashboard/artworks/new">Add artwork</Link>
+                    </Button>
                   ) : null}
                   
                   {session ? (
