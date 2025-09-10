@@ -5,23 +5,28 @@ import { createArtwork, listArtworks } from '@/lib/db/artworks'
 import { ObjectId } from 'mongodb'
 import { sanitizeInput } from '@/lib/utils'
 import { ArtworkCreateBodySchema } from '@/lib/schemas/artwork'
+import { requireArtist } from '@/lib/authz'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (session.user.role !== 'ARTIST') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  try { requireArtist(session as any) } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Unauthorized'
+    return NextResponse.json({ error: msg }, { status: msg === 'Forbidden' ? 403 : 401 })
+  }
 
-  const res = await listArtworks({ artistId: session.user.id }, { page: 1, pageSize: 100, sort: 'new' })
+  const res = await listArtworks({ artistId: (session as any).user.id }, { page: 1, pageSize: 100, sort: 'new' })
   return NextResponse.json(res)
 }
 
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (session.user.role !== 'ARTIST') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  try { requireArtist(session as any) } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Unauthorized'
+    return NextResponse.json({ error: msg }, { status: msg === 'Forbidden' ? 403 : 401 })
+  }
 
   const bodyRaw = await req.json().catch(() => null)
   if (!bodyRaw) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
@@ -38,7 +43,7 @@ export async function POST(req: Request) {
     price,
     description: description ? sanitizeInput(description) : undefined,
     tags: Array.isArray(tags) ? tags.slice(0, 5) : [],
-    artistId: new ObjectId(session.user.id),
+    artistId: new ObjectId((session as any).user.id),
   })
   return NextResponse.json({ id: String(doc._id) }, { status: 201 })
 }
