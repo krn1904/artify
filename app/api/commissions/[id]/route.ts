@@ -4,20 +4,21 @@ import { ObjectId } from 'mongodb'
 import { authOptions } from '@/lib/authOptions'
 import { getCommissionById, updateCommissionStatus, type CommissionStatus } from '@/lib/db/commissions'
 import { CommissionStatusSchema } from '@/lib/schemas/commission'
+import { requireAuth } from '@/lib/authz'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
-    if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    try { requireAuth(session as any) } catch (e) { return NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
 
     const { id } = params
     if (!ObjectId.isValid(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
     const c = await getCommissionById(id)
     if (!c) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-    const uid = session.user.id
+    const uid = (session as any).user.id
     const isParty = String(c.artistId) === uid || String(c.customerId) === uid
     if (!isParty) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
@@ -43,7 +44,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
-    if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    try { requireAuth(session as any) } catch (e) { return NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
 
     const { id } = params
     if (!ObjectId.isValid(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
@@ -51,7 +52,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     if (!c) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
     // Only the artist can change status (accept/decline) for now
-    if (String(c.artistId) !== session.user.id) {
+    if (String(c.artistId) !== (session as any).user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

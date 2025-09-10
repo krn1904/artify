@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/authOptions'
 import { createCommission } from '@/lib/db/commissions'
 import { getUserById } from '@/lib/db/users'
 import { CommissionCreateSchema } from '@/lib/schemas/commission'
+import { requireAuth } from '@/lib/authz'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,9 +14,7 @@ export const dynamic = 'force-dynamic'
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    try { requireAuth(session as any) } catch (e) { return NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
 
     // Parse and validate body
   // Clone the request before parsing JSON to avoid dev-mode stream reuse issues
@@ -41,13 +40,13 @@ export async function POST(req: Request) {
     }
 
     // Prevent self-commission: an artist/customer cannot request themself
-    if (session.user.id === body.data.artistId) {
+    if ((session as any).user.id === body.data.artistId) {
       return NextResponse.json({ error: 'You cannot request a commission from yourself' }, { status: 400 })
     }
 
     const doc = await createCommission({
       artistId: new ObjectId(body.data.artistId),
-      customerId: new ObjectId(session.user.id),
+      customerId: new ObjectId((session as any).user.id),
       title: body.data.title,
       brief: body.data.brief,
       budget: body.data.budget,
