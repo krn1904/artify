@@ -1,20 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
-
-// Public routes accessible without authentication
-const PUBLIC_PATHS: RegExp[] = [
-  /^\/$/,
-  /^\/login$/,
-  /^\/signup$/,
-  /^\/explore(\/.*)?$/,
-  /^\/artists(\/.*)?$/,
-  /^\/commissions(\/.*)?$/,
-]
-
-function isPublicPath(pathname: string) {
-  return PUBLIC_PATHS.some((rx) => rx.test(pathname))
-}
+import { isPublicPath } from '@/lib/publicPaths'
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
