@@ -12,6 +12,12 @@ AI-powered custom artwork marketplace built with Next.js App Router, Tailwind, s
 - `components/shared/*`: shared client utilities (e.g., `route-refresher`, `refresh-hint`).
 - `components/ui/*`: shadcn/ui primitives.
 
+## Navigation & UX
+
+- Role-aware navbar: shows Profile when logged in, and an Add artwork button for artists.
+- Active link highlighting: selected nav items display a subtle underline badge.
+- Loading states: skeleton UIs for key pages (e.g., Artists list, Commissions, Profile, New Commission, New Artwork) improve perceived performance.
+
 ## Profile & Settings
 
 - Page: `/dashboard/profile` — update name, avatar URL, bio, and role (Customer/Artist).
@@ -22,6 +28,7 @@ AI-powered custom artwork marketplace built with Next.js App Router, Tailwind, s
 
 - Route-level error boundaries provide friendly fallbacks:
   - `app/commissions/error.tsx` and `app/explore/error.tsx` render retry UIs on failure.
+  - Global fallbacks: `app/error.tsx` and `app/not-found.tsx` for unexpected errors and 404s.
 
 ## Environment
 - Copy `.env.example` to `.env.local` for local dev.
