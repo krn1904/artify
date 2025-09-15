@@ -6,6 +6,11 @@ import { listArtists } from '@/lib/db/users'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = {
+  title: 'Artists | Artify',
+  description: 'Discover artists and explore their portfolios.',
+}
+
 type SearchParams = {
   page?: string
   pageSize?: string

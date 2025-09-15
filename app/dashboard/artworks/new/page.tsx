@@ -5,6 +5,11 @@ import { ArtworkForm } from './artwork-form'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = {
+  title: 'Add Artwork | Artify',
+  description: 'Add a new artwork to your portfolio.',
+}
+
 export default async function NewArtworkPage() {
   const session = await getServerSession(authOptions)
   if (!session) redirect('/login')
@@ -18,4 +23,3 @@ export default async function NewArtworkPage() {
     </div>
   )
 }
-

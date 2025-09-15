@@ -3,6 +3,7 @@
 // - Shows popular category chips
 // - Presents an interactive "How it works" stepper (FeatureFlow)
 // Data is fetched server-side to keep the landing fast and SEO-friendly.
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Palette, Sparkles, Users, BadgeCheck, Brush } from "lucide-react";
 import Link from "next/link";
@@ -13,6 +14,11 @@ import { getUsersCollection } from "@/lib/db/users";
 import { getCommissionsCollection } from "@/lib/db/commissions";
 import { ArtMarquee } from "@/components/landing/art-marquee";
 import { FeatureFlow } from "@/components/landing/feature-flow";
+
+export const metadata: Metadata = {
+  title: "Artify — Discover and Commission Custom Artwork",
+  description: "Browse unique artwork or commission custom pieces from artists.",
+};
 
 export default async function Home() {
   const session = await getServerSession(authOptions);

@@ -6,6 +6,11 @@ import ProfileForm from './profile-form'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = {
+  title: 'Profile Settings | Artify',
+  description: 'Update your profile and preferences.',
+}
+
 export default async function ProfileSettingsPage() {
   const session = await getServerSession(authOptions)
   if (!session) redirect('/login')
@@ -28,4 +33,3 @@ export default async function ProfileSettingsPage() {
     </div>
   )
 }
-
