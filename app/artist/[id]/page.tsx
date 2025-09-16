@@ -13,6 +13,8 @@ import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { CloseBack } from '@/components/close-back'
 import NextDynamic from 'next/dynamic'
 import { FavoriteButton } from '@/components/favorite-button'
+import { getFavoritesCollection } from '@/lib/db/favorites'
+import { ObjectId } from 'mongodb'
 
 const MyArtworkDelete = NextDynamic(() => import('@/components/my-artwork-delete'), { ssr: false })
 
@@ -47,6 +49,19 @@ export default async function ArtistProfilePage({ params }: PageProps) {
   const isSelf = session?.user?.id === params.id
 
   const { items: artworks, total } = await listArtworks({ artistId: params.id }, { page: 1, pageSize: 24 })
+
+  // SSR-hydrate favorited state for the logged-in user
+  let favoritedSet = new Set<string>()
+  if (session?.user?.id && artworks.length > 0) {
+    try {
+      const favCol = await getFavoritesCollection()
+      const ids = artworks.map((a) => a._id).filter(Boolean) as ObjectId[]
+      const favs = await favCol
+        .find({ userId: new ObjectId(session.user.id), artworkId: { $in: ids } }, { projection: { artworkId: 1 } })
+        .toArray()
+      favoritedSet = new Set(favs.map((f: any) => String(f.artworkId)))
+    } catch {}
+  }
 
   return (
     <div className="container mx-auto py-8 relative">
@@ -153,7 +168,7 @@ export default async function ArtistProfilePage({ params }: PageProps) {
                 ) : null}
               </CardContent>
               <CardFooter className="p-4 pt-0 flex justify-between">
-                <FavoriteButton artworkId={String(art._id)} size="sm" />
+                <FavoriteButton artworkId={String(art._id)} size="sm" initialFavorited={favoritedSet.has(String(art._id))} />
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm">
                     <Share2 className="h-4 w-4 mr-2" />
