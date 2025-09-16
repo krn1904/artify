@@ -43,6 +43,7 @@ export default function DashboardPage() {
           {session.user.role === 'ARTIST' ? (
             <Link className="underline text-sm" href="/explore?my=1">My artworks</Link>
           ) : null}
+          <Link className="underline text-sm" href="/dashboard/favorites">My favorites</Link>
           <Link className="underline text-sm" href="/commissions">Commissions</Link>
         </div>
       </div>

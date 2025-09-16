@@ -5,8 +5,11 @@ import { getArtworkById } from '@/lib/db/artworks'
 import { getUserById } from '@/lib/db/users'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Heart } from 'lucide-react'
 import { CloseBack } from '@/components/close-back'
+import { FavoriteButton } from '@/components/favorite-button'
+import { countFavoritesForArtwork, isFavorited } from '@/lib/db/favorites'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/authOptions'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,6 +32,11 @@ export default async function ArtworkDetailPage({ params }: PageProps) {
   if (!art) return notFound()
 
   const artist = await getUserById(art.artistId)
+  const session = await getServerSession(authOptions)
+  const [count, favorited] = await Promise.all([
+    countFavoritesForArtwork(art._id!),
+    session?.user?.id ? isFavorited(session.user.id, art._id!) : Promise.resolve(false),
+  ])
 
   return (
     <div className="container mx-auto py-8 relative">
@@ -62,10 +70,12 @@ export default async function ArtworkDetailPage({ params }: PageProps) {
 
           <div className="mt-4 flex items-center gap-3">
             <span className="text-2xl font-semibold">${art.price}</span>
-            <Button variant="outline" size="sm">
-              <Heart className="h-4 w-4 mr-2" />
-              Favorite
-            </Button>
+            <FavoriteButton
+              artworkId={String(art._id)}
+              initialFavorited={!!(session?.user?.id && favorited)}
+              initialCount={typeof count === 'number' ? count : undefined}
+              size="sm"
+            />
           </div>
 
           {art.tags?.length ? (

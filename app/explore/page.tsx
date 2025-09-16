@@ -2,11 +2,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Heart, Share2, SearchX } from 'lucide-react'
+import { Share2, SearchX } from 'lucide-react'
 import { listArtworks } from '@/lib/db/artworks'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
+import { FavoriteButton } from '@/components/favorite-button'
 
 export const dynamic = 'force-dynamic'
 export const metadata = {
@@ -183,10 +184,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
                   ) : null}
                 </CardContent>
                 <CardFooter className="p-4 pt-0 flex justify-between">
-                  <Button variant="outline" size="sm">
-                    <Heart className="h-4 w-4 mr-2" />
-                    Favorite
-                  </Button>
+                  <FavoriteButton artworkId={String(art._id)} size="sm" />
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm">
                       <Share2 className="h-4 w-4 mr-2" />
