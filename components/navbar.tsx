@@ -1,6 +1,7 @@
 "use client"
 
 import type { JSX } from 'react'
+import { useEffect, useState } from 'react'
 import { Menu, Palette } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -9,10 +10,20 @@ import { ModeToggle } from "./mode-toggle"
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
 import { useSession } from "next-auth/react"
 import { signOut } from "next-auth/react"
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu"
 
 export default function Navbar() {
   const { data: session } = useSession()
   const pathname = usePathname()
+  const [avatarUrl, setAvatarUrl] = useState<string>("")
 
   function isActive(href: string) {
     if (href === "/") return pathname === "/"
@@ -29,6 +40,31 @@ export default function Navbar() {
     }
     return base
   }
+
+  function getInitials(name?: string | null) {
+    if (!name) return 'A'
+    const parts = String(name).trim().split(/\s+/)
+    const first = parts[0]?.[0] ?? ''
+    const last = parts.length > 1 ? parts[parts.length - 1][0] : ''
+    return (first + last).toUpperCase() || 'A'
+  }
+
+  useEffect(() => {
+    let active = true
+    async function load() {
+      if (!session) return
+      try {
+        const res = await fetch('/api/me/profile')
+        if (!res.ok) return
+        const data = await res.json()
+        if (active && data?.user?.avatarUrl) setAvatarUrl(data.user.avatarUrl)
+      } catch {}
+    }
+    load()
+    return () => {
+      active = false
+    }
+  }, [session])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -51,11 +87,6 @@ export default function Navbar() {
               <Link href="/commissions" className={linkClass("/commissions")}>
                 Commissions
               </Link>
-              {session ? (
-                <Link href="/dashboard/profile" className={linkClass("/dashboard/profile")}>
-                  Profile
-                </Link>
-              ) : null}
               {session?.user?.role === 'ARTIST' ? (
                 <Button asChild size="sm">
                   <Link href="/dashboard/artworks/new">Add artwork</Link>
@@ -67,12 +98,38 @@ export default function Navbar() {
           <div className="flex items-center space-x-4">
             <ModeToggle />
             
-            {/* Desktop Auth Buttons */}
+            {/* Desktop Account */}
             <div className="hidden md:flex items-center space-x-4">
               {session ? (
-                <Button variant="outline" onClick={() => signOut({ callbackUrl: '/' })}>
-                  Logout
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="inline-flex items-center gap-2 rounded-full ring-1 ring-border px-2 py-1 hover:bg-muted/50">
+                      <Avatar className="h-7 w-7">
+                        <AvatarImage src={avatarUrl} alt={session.user.name || 'Account'} />
+                        <AvatarFallback>{getInitials(session.user.name)}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm max-w-[120px] truncate">{session.user.name}</span>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard">Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/profile">Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/favorites">My favorites</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/commissions">Commissions</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/' })}>Logout</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               ) : (
                 <>
                   <Button variant="outline" asChild>
@@ -104,9 +161,21 @@ export default function Navbar() {
                     Commissions
                   </Link>
                   {session ? (
-                    <Link href="/dashboard/profile" className={linkClass("/dashboard/profile")}>
-                      Profile
-                    </Link>
+                    <>
+                      <div className="h-px bg-border my-2" />
+                      <Link href="/dashboard" className={linkClass("/dashboard")}>
+                        Dashboard
+                      </Link>
+                      <Link href="/dashboard/profile" className={linkClass("/dashboard/profile")}>
+                        Profile
+                      </Link>
+                      <Link href="/dashboard/favorites" className={linkClass("/dashboard/favorites")}>
+                        My favorites
+                      </Link>
+                      <Link href="/commissions" className={linkClass("/commissions")}>
+                        Commissions
+                      </Link>
+                    </>
                   ) : null}
                   {session?.user?.role === 'ARTIST' ? (
                     <Button asChild>
