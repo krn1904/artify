@@ -44,6 +44,8 @@
 
 6) Navigation & UX
  - [x] Navbar: role-aware links and active state highlighting
+ - [x] Navbar: avatar account menu with Dashboard/Profile/Favorites/Commissions + Logout
+ - [x] Dashboard UI polish: hero with avatar, quick actions grid, tips
  - [x] Loading skeletons and empty states for lists/detail pages
  - [x] Friendly error UX: custom `not-found` and `error` pages in `app/`
 
@@ -83,7 +85,12 @@
   - [x] AuthZ: artist-only; ownership checks per user id
   - [x] UX: preview image, toasts, loading skeletons; auto-refresh on focus
   - [x] Note: no binary uploads in P1; paste remote image URLs (Unsplash, etc.)
-- [ ] Favorites/likes with optimistic UI; list “My favorites” under dashboard
+- [x] Favorites/likes MVP with optimistic UI
+  - [x] API: `POST /api/favorites/toggle`, `GET /api/favorites/status`
+  - [x] UI: Favorite buttons on Explore, Artwork detail, Artist grid (red heart)
+  - [x] Page: `/dashboard/favorites` with paginated list
+  - [x] Navbar: add Favorites in account menu
+  - [ ] Optional: bulk status for grids (avoid client fetches)
 - [ ] Search + basic filters powered by Mongo queries and indexes (post-launch)
 - [ ] Add filters to Explore (tags, price) and Artists (role/keyword) pages
 - [ ] Demo users + README walkthrough with screenshots
