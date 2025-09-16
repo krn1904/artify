@@ -139,8 +139,8 @@ export default function DashboardPage() {
       <section>
         <h2 className="text-lg font-semibold mb-3">Quick actions</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {actions.map((a) => (
-            <Link key={a.href} href={a.href} className="group">
+            {actions.map((a) => (
+            <Link key={a.href} href={a.href} prefetch={false} className="group">
               <Card className="h-full overflow-hidden transition-colors hover:border-primary/40">
                 <CardContent className="p-4 flex items-start gap-3">
                   <div className="rounded-md bg-muted p-2 text-foreground/80 group-hover:text-primary">

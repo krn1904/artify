@@ -121,7 +121,7 @@ export default function Navbar() {
                       <Link href="/dashboard/profile">Profile</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/favorites">My favorites</Link>
+                      <Link href="/dashboard/favorites" prefetch={false}>My favorites</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/commissions">Commissions</Link>
