@@ -21,7 +21,7 @@ export function FavoriteButton({
   initialCount,
   size = 'sm',
   variant = 'outline',
-  showCount = true,
+  showCount = false,
 }: Props) {
   const router = useRouter()
   const [favorited, setFavorited] = useState<boolean | undefined>(initialFavorited)
