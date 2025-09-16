@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button'
 import { FavoriteButton } from '@/components/favorite-button'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import RouteRefresher from '@/components/shared/route-refresher'
-import RefreshHint from '@/components/shared/refresh-hint'
 
 export const dynamic = 'force-dynamic'
 
@@ -61,10 +60,7 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
       <RouteRefresher intervalMs={0} onMount onFocus onInterval={false} />
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-3xl font-bold">My Favorites</h1>
-        <div className="flex items-center gap-3">
-          <div className="text-sm text-muted-foreground">{total} {total === 1 ? 'item' : 'items'}</div>
-          <RefreshHint intervalMs={0} />
-        </div>
+        <div className="text-sm text-muted-foreground">{total} {total === 1 ? 'item' : 'items'}</div>
       </div>
 
       {rows.length === 0 ? (
