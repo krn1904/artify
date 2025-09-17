@@ -48,8 +48,8 @@
  - [x] Friendly error UX: custom `not-found` and `error` pages in `app/`
 
 7) SEO & Discoverability (free only)
-- [ ] Per-page metadata (title/description)
-- [ ] `sitemap.xml` and `robots.txt` routes
+- [x] Per-page metadata (title/description)
+- [x] `sitemap.xml` and `robots.txt` routes
 
 8) Testing & CI (lean)
 - [ ] Unit tests for zod validation (`registerSchema`, `loginSchema`)

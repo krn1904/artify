@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import Navbar from '@/components/navbar';
 import AuthSessionProvider from '@/components/auth-session-provider';
+import FooterController from '@/components/footer-controller';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,9 +30,11 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Navbar />
-            <main className="min-h-screen bg-background">
+            {/* Avoid forced extra scroll: main fills viewport minus 4rem navbar */}
+            <main className="min-h-[calc(100dvh-4rem)] md:min-h-[calc(100vh-4rem)] bg-background pt-2 md:pt-4">
               {children}
             </main>
+            <FooterController />
             <Toaster />
           </ThemeProvider>
         </AuthSessionProvider>
