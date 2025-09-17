@@ -19,14 +19,17 @@ This guide explains what you can do and how to get around.
 - Use the quick category chips (e.g., Paintings, Digital Art, Photography, Sculptures) to filter.
 - Click an artwork to view its full details.
  - Tip: The navbar highlights your current section and, if you’re an artist, shows an Add artwork button.
+ - Hearts indicate favorites. Logged‑in users see their favorites highlighted across listings.
 
 ### Viewing artwork details
 - On an artwork page you’ll see a large image, title, price, tags, and description.
 - You can jump to the artist’s profile from here.
+ - Use the heart button to favorite/unfavorite; your state renders accurately on revisit.
 
 ### Meeting artists
 - On an artist’s profile you’ll see their name, bio, and a portfolio of their artworks.
 - Ready to collaborate? Click “Request commission” to contact the artist.
+ - Favorite/unfavorite artworks directly from the profile grid.
 
 ### Requesting a commission (login required)
 - Click “Request commission” on an artist profile, or go to the Commissions hub → New Request.
@@ -45,6 +48,10 @@ This guide explains what you can do and how to get around.
 - Customer: “My Requests” shows your commissions; “New Request” starts a new one.
 - Artist: “Incoming” shows new requests; “Archive” shows accepted/declined/completed.
 - The page auto‑updates on focus (and for artists every ~15s). Use the Refresh button if needed.
+
+### Favorites
+- Find all your favorited items at `/dashboard/favorites`.
+- The page refreshes on mount and when returning focus, so it reflects recent changes.
 
 ### Adding your artwork (artists)
 - Go to Explore. If you’re logged in as an artist, you’ll see an “Add artwork” button next to the page title.
@@ -67,7 +74,7 @@ This guide explains what you can do and how to get around.
 
 ### Signing in and out
 - Use the Login or Sign Up buttons in the navigation when you’re not signed in.
-- After you sign in, you’ll see a Logout button in the navigation.
+- After you sign in, an avatar menu appears with Dashboard, Profile, My favorites, Commissions, and Logout.
 
 ### Profile settings
 - Go to `/dashboard/profile` to update your name, avatar image URL, and bio.

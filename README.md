@@ -14,9 +14,10 @@ AI-powered custom artwork marketplace built with Next.js App Router, Tailwind, s
 
 ## Navigation & UX
 
-- Role-aware navbar: shows Profile when logged in, and an Add artwork button for artists.
+- Role-aware navbar: avatar account menu when logged in (Dashboard, Profile, My favorites, Commissions) and an Add artwork button for artists.
 - Active link highlighting: selected nav items display a subtle underline badge.
 - Loading states: skeleton UIs for key pages (e.g., Artists list, Commissions, Profile, New Commission, New Artwork) improve perceived performance.
+- Dashboard: polished hero with user avatar, quick actions grid, and tips.
 
 ## Profile & Settings
 
@@ -36,6 +37,7 @@ AI-powered custom artwork marketplace built with Next.js App Router, Tailwind, s
 	- `MONGODB_URI`
 	- `NEXTAUTH_SECRET`
 	- `NEXTAUTH_URL`
+	- `NEXT_PUBLIC_APP_URL` (canonical base used by sitemap/robots when `NEXTAUTH_URL` is not set)
 
 ## Health Check
 Endpoint to verify live MongoDB connectivity.
@@ -80,6 +82,22 @@ curl -sS http://localhost:3000/api/health/db | jq
   - Transitions enforced: `REQUESTED→ACCEPTED|DECLINED`, `ACCEPTED→COMPLETED`
 
 - GET `/api/artists?q=<name>&limit=<n>` — Search artists by name for the commission form picker
+
+## Favorites
+
+- Favorite any artwork using the heart button. Signed-out users are redirected to login and returned to the same page.
+- Pages hydrate favorite state server-side to avoid N+1 client calls:
+  - Explore grid, Artist profile grid, Artwork detail.
+- Toggle API: `POST /api/favorites/toggle` → `{ favorited, count }`
+- Status API: `GET /api/favorites/status?artworkId=...` → `{ favorited, count }`
+- My Favorites page: `/dashboard/favorites` (auto-refreshes on mount/focus; no stale prefetch)
+
+## SEO
+
+- Per-page metadata via Next.js Metadata API (titles/descriptions, dynamic on detail pages).
+- Sitemap and robots routes under `app/`:
+  - `app/sitemap.ts` — includes key static routes and recent artists/artworks.
+  - `app/robots.ts` — allows public content; disallows `/api`, `/dashboard`, `/login`, `/signup`.
 
 ### New Commission form
 
