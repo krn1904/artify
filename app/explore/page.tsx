@@ -2,11 +2,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Heart, Share2, SearchX } from 'lucide-react'
+import { Share2, SearchX } from 'lucide-react'
 import { listArtworks } from '@/lib/db/artworks'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
+import { FavoriteButton } from '@/components/favorite-button'
+import { getFavoritesCollection } from '@/lib/db/favorites'
+import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
 export const metadata = {
@@ -46,6 +49,19 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
   )
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
+
+  // SSR-hydrate which artworks are favorited by the current user (single query)
+  let favoritedSet = new Set<string>()
+  if (session?.user?.id && items.length > 0) {
+    try {
+      const favCol = await getFavoritesCollection()
+      const ids = items.map((a) => a._id).filter(Boolean) as ObjectId[]
+      const favs = await favCol
+        .find({ userId: new ObjectId(session.user.id), artworkId: { $in: ids } }, { projection: { artworkId: 1 } })
+        .toArray()
+      favoritedSet = new Set(favs.map((f: any) => String(f.artworkId)))
+    } catch {}
+  }
 
   const makeHref = (overrides: Partial<SearchParams> = {}) => {
     const sp = new URLSearchParams()
@@ -183,10 +199,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
                   ) : null}
                 </CardContent>
                 <CardFooter className="p-4 pt-0 flex justify-between">
-                  <Button variant="outline" size="sm">
-                    <Heart className="h-4 w-4 mr-2" />
-                    Favorite
-                  </Button>
+                  <FavoriteButton artworkId={String(art._id)} size="sm" initialFavorited={favoritedSet.has(String(art._id))} />
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm">
                       <Share2 className="h-4 w-4 mr-2" />
