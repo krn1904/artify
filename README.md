@@ -35,6 +35,7 @@ AI-powered custom artwork marketplace built with Next.js App Router, Tailwind, s
 - Copy `.env.example` to `.env.local` for local dev.
 - On Vercel, set env vars in Project Settings:
 	- `MONGODB_URI`
+	- `MONGODB_DB_NAME` (optional when you share a cluster; defaults to `artify`)
 	- `NEXTAUTH_SECRET`
 	- `NEXTAUTH_URL`
 	- `NEXT_PUBLIC_APP_URL` (canonical base used by sitemap/robots when `NEXTAUTH_URL` is not set)

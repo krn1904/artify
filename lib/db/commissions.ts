@@ -1,5 +1,5 @@
 import { Collection, ObjectId, Filter } from 'mongodb'
-import getMongoClient from '@/lib/db'
+import { getMongoDatabase } from '@/lib/db'
 
 /** Commission status lifecycle used by dashboards and API flows. */
 export type CommissionStatus = 'REQUESTED' | 'ACCEPTED' | 'DECLINED' | 'COMPLETED'
@@ -24,8 +24,7 @@ export interface CommissionDoc {
 
 /** Get the commissions collection and ensure indexes. */
 export async function getCommissionsCollection(): Promise<Collection<CommissionDoc>> {
-  const client = await getMongoClient()
-  const db = client.db('artify')
+  const db = await getMongoDatabase()
   const col = db.collection<CommissionDoc>('commissions')
   await ensureCommissionIndexes(col)
   return col
@@ -43,8 +42,7 @@ export async function ensureCommissionIndexes(col?: Collection<CommissionDoc>) {
       { key: { customerId: 1, createdAt: -1 }, name: 'customer_createdAt' },
     ])
   if (!col) {
-    const client = await getMongoClient()
-    const db = client.db('artify')
+    const db = await getMongoDatabase()
     const c = db.collection<CommissionDoc>('commissions')
     await createCommissionIndexes(c)
     return

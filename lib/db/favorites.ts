@@ -1,5 +1,5 @@
 import { Collection, ObjectId } from 'mongodb'
-import getMongoClient from '@/lib/db'
+import { getMongoDatabase } from '@/lib/db'
 
 /** Favorite document mapping a user to an artwork. */
 export interface FavoriteDoc {
@@ -11,8 +11,7 @@ export interface FavoriteDoc {
 
 /** Get the favorites collection and ensure indexes. */
 export async function getFavoritesCollection(): Promise<Collection<FavoriteDoc>> {
-  const client = await getMongoClient()
-  const db = client.db('artify')
+  const db = await getMongoDatabase()
   const col = db.collection<FavoriteDoc>('favorites')
   await ensureFavoritesIndexes(col)
   return col
@@ -27,8 +26,7 @@ export async function ensureFavoritesIndexes(col?: Collection<FavoriteDoc>) {
       { key: { artworkId: 1 }, name: 'artworkId_asc' },
     ])
   if (!col) {
-    const client = await getMongoClient()
-    const db = client.db('artify')
+    const db = await getMongoDatabase()
     const c = db.collection<FavoriteDoc>('favorites')
     await createFavoritesIndexes(c)
     return
