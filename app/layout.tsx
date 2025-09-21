@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Navbar from '@/components/navbar';
 import AuthSessionProvider from '@/components/auth-session-provider';
 import FooterController from '@/components/footer-controller';
+import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -36,6 +37,7 @@ export default function RootLayout({
             </main>
             <FooterController />
             <Toaster />
+            <Analytics />
           </ThemeProvider>
         </AuthSessionProvider>
       </body>
