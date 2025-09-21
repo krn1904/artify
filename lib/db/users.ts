@@ -1,5 +1,5 @@
 import { Collection, ObjectId } from 'mongodb'
-import getMongoClient from '@/lib/db'
+import { getMongoDatabase } from '@/lib/db'
 
 /**
  * User document shape used by auth and profiles.
@@ -21,8 +21,7 @@ export interface UserDoc {
 
 /** Get the users collection and ensure basic indexes. */
 export async function getUsersCollection(): Promise<Collection<UserDoc>> {
-  const client = await getMongoClient()
-  const db = client.db('artify')
+  const db = await getMongoDatabase()
   const col = db.collection<UserDoc>('users')
   await col.createIndexes([
     { key: { email: 1 }, name: 'email_unique', unique: true },

@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
-import getMongoClient from './db';
+import { getMongoDatabase } from './db';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -17,8 +17,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const client = await getMongoClient();
-          const db = client.db('artify');
+          const db = await getMongoDatabase();
           
           const user = await db.collection('users').findOne({ 
             email: credentials.email.toLowerCase() 

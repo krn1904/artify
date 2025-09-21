@@ -1,4 +1,4 @@
-import getMongoClient from '@/lib/db'
+import { getMongoDatabase } from '@/lib/db'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
@@ -13,8 +13,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
     }
 
-    const client = await getMongoClient()
-    const db = client.db('artify')
+    const db = await getMongoDatabase()
     const col = db.collection('contact_messages')
     const doc = {
       name,
@@ -32,4 +31,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
-
