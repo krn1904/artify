@@ -6,6 +6,8 @@ if (!process.env.MONGODB_URI) {
 
 const uri = process.env.MONGODB_URI;
 
+export const mongoDbName = process.env.MONGODB_DB_NAME?.trim() || 'artify';
+
 let client: MongoClient | undefined;
 let clientPromise: Promise<MongoClient> | undefined;
 
@@ -19,7 +21,7 @@ export default async function getMongoClient(): Promise<MongoClient> {
       _mongoClient?: MongoClient;
     };
     if (!globalWithMongo._mongoClientPromise) {
-  client = new MongoClient(uri);
+      client = new MongoClient(uri);
       globalWithMongo._mongoClient = client;
       globalWithMongo._mongoClientPromise = client.connect();
     }
@@ -32,4 +34,9 @@ export default async function getMongoClient(): Promise<MongoClient> {
   client = new MongoClient(uri);
   clientPromise = client.connect();
   return clientPromise;
+}
+
+export async function getMongoDatabase() {
+  const mongo = await getMongoClient();
+  return mongo.db(mongoDbName);
 }

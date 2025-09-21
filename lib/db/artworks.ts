@@ -1,5 +1,5 @@
 import { Collection, ObjectId, Sort, Filter } from 'mongodb'
-import getMongoClient from '@/lib/db'
+import { getMongoDatabase } from '@/lib/db'
 
 /**
  * Artwork document shape stored in MongoDB.
@@ -19,8 +19,7 @@ export interface ArtworkDoc {
 
 /** Get the artworks collection and ensure required indexes exist. */
 export async function getArtworksCollection(): Promise<Collection<ArtworkDoc>> {
-  const client = await getMongoClient()
-  const db = client.db('artify')
+  const db = await getMongoDatabase()
   const col = db.collection<ArtworkDoc>('artworks')
   await ensureArtworksIndexes(col)
   return col
@@ -46,8 +45,7 @@ export async function ensureArtworksIndexes(col?: Collection<ArtworkDoc>) {
       { key: { tags: 1 }, name: 'tags_asc' },
     ])
   if (!col) {
-    const client = await getMongoClient()
-    const db = client.db('artify')
+    const db = await getMongoDatabase()
     const c = db.collection<ArtworkDoc>('artworks')
     await createArtworksIndexes(c)
     return
