@@ -16,7 +16,7 @@ import { FavoriteButton } from '@/components/favorite-button'
 import { getFavoritesCollection } from '@/lib/db/favorites'
 import { ObjectId } from 'mongodb'
 
-const MyArtworkDelete = NextDynamic(() => import('@/components/my-artwork-delete'), { ssr: false })
+const MyArtworkDelete = NextDynamic(() => import('@/components/my-artwork-delete'))
 
 export const dynamic = 'force-dynamic'
 

@@ -1,8 +1,10 @@
 import { z } from 'zod'
-import { ObjectId } from 'mongodb'
+
+// Simple MongoDB ObjectId validation without importing mongodb
+const isValidObjectId = (id: string) => /^[a-f\d]{24}$/i.test(id)
 
 export const CommissionCreateSchema = z.object({
-  artistId: z.string().trim().refine((v) => ObjectId.isValid(v), 'Invalid artist id'),
+  artistId: z.string().trim().refine((v) => isValidObjectId(v), 'Invalid artist id'),
   title: z.string().trim().min(3).max(120).optional(),
   brief: z.string().trim().min(10, 'Please provide a short brief (min 10 chars)').max(2000),
   budget: z

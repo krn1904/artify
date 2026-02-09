@@ -200,4 +200,4 @@ export default async function CommissionsHubPage() {
 // Client actions for artist: Accept/Decline
 // Placed at bottom to keep file server by default
 import NextDynamic from 'next/dynamic'
-const CommissionActions = NextDynamic(() => import('./_components/CommissionActions'), { ssr: false })
+const CommissionActions = NextDynamic(() => import('./_components/CommissionActions'))
