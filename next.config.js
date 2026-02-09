@@ -1,43 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: { unoptimized: true },
-  experimental: {
-    serverActions: true,
-    // Ensure the MongoDB driver is handled on the server in RSC
-    serverComponentsExternalPackages: ['mongodb'],
-  },
+  
+  // Moved from experimental in Next.js 16
+  serverExternalPackages: ['mongodb'],
+  
   typescript: {
     // Don't fail build on TS errors (use with caution)
     ignoreBuildErrors: true,
   },
-  webpack: (config, { isServer }) => {
-    // Prevent client bundles from trying to polyfill Node core modules
-    if (!isServer) {
-      config.resolve = config.resolve || {}
-      config.resolve.fallback = {
-        ...(config.resolve.fallback || {}),
-        fs: false,
-        tls: false,
-        net: false,
-        dns: false,
-        child_process: false,
-        timers: false,
-      }
-      // Avoid optional deps pulled by mongodb from being bundled client-side
-      config.resolve.alias = {
-        ...(config.resolve.alias || {}),
-        mongodb: false,
-        'mongodb-client-encryption': false,
-        '@aws-sdk/credential-providers': false,
-        aws4: false,
-        'timers/promises': false,
-      }
-    }
-    return config
-  },
+  
+  // Empty turbopack config to silence Next.js 16 warning
+  // Turbopack handles server-side packages automatically
+  turbopack: {},
 };
 
 module.exports = nextConfig;
