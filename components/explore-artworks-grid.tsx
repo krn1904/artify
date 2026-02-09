@@ -109,6 +109,7 @@ export function ExploreArtworksGrid({
 
   return (
     <InfiniteScrollContainer
+      key={`${tags || 'all'}-${myOnly ? 'my' : 'all'}`}
       initialData={initialArtworks}
       initialPage={1}
       hasMore={initialHasMore}
