@@ -190,7 +190,7 @@ export async function fetchFavoritesAction(page: number, pageSize: number) {
           }
         : null
     })
-    .filter((r): r is ArtworkItem => r !== null)
+    .filter((r) => r !== null) as ArtworkItem[]
 
   const totalPages = Math.ceil(total / pageSize)
   const hasMore = page < totalPages
