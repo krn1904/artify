@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { FavoriteButton } from '@/components/favorite-button'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { InfiniteScrollContainer } from '@/components/infinite-scroll-container'
-import { fetchFavoritesAction } from '@/lib/actions/fetch-lists'
 
 type ArtworkItem = {
   _id: string
@@ -26,10 +25,18 @@ type FavoritesGridProps = {
 
 export function FavoritesGrid({ initialArtworks, initialHasMore }: FavoritesGridProps) {
   const fetchMore = async (page: number) => {
-    const result = await fetchFavoritesAction(page, 12)
+    const params = new URLSearchParams({
+      page: String(page),
+      pageSize: '12',
+    })
+
+    const response = await fetch(`/api/favorites/list?${params.toString()}`)
+    if (!response.ok) throw new Error('Failed to fetch favorites')
+
+    const data = await response.json()
     return {
-      items: result.items,
-      hasMore: result.hasMore,
+      items: data.items,
+      hasMore: data.hasMore,
     }
   }
 

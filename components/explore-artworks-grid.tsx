@@ -7,7 +7,6 @@ import { Share2 } from 'lucide-react'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { FavoriteButton } from '@/components/favorite-button'
 import { InfiniteScrollContainer } from '@/components/infinite-scroll-container'
-import { fetchArtworksAction } from '@/lib/actions/fetch-lists'
 
 type ArtworkItem = {
   _id: string
@@ -34,10 +33,20 @@ export function ExploreArtworksGrid({
   myOnly,
 }: ExploreArtworksGridProps) {
   const fetchMore = async (page: number) => {
-    const result = await fetchArtworksAction(page, 12, tags, myOnly)
+    const params = new URLSearchParams({
+      page: String(page),
+      pageSize: '12',
+    })
+    if (tags) params.set('tags', tags)
+    if (myOnly) params.set('my', '1')
+
+    const response = await fetch(`/api/artworks/list?${params.toString()}`)
+    if (!response.ok) throw new Error('Failed to fetch artworks')
+
+    const data = await response.json()
     return {
-      items: result.items,
-      hasMore: result.hasMore,
+      items: data.items,
+      hasMore: data.hasMore,
     }
   }
 

@@ -5,7 +5,6 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { InfiniteScrollContainer } from '@/components/infinite-scroll-container'
-import { fetchArtistsAction } from '@/lib/actions/fetch-lists'
 
 type ArtistItem = {
   _id: string
@@ -22,10 +21,18 @@ type ArtistsGridProps = {
 
 export function ArtistsGrid({ initialArtists, initialHasMore }: ArtistsGridProps) {
   const fetchMore = async (page: number) => {
-    const result = await fetchArtistsAction(page, 12)
+    const params = new URLSearchParams({
+      page: String(page),
+      pageSize: '12',
+    })
+
+    const response = await fetch(`/api/artists/list?${params.toString()}`)
+    if (!response.ok) throw new Error('Failed to fetch artists')
+
+    const data = await response.json()
     return {
-      items: result.items,
-      hasMore: result.hasMore,
+      items: data.items,
+      hasMore: data.hasMore,
     }
   }
 
