@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Please add your MongoDB URI to .env.local');
@@ -7,6 +7,20 @@ if (!process.env.MONGODB_URI) {
 const uri = process.env.MONGODB_URI;
 
 export const mongoDbName = process.env.MONGODB_DB_NAME?.trim() || 'artify';
+
+// MongoDB connection options for better performance
+const clientOptions = {
+  maxPoolSize: 10, // Maximum connections in pool
+  minPoolSize: 2, // Keep at least 2 connections open
+  maxIdleTimeMS: 60000, // Close idle connections after 60s
+  serverSelectionTimeoutMS: 5000, // Fail fast if can't connect
+  socketTimeoutMS: 45000, // Socket timeout
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+}
 
 let client: MongoClient | undefined;
 let clientPromise: Promise<MongoClient> | undefined;
@@ -21,7 +35,7 @@ export default async function getMongoClient(): Promise<MongoClient> {
       _mongoClient?: MongoClient;
     };
     if (!globalWithMongo._mongoClientPromise) {
-      client = new MongoClient(uri);
+      client = new MongoClient(uri, clientOptions);
       globalWithMongo._mongoClient = client;
       globalWithMongo._mongoClientPromise = client.connect();
     }
@@ -30,10 +44,12 @@ export default async function getMongoClient(): Promise<MongoClient> {
     return clientPromise;
   }
 
-  // Production: no globals
-  client = new MongoClient(uri);
-  clientPromise = client.connect();
-  return clientPromise;
+  // Production: no globals, but reuse connection
+  if (!client) {
+    client = new MongoClient(uri, clientOptions);
+    clientPromise = client.connect();
+  }
+  return clientPromise as Promise<MongoClient>;
 }
 
 export async function getMongoDatabase() {

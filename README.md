@@ -33,12 +33,17 @@ AI-powered custom artwork marketplace built with Next.js App Router, Tailwind, s
 
 ## Environment
 - Copy `.env.example` to `.env.local` for local dev.
-- On Vercel, set env vars in Project Settings:
-	- `MONGODB_URI`
-	- `MONGODB_DB_NAME` (optional when you share a cluster; defaults to `artify`)
-	- `NEXTAUTH_SECRET`
-	- `NEXTAUTH_URL`
-	- `NEXT_PUBLIC_APP_URL` (canonical base used by sitemap/robots when `NEXTAUTH_URL` is not set)
+- On Vercel, add the same keys in Project Settings → Environment Variables (set the Target for Production / Preview / Development as needed).
+
+### Database configuration
+- `MONGODB_URI` must point at the cluster/replica set for the current environment (e.g., prod cluster for Production target, free cluster for local/preview).
+- `MONGODB_DB_NAME` selects the database inside that cluster. It defaults to `artify`, so set it only when you need a different database per environment.
+- The app resolves the database through `getMongoDatabase()` (`lib/db.ts`), so changing the env vars is enough—no code edits required when you add new clusters.
+- Suggested workflow:
+  1. Create two MongoDB Atlas clusters (or two databases inside one cluster) named for prod and dev/testing.
+  2. Copy each connection string into the proper environment’s `MONGODB_URI` and, if the DB name differs, set `MONGODB_DB_NAME` alongside it.
+  3. Sync local values by running `cp .env.example .env.local` and filling in your dev credentials; optionally pull from Vercel with `npx vercel env pull .env.local`.
+- Verify connectivity after updates with `curl http://localhost:3000/api/health/db` locally or the deployed equivalent.
 
 ## Health Check
 Endpoint to verify live MongoDB connectivity.

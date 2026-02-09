@@ -82,7 +82,7 @@ export default async function ArtistProfilePage({ params }: PageProps) {
           {artist.bio ? (
             <p className="mt-3 max-w-3xl text-sm leading-relaxed whitespace-pre-line">{artist.bio}</p>
           ) : (
-            <p className="mt-3 text-sm text-muted-foreground">This artist hasn't added a bio yet.</p>
+            <p className="mt-3 text-sm text-muted-foreground">This artist hasn&apos;t added a bio yet.</p>
           )}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {isSelf ? (
@@ -120,7 +120,7 @@ export default async function ArtistProfilePage({ params }: PageProps) {
             </div>
             <div>
               <h3 className="text-lg font-semibold">No artworks yet</h3>
-              <p className="text-sm text-muted-foreground mt-1">This artist hasn't added any artworks to their portfolio.</p>
+              <p className="text-sm text-muted-foreground mt-1">This artist hasn&apos;t added any artworks to their portfolio.</p>
             </div>
           </div>
         </div>

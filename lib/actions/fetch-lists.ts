@@ -8,6 +8,13 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { ObjectId } from 'mongodb'
 
+// Helper to log performance in development
+const logTiming = (label: string, start: number) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`⏱️  ${label}: ${Date.now() - start}ms`)
+  }
+}
+
 // Type definitions for return values
 export type ArtworkItem = {
   _id: string
@@ -42,23 +49,56 @@ export async function fetchArtworksAction(
   tags?: string,
   myOnly?: boolean
 ) {
-  const session = await getServerSession(authOptions)
-  const shouldFilterByUser = myOnly && session?.user?.role === 'ARTIST'
+  const startTime = Date.now()
+  
+  // For guest users (no myOnly filter), skip session and favorites
+  if (!myOnly) {
+    const dbStart = Date.now()
+    const { items, total } = await listArtworks(
+      { tags: tags ? [tags] : undefined },
+      { page, pageSize }
+    )
+    logTiming('DB query (guest)', dbStart)
 
-  const { items, total } = await listArtworks(
-    {
-      tags: tags ? [tags] : undefined,
-      artistId: shouldFilterByUser ? session!.user.id : undefined,
-    },
-    { page, pageSize }
-  )
+    const totalPages = Math.ceil(total / pageSize)
+    const hasMore = page < totalPages
 
+    logTiming('Total fetchArtworksAction (guest)', startTime)
+    return {
+      items: items.map((art): ArtworkItem => ({
+        _id: String(art._id),
+        title: art.title,
+        imageUrl: art.imageUrl,
+        price: art.price,
+        description: art.description,
+        tags: art.tags,
+        artistId: String(art.artistId),
+        initialFavorited: false,
+      })),
+      hasMore,
+      total,
+    }
+  }
+
+  // For authenticated users: parallel session + DB query, then favorites
+  const parallelStart = Date.now()
+  const [session, artworksResult] = await Promise.all([
+    getServerSession(authOptions),
+    listArtworks(
+      { tags: tags ? [tags] : undefined },
+      { page, pageSize }
+    ),
+  ])
+  logTiming('Session + DB (parallel)', parallelStart)
+
+  const { items, total } = artworksResult
   const totalPages = Math.ceil(total / pageSize)
   const hasMore = page < totalPages
 
-  // Check favorites for logged-in user
+  // Fetch favorites only if logged in
   let favoritedSet = new Set<string>()
   if (session?.user?.id && items.length > 0) {
+    const favStart = Date.now()
     try {
       const favCol = await getFavoritesCollection()
       const ids = items.map((a) => a._id).filter(Boolean) as ObjectId[]
@@ -66,11 +106,14 @@ export async function fetchArtworksAction(
         .find({ userId: new ObjectId(session.user.id), artworkId: { $in: ids } }, { projection: { artworkId: 1 } })
         .toArray()
       favoritedSet = new Set(favs.map((f: any) => String(f.artworkId)))
-    } catch {
-      // Silently fail if favorites fetch fails
+      logTiming('Favorites query', favStart)
+    } catch (err) {
+      console.error('Favorites fetch failed:', err)
     }
   }
 
+  logTiming('Total fetchArtworksAction (auth)', startTime)
+  
   return {
     items: items.map((art): ArtworkItem => ({
       _id: String(art._id),
