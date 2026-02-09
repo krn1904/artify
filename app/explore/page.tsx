@@ -1,15 +1,12 @@
-import Image from 'next/image'
 import Link from 'next/link'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Share2, SearchX } from 'lucide-react'
+import { SearchX } from 'lucide-react'
 import { listArtworks } from '@/lib/db/artworks'
-import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
-import { FavoriteButton } from '@/components/favorite-button'
 import { getFavoritesCollection } from '@/lib/db/favorites'
 import { ObjectId } from 'mongodb'
+import { ExploreArtworksGrid } from '@/components/explore-artworks-grid'
 
 export const dynamic = 'force-dynamic'
 export const metadata = {
@@ -18,37 +15,24 @@ export const metadata = {
 }
 
 type SearchParams = {
-  page?: string
-  pageSize?: string
   tags?: string | string[]
   my?: string
 }
 
-function parseIntOr<T extends number>(value: string | undefined, fallback: T, min?: number, max?: number): number {
-  const n = value ? Number.parseInt(value, 10) : NaN
-  if (Number.isNaN(n)) return fallback
-  let v = n
-  if (min != null) v = Math.max(min, v)
-  if (max != null) v = Math.min(max, v)
-  return v
-}
-
-// no-op helper removed (filters deferred)
-
-// Public Explore page: lists artworks with optional tag filter and pagination.
+// Public Explore page: lists artworks with optional tag filter and infinite scroll.
 export default async function ExplorePage({ searchParams }: { searchParams: SearchParams }) {
   const session = await getServerSession(authOptions)
-  const page = parseIntOr(searchParams.page, 1, 1)
-  const pageSize = parseIntOr(searchParams.pageSize, 12, 1, 100)
+  const pageSize = 12
   const activeTag = typeof searchParams.tags === 'string' ? searchParams.tags : undefined
   const myOnly = searchParams.my === '1' && session?.user?.role === 'ARTIST'
 
   const { items, total } = await listArtworks(
     { tags: activeTag ? [activeTag] : undefined, artistId: myOnly ? session!.user.id : undefined },
-    { page, pageSize }
+    { page: 1, pageSize }
   )
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const hasMore = totalPages > 1
 
   // SSR-hydrate which artworks are favorited by the current user (single query)
   let favoritedSet = new Set<string>()
@@ -65,9 +49,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
 
   const makeHref = (overrides: Partial<SearchParams> = {}) => {
     const sp = new URLSearchParams()
-    const next = { page, pageSize, tags: activeTag, my: myOnly ? '1' : undefined, ...overrides }
-    if (next.page && next.page !== 1) sp.set('page', String(next.page))
-    if (next.pageSize && next.pageSize !== 12) sp.set('pageSize', String(next.pageSize))
+    const next = { tags: activeTag, my: myOnly ? '1' : undefined, ...overrides }
     if (next.tags) sp.set('tags', String(next.tags))
     if (next.my === '1') sp.set('my', '1')
     const qs = sp.toString()
@@ -94,7 +76,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
           { label: 'Photography', value: 'photography' },
           { label: 'Sculptures', value: 'sculpture' },
         ].map(({ label, value }) => {
-          const href = value ? makeHref({ tags: value, page: '1' }) : makeHref({ tags: undefined, page: '1' })
+          const href = value ? makeHref({ tags: value }) : makeHref({ tags: undefined })
           const isActive = (!activeTag && value === undefined) || activeTag === value
           return (
             <Button key={label} asChild variant={isActive ? 'default' : 'outline'} size="sm">
@@ -108,7 +90,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
             size="sm"
             variant={myOnly ? 'default' : 'outline'}
           >
-            <Link href={myOnly ? makeHref({ my: undefined, page: '1' }) : makeHref({ my: '1', page: '1' })}>
+            <Link href={myOnly ? makeHref({ my: undefined }) : makeHref({ my: '1' })}>
               My Artworks
             </Link>
           </Button>
@@ -134,7 +116,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
           </div>
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Button asChild>
-              <Link href={makeHref({ tags: undefined, page: '1' })}>Show all artwork</Link>
+              <Link href={makeHref({ tags: undefined })}>Show all artwork</Link>
             </Button>
             {[
               { label: 'Paintings', value: 'painting' },
@@ -145,7 +127,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
               .filter((o) => o.value !== activeTag)
               .map(({ label, value }) => (
                 <Button key={value} asChild variant="outline">
-                  <Link href={makeHref({ tags: value, page: '1' })}>{label}</Link>
+                  <Link href={makeHref({ tags: value })}>{label}</Link>
                 </Button>
               ))}
             <Button asChild variant="outline">
@@ -154,78 +136,23 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
           </div>
           </div>
         ) : (
-          <>
-          {/* Artwork Grid */}
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
-            {items.map((art) => (
-              <Card key={String(art._id)} className="overflow-hidden">
-                <ArtworkQuickView
-                  id={String(art._id)}
-                  title={art.title}
-                  imageUrl={art.imageUrl}
-                  price={art.price}
-                  description={art.description}
-                  tags={art.tags}
-                  artistId={String(art.artistId)}
-                  trigger={
-                    <div className="aspect-square relative cursor-pointer">
-                      <Image
-                        src={art.imageUrl}
-                        alt={art.title}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover hover:scale-105 transition-transform duration-300"
-                        priority={false}
-                      />
-                    </div>
-                  }
-                />
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-lg">
-                    <ArtworkQuickView
-                      id={String(art._id)}
-                      title={art.title}
-                      imageUrl={art.imageUrl}
-                      price={art.price}
-                      description={art.description}
-                      tags={art.tags}
-                      artistId={String(art.artistId)}
-                      trigger={<span className="cursor-pointer underline-offset-4 hover:underline">{art.title}</span>}
-                    />
-                  </h3>
-                  <p className="font-bold mt-2">${art.price}</p>
-                  {art.tags?.length ? (
-                    <p className="text-xs text-muted-foreground mt-1">{art.tags.join(', ')}</p>
-                  ) : null}
-                </CardContent>
-                <CardFooter className="p-4 pt-0 flex justify-between">
-                  <FavoriteButton artworkId={String(art._id)} size="sm" initialFavorited={favoritedSet.has(String(art._id))} />
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      <Share2 className="h-4 w-4 mr-2" />
-                      Share
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-          </>
+          <ExploreArtworksGrid
+            initialArtworks={items.map((art) => ({
+              _id: String(art._id),
+              title: art.title,
+              imageUrl: art.imageUrl,
+              price: art.price,
+              description: art.description,
+              tags: art.tags,
+              artistId: String(art.artistId),
+              initialFavorited: favoritedSet.has(String(art._id)),
+            }))}
+            initialHasMore={hasMore}
+            tags={activeTag}
+            myOnly={myOnly}
+          />
         )}
       </div>
-
-      {/* Pagination at bottom */}
-      {total > 0 && (
-        <div className="flex items-center justify-center gap-2 mt-8">
-          <Button asChild variant="outline" disabled={page <= 1}>
-            <Link href={makeHref({ page: String(Math.max(1, page - 1)) })}>Previous</Link>
-          </Button>
-          <span className="text-sm">Page {page} of {totalPages}</span>
-          <Button asChild variant="outline" disabled={page >= totalPages}>
-            <Link href={makeHref({ page: String(Math.min(totalPages, page + 1)) })}>Next</Link>
-          </Button>
-        </div>
-      )}
     </div>
   )
 }
