@@ -76,6 +76,20 @@
     - Add new hosts to `remotePatterns` as you introduce them.
   - Current usage hint: Explore page uses Unsplash; first host to add would be `images.unsplash.com`.
 
+- [ ] Migrate infinite scroll data fetching to Server Actions
+  - Description: Replace API Routes (`/api/artworks/list`, `/api/artists/list`, `/api/favorites/list`) with Next.js Server Actions for data fetching in infinite scroll components.
+  - Why: Server Actions eliminate HTTP/JSON serialization overhead (~10-15ms per request), reduce cold start time, and provide better integration with Next.js caching strategies.
+  - Current implementation: API Routes with MongoDB connection pooling (reduced load time from 2-3s to ~300-500ms).
+  - Performance baseline:
+    - API Routes: ~450ms total (150ms session + 200ms DB query + 80ms favorites + 20ms overhead)
+    - Expected with Server Actions: ~360ms total (same DB queries but no HTTP layer)
+  - Change required:
+    - Switch client components to use Server Actions from `lib/actions/fetch-lists.ts` instead of fetch() calls
+    - Remove API route files: `app/api/artworks/list/route.ts`, `app/api/artists/list/route.ts`, `app/api/favorites/list/route.ts`
+    - Update imports in: `components/explore-artworks-grid.tsx`, `components/artists-grid.tsx`, `components/favorites-grid.tsx`
+  - Testing: Verify Network tab shows faster load times and no regression in functionality
+  - Note: Keep MongoDB connection pooling optimizations (maxPoolSize: 10, minPoolSize: 2) regardless of approach
+
 ## P1 — Portfolio polish (free-friendly)
  - [x] Artist portfolio management (URL-based uploads, free)
   - [x] Listing: via Explore “My Artworks” filter for artists (`/explore?my=1`)
