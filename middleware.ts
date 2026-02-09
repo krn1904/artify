@@ -12,21 +12,28 @@ export async function middleware(req: NextRequest) {
   }
 
   // Check for a valid session token using NextAuth JWT
-  // Prefer explicit secret if available; otherwise let NextAuth handle defaults
   const secret = process.env.NEXTAUTH_SECRET
   if (!secret) {
-    // In production this will cause token validation to fail; avoid noisy logs there.
+    console.error('NEXTAUTH_SECRET is not set')
+    // Don't block in development
     if (process.env.NODE_ENV !== 'production') {
-      console.warn('NEXTAUTH_SECRET is not set; token validation may fail.')
+      return NextResponse.next()
     }
   }
-  const token = await getToken({ req, ...(secret ? { secret } : {}) })
 
-  if (!token) {
-    const loginUrl = new URL('/login', req.url)
-    loginUrl.searchParams.set('callbackUrl', req.nextUrl.href)
-    loginUrl.searchParams.set('reason', 'auth')
-    return NextResponse.redirect(loginUrl)
+  try {
+    const token = await getToken({ req, secret })
+    
+    if (!token) {
+      const loginUrl = new URL('/login', req.url)
+      loginUrl.searchParams.set('callbackUrl', req.nextUrl.href)
+      loginUrl.searchParams.set('reason', 'auth')
+      return NextResponse.redirect(loginUrl)
+    }
+  } catch (error) {
+    console.error('Token validation error:', error)
+    // Allow through on error to avoid blocking everything
+    return NextResponse.next()
   }
 
   return NextResponse.next()

@@ -34,6 +34,15 @@ export function InfiniteScrollContainer<T>({
   const observerTarget = useRef<HTMLDivElement>(null)
   const loadingRef = useRef(false)
 
+  // Reset state when initialData changes (filter change)
+  useEffect(() => {
+    setItems(initialData)
+    setPage(initialPage)
+    setHasMore(initialHasMore)
+    setError(null)
+    loadingRef.current = false
+  }, [initialData, initialPage, initialHasMore])
+
   const loadMore = useCallback(async () => {
     // Prevent duplicate requests
     if (loadingRef.current || !hasMore) return

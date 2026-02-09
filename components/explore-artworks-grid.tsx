@@ -1,5 +1,6 @@
 'use client'
 
+import { useCallback } from 'react'
 import Image from 'next/image'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -32,7 +33,7 @@ export function ExploreArtworksGrid({
   tags,
   myOnly,
 }: ExploreArtworksGridProps) {
-  const fetchMore = async (page: number) => {
+  const fetchMore = useCallback(async (page: number) => {
     const params = new URLSearchParams({
       page: String(page),
       pageSize: '12',
@@ -48,7 +49,7 @@ export function ExploreArtworksGrid({
       items: data.items,
       hasMore: data.hasMore,
     }
-  }
+  }, [tags, myOnly])
 
   const renderArtwork = (art: ArtworkItem) => (
     <Card key={art._id} className="overflow-hidden">
