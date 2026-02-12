@@ -69,7 +69,7 @@ export function ArtworkForm() {
                   <ol className="list-decimal ml-4 space-y-1">
                     <li>Open the image in your browser</li>
                     <li>Right-click on the image</li>
-                    <li>Select "Copy image address" or "Copy image location"</li>
+                    <li>Select &quot;Copy image address&quot; or &quot;Copy image location&quot;</li>
                     <li>Paste that URL here</li>
                   </ol>
                   <p className="text-xs pt-1">✓ Correct: <code className="text-xs">https://images.example.com/photo.jpg</code></p>
