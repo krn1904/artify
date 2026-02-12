@@ -28,8 +28,7 @@ This guide explains what you can do and how to get around.
 
 ### Meeting artists
 - On an artist’s profile you’ll see their name, bio, and a portfolio of their artworks.
-- Ready to collaborate? Click “Request commission” to contact the artist.
- - Favorite/unfavorite artworks directly from the profile grid.
+- Ready to collaborate? Click “Request commission” to contact the artist.- When viewing your own artist profile, you'll see an "Edit profile" button to update your details and an "Add artwork" button for your portfolio. - Favorite/unfavorite artworks directly from the profile grid.
 
 ### Requesting a commission (login required)
 - Click “Request commission” on an artist profile, or go to the Commissions hub → New Request.
@@ -64,7 +63,7 @@ This guide explains what you can do and how to get around.
 - Note: Binary uploads are deferred in MVP; use URL‑based images for now.
 
 ### Deleting an artwork (artists)
-- Open your Artist Profile page (e.g., from an artwork or via the Artists list).
+- Go to your Artist Profile page by clicking "Profile" in the navbar.
 - When viewing your own profile, each portfolio card shows a Delete button.
 - Confirm the dialog to remove the artwork; the list refreshes automatically.
 
@@ -74,10 +73,11 @@ This guide explains what you can do and how to get around.
 
 ### Signing in and out
 - Use the Login or Sign Up buttons in the navigation when you’re not signed in.
-- After you sign in, an avatar menu appears with Dashboard, Profile, My favorites, Commissions, and Logout.
-
+- After you sign in, an avatar menu appears with Dashboard, Profile, My favorites, Commissions, and Logout.- Clicking "Profile" takes you to your public artist profile page where you can see how others view your profile.
 ### Profile settings
-- Go to `/dashboard/profile` to update your name, avatar image URL, and bio.
+- Click "Profile" in the navbar to view your public profile page.
+- From your profile, click "Edit profile" to update your name, avatar image URL, and bio.
+- You can also access profile settings directly at `/dashboard/profile`.
 - Role switching is temporarily disabled; it will be available soon.
 
 ### Tips
