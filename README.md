@@ -1,122 +1,256 @@
-# Artify
+<div align="center">
 
-AI-powered custom artwork marketplace built with Next.js App Router, Tailwind, shadcn/ui, and MongoDB.
+# 🎨 Artify
 
-## Project Structure (high-level)
+### AI-Powered Custom Artwork Marketplace
 
-- `app/*`: route handlers and pages (App Router). Co-located UI under `_components/` within routes where helpful.
-- `lib/db/*`: low-level MongoDB repositories and collection helpers.
-- `lib/schemas/*`: shared zod schemas used by both API routes and client forms (DRY validation).
--   - Includes `commission`, `artwork`, and `auth` (re-exporting existing auth schemas)
-- `lib/authz.ts`: small authorization helpers to standardize API guards.
-- `components/shared/*`: shared client utilities (e.g., `route-refresher`, `refresh-hint`).
-- `components/ui/*`: shadcn/ui primitives.
+A modern, full-stack marketplace connecting artists with customers for custom artwork commissions. Built with Next.js 14, MongoDB, and TypeScript.
 
-## Navigation & UX
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6.3-green?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
-- Role-aware navbar: avatar account menu when logged in (Dashboard, Profile, My favorites, Commissions) and an Add artwork button for artists.
-- Active link highlighting: selected nav items display a subtle underline badge.
-- Loading states: skeleton UIs for key pages (e.g., Artists list, Commissions, Profile, New Commission, New Artwork) improve perceived performance.
-- Dashboard: polished hero with user avatar, quick actions grid, and tips.
+[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](./DOCUMENTATION.md)
 
-## Profile & Settings
+</div>
 
-- Page: `/dashboard/profile` — update name, avatar URL, bio, and role (Customer/Artist).
-- API: `GET /api/me/profile` returns current user details; `PATCH /api/me/profile` updates fields.
-- Notes: Role changes are temporarily disabled (UI disabled and server ignores role updates).
+---
 
-## Error Handling
+## 📖 Overview
 
-- Route-level error boundaries provide friendly fallbacks:
-  - `app/commissions/error.tsx` and `app/explore/error.tsx` render retry UIs on failure.
-  - Global fallbacks: `app/error.tsx` and `app/not-found.tsx` for unexpected errors and 404s.
+**Artify** is a comprehensive marketplace platform that bridges artists and art enthusiasts. Whether you're an artist looking to showcase your portfolio and accept commissions, or a customer searching for unique artwork and custom pieces, Artify provides an intuitive, feature-rich experience.
 
-## Environment
-- Copy `.env.example` to `.env.local` for local dev.
-- On Vercel, set env vars in Project Settings:
-	- `MONGODB_URI`
-	- `MONGODB_DB_NAME` (optional when you share a cluster; defaults to `artify`)
-	- `NEXTAUTH_SECRET`
-	- `NEXTAUTH_URL`
-	- `NEXT_PUBLIC_APP_URL` (canonical base used by sitemap/robots when `NEXTAUTH_URL` is not set)
+### What It Does
 
-## Health Check
-Endpoint to verify live MongoDB connectivity.
+- **🖼️ Artwork Discovery** - Browse and explore curated artworks from talented artists
+- **👨‍🎨 Artist Profiles** - Showcase portfolios with detailed artist bios and collections
+- **📝 Commission Management** - Seamless request-accept-complete workflow for custom art
+- **❤️ Favorites System** - Bookmark and manage your favorite artworks
+- **🔐 Secure Authentication** - Role-based access for customers and artists
+- **📱 Responsive Design** - Beautiful UI that works on all devices
 
-- Route: `GET /api/health/db`
-- Success: `200 { "status": "ok" }`
-- Failure: `500 { "status": "error" }`
-- Caching: disabled (force-dynamic + `Cache-Control: no-store`)
+---
 
-Use it to quickly confirm environment variables and DB access on local and Vercel.
+## ✨ Features
 
-### Try it
-- Local: `http://localhost:3000/api/health/db`
-- Vercel: `https://<your-app>.vercel.app/api/health/db`
+### For Customers
+- 🔍 **Browse & Discover** - Explore paginated artwork collections with tag filtering
+- ❤️ **Favorites** - Save artworks you love to your personal collection
+- 📋 **Commission Requests** - Request custom artwork from your favorite artists
+- 👤 **Personal Dashboard** - Manage your profile, favorites, and commission requests
+- 🔔 **Status Notifications** - Get in-app toast notifications about commission updates
 
+### For Artists
+- 🎨 **Portfolio Management** - Upload and manage your artwork collection
+- 📬 **Commission Hub** - View incoming commission requests in a centralized dashboard
+- ✅ **Request Workflow** - Accept, decline, or mark commissions as completed
+- 💼 **Artist Profile** - Showcase your bio, skills, and portfolio
+- 🎯 **Role-based Features** - Access artist-specific tools and dashboards
+
+### Platform Features
+- 🔐 **Secure Authentication** - NextAuth.js with credential-based login
+- 🌓 **Dark/Light Mode** - Theme switching for comfortable viewing
+- 📱 **Fully Responsive** - Optimized for mobile, tablet, and desktop
+- ⚡ **Fast Performance** - Server-side rendering and optimized MongoDB queries
+- 🎭 **Beautiful UI** - Built with shadcn/ui and Tailwind CSS
+- 🗺️ **SEO Optimized** - Dynamic metadata, sitemaps, and robots.txt
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework:** [Next.js 14](https://nextjs.org/) (App Router, RSC, Server Actions)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components:** [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/)
+- **Forms:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+
+### Backend
+- **Database:** [MongoDB](https://www.mongodb.com/) (Atlas)
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/)
+- **Password Hashing:** bcryptjs
+- **Validation:** Zod schemas
+
+### Deployment & DevOps
+- **Hosting:** [Vercel](https://vercel.com/)
+- **Database Hosting:** MongoDB Atlas (Free Tier)
+- **Analytics:** Vercel Analytics
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+- **Node.js** 18.17.0 or higher
+- **npm** 9.0.0 or higher
+- **MongoDB** account (Atlas free tier works great)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/artify.git
+   cd artify
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   
+   Create a `.env.local` file in the root directory:
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Fill in your environment variables:
+   ```env
+   # MongoDB
+   MONGODB_URI=your_mongodb_connection_string
+   MONGODB_DB_NAME=artify
+   
+   # NextAuth
+   NEXTAUTH_SECRET=your_secret_key_here
+   NEXTAUTH_URL=http://localhost:3000
+   
+   # App
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   ```
+   
+   > **Generate NextAuth Secret:** Run `openssl rand -base64 32`
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 📚 Usage
+
+### For Artists
+
+1. **Sign Up** as an artist
+2. **Complete your profile** with bio and avatar
+3. **Add artworks** to your portfolio via Dashboard → Add Artwork
+4. **Manage commissions** in the Commissions hub
+
+### For Customers
+
+1. **Browse artworks** on the Explore page
+2. **Favorite** artworks you love
+3. **Visit artist profiles** to see their full portfolio
+4. **Request commissions** from any artist
+5. **Track requests** in your Commissions dashboard
+
+### API Health Check
+
+Verify your setup is working:
 ```bash
-# Optional: quick check
-curl -sS http://localhost:3000/api/health/db | jq
+curl http://localhost:3000/api/health/db
 ```
 
-## Commissions
+Expected response:
+```json
+{
+  "status": "ok"
+}
+```
 
-- Hub: `/commissions`
-  - Guest: short explainer with Login/Browse CTAs
-  - Customer: tabs — “My Requests” and “New Request”
-  - Artist: tabs — “Incoming” (REQUESTED) and “Archive” (ACCEPTED/DECLINED/COMPLETED)
-  - Live UX: auto-refresh on focus (artist also every 15s) and in‑app toasts for actions
+---
 
-### API
+## 📂 Project Structure
 
-- POST `/api/commissions` — Auth required
-  - Body: `{ artistId: string, brief: string, title?: string, referenceUrls?: string[], budget?: number, dueDate?: string | Date }`
-  - Validation: `brief` min 10 chars, `budget` ≥ 0, `referenceUrls` are valid URLs
-  - Restriction: self‑commission is blocked (you cannot request from yourself)
-  - Returns: `{ id }`
+```
+artify/
+├── app/                    # Next.js App Router pages & API routes
+│   ├── (auth)/            # Authentication pages (login, signup)
+│   ├── api/               # API endpoints
+│   ├── explore/           # Artwork discovery page
+│   ├── artists/           # Artist listing page
+│   ├── commissions/       # Commission management
+│   └── dashboard/         # User dashboard & settings
+├── components/            # React components
+│   ├── ui/               # shadcn/ui components
+│   ├── landing/          # Landing page components
+│   └── shared/           # Reusable components
+├── lib/                   # Utilities & configurations
+│   ├── db/               # MongoDB repositories
+│   ├── schemas/          # Zod validation schemas
+│   └── authOptions.ts    # NextAuth configuration
+├── hooks/                 # Custom React hooks
+├── types/                 # TypeScript type definitions
+└── middleware.ts          # Next.js middleware (auth protection)
+```
 
-- GET `/api/commissions/[id]` — Auth required, only artist or customer on the commission
-  - Returns commission details (fields above) with status and timestamps
+---
 
-- PATCH `/api/commissions/[id]` — Artist only
-  - Body: `{ status: 'REQUESTED' | 'ACCEPTED' | 'DECLINED' | 'COMPLETED' }`
-  - Transitions enforced: `REQUESTED→ACCEPTED|DECLINED`, `ACCEPTED→COMPLETED`
+## 🔑 Environment Variables
 
-- GET `/api/artists?q=<name>&limit=<n>` — Search artists by name for the commission form picker
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `MONGODB_URI` | MongoDB connection string | ✅ Yes | - |
+| `MONGODB_DB_NAME` | Database name | ❌ No | `artify` |
+| `NEXTAUTH_SECRET` | Secret for NextAuth.js | ✅ Yes | - |
+| `NEXTAUTH_URL` | Application URL | ✅ Yes | - |
+| `NEXT_PUBLIC_APP_URL` | Public app URL for SEO | ❌ No | `NEXTAUTH_URL` |
 
-## Favorites
+---
 
-- Favorite any artwork using the heart button. Signed-out users are redirected to login and returned to the same page.
-- Pages hydrate favorite state server-side to avoid N+1 client calls:
-  - Explore grid, Artist profile grid, Artwork detail.
-- Toggle API: `POST /api/favorites/toggle` → `{ favorited, count }`
-- Status API: `GET /api/favorites/status?artworkId=...` → `{ favorited, count }`
-- My Favorites page: `/dashboard/favorites` (auto-refreshes on mount/focus; no stale prefetch)
+## 🏗️ Building for Production
 
-## SEO
+```bash
+# Create production build
+npm run build
 
-- Per-page metadata via Next.js Metadata API (titles/descriptions, dynamic on detail pages).
-- Sitemap and robots routes under `app/`:
-  - `app/sitemap.ts` — includes key static routes and recent artists/artworks.
-  - `app/robots.ts` — allows public content; disallows `/api`, `/dashboard`, `/login`, `/signup`.
+# Start production server
+npm start
+```
 
-### New Commission form
+---
 
-- Page: `/commissions/new?artistId=<id>` preselects artist when coming from profile
-- Fields: Artist (searchable), optional Title, Brief (min 10 chars), optional Budget, optional Reference URLs (one per line), optional Due Date
-- On submit: shows a toast and navigates to the Commissions hub
-- Self‑commission is disabled in UI and rejected server‑side
+## 🚢 Deployment
 
-## Artist Portfolio
+### Deploy to Vercel (Recommended)
 
-- Explore filter: artists can view only their work via `/explore?my=1` or by toggling “My Artworks” on the Explore page. The “Add artwork” button is visible to artists on Explore.
-- Create page: `/dashboard/artworks/new` lets artists add new pieces using a remote image URL (no binary uploads in MVP).
-- Manage: delete your own artworks from your Artist Profile page (only visible to you on your profile’s portfolio grid).
+1. Push your code to GitHub
+2. Import project in [Vercel](https://vercel.com)
+3. Configure environment variables
+4. Deploy!
 
-### Artwork API
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/artify)
 
-- GET `/api/my/artworks` — Auth (artist): return current artist’s artworks (paginated in code).
-- POST `/api/my/artworks` — Auth (artist): create artwork.
-  - Body: `{ title: string, imageUrl: string (URL), price: number, description?: string, tags?: string[] (<=5) }`
-  - Validation: title ≥ 3, price ≥ 0; URL must be valid; description is sanitized.
-- DELETE `/api/my/artworks/[id]` — Auth (artist): delete own artwork by id (ownership enforced).
+---
+
+## 📖 Documentation
+
+For detailed API documentation and development guides, see [DOCUMENTATION.md](./DOCUMENTATION.md)
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📝 License
+
+This project is proprietary and confidential. All rights reserved.
