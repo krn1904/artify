@@ -1,10 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: { unoptimized: true },
+  // Ensure the MongoDB driver is handled on the server in RSC
+  serverExternalPackages: ['mongodb'],
   experimental: {
-    serverActions: true,
-    // Ensure the MongoDB driver is handled on the server in RSC
-    serverComponentsExternalPackages: ['mongodb'],
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
   webpack: (config, { isServer }) => {
     // Prevent client bundles from trying to polyfill Node core modules
