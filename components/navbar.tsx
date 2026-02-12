@@ -118,7 +118,7 @@ export default function Navbar() {
                       <Link href="/dashboard">Dashboard</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/profile">Profile</Link>
+                      <Link href={`/artist/${session.user.id}`}>Profile</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/dashboard/favorites" prefetch={false}>My favorites</Link>
@@ -166,7 +166,7 @@ export default function Navbar() {
                       <Link href="/dashboard" className={linkClass("/dashboard")}>
                         Dashboard
                       </Link>
-                      <Link href="/dashboard/profile" className={linkClass("/dashboard/profile")}>
+                      <Link href={`/artist/${session.user.id}`} className={linkClass(`/artist/${session.user.id}`)}>
                         Profile
                       </Link>
                       <Link href="/dashboard/favorites" className={linkClass("/dashboard/favorites")}>
