@@ -19,8 +19,8 @@
 - [ ] Add artist search with filters
 
 ### Code Organization
-- [ ] Move auth schemas to `lib/schemas`
-- [ ] Consolidate validation schemas
+- [x] Move auth schemas to `lib/schemas`
+- [x] Consolidate validation schemas
 
 ---
 

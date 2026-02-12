@@ -187,7 +187,7 @@ artify/
 │   └── shared/           # Reusable components
 ├── lib/                   # Utilities & configurations
 │   ├── db/               # MongoDB repositories
-│   ├── schemas/          # Zod validation schemas
+│   ├── schemas/          # Zod validation schemas (auth, artwork, commission, favorite, user)
 │   └── authOptions.ts    # NextAuth configuration
 ├── hooks/                 # Custom React hooks
 ├── types/                 # TypeScript type definitions

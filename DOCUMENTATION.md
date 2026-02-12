@@ -336,6 +336,13 @@ Submit a contact form message.
 
 ## Data Models
 
+All validation schemas are located in `lib/schemas/` for consistency:
+- `auth.ts` - Registration and login schemas
+- `user.ts` - User profile update schema
+- `artwork.ts` - Artwork creation and form schemas
+- `commission.ts` - Commission creation and status schemas
+- `favorite.ts` - Favorite toggle schema
+
 ### User
 ```typescript
 {
