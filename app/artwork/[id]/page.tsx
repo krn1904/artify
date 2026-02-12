@@ -13,8 +13,9 @@ import { authOptions } from '@/lib/authOptions'
 
 export const dynamic = 'force-dynamic'
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const art = await getArtworkById(params.id)
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const art = await getArtworkById(id)
   if (!art) return { title: 'Artwork Not Found | Artify' }
   return {
     title: `${art.title} | Artify`,
@@ -23,12 +24,13 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 // Artwork detail page: full view for a single artwork.
 export default async function ArtworkDetailPage({ params }: PageProps) {
-  const art = await getArtworkById(params.id)
+  const { id } = await params
+  const art = await getArtworkById(id)
   if (!art) return notFound()
 
   const artist = await getUserById(art.artistId)

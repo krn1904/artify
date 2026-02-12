@@ -10,13 +10,14 @@ export const metadata = {
   title: 'Request a commission | Artify',
 }
 
-interface PageProps { searchParams?: { artistId?: string } }
+interface PageProps { searchParams?: Promise<{ artistId?: string }> }
 
 export default async function NewCommissionPage({ searchParams }: PageProps) {
   const session = await getServerSession(authOptions)
   if (!session) redirect('/login')
 
-  const artistId = searchParams?.artistId
+  const params = searchParams ? await searchParams : {}
+  const artistId = params?.artistId
   const artist = artistId ? await getUserById(artistId) : null
 
   return (

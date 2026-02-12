@@ -29,12 +29,13 @@ function parseIntOr<T extends number>(value: string | undefined, fallback: T, mi
   return v
 }
 
-export default async function FavoritesPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function FavoritesPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const session = await getServerSession(authOptions)
   if (!session) redirect('/login?reason=auth&callbackUrl=%2Fdashboard%2Ffavorites')
 
-  const page = parseIntOr(searchParams.page, 1, 1)
-  const pageSize = parseIntOr(searchParams.pageSize, 12, 1, 100)
+  const params = await searchParams
+  const page = parseIntOr(params.page, 1, 1)
+  const pageSize = parseIntOr(params.pageSize, 12, 1, 100)
 
   const { items, total } = await listFavoritesByUser(session.user.id, page, pageSize)
   const ids = items.map((f) => f.artworkId)
