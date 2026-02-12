@@ -11,12 +11,10 @@ import { Button } from '@/components/ui/button'
 import { Share2, SearchX } from 'lucide-react'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { CloseBack } from '@/components/close-back'
-import NextDynamic from 'next/dynamic'
 import { FavoriteButton } from '@/components/favorite-button'
 import { getFavoritesCollection } from '@/lib/db/favorites'
 import { ObjectId } from 'mongodb'
-
-const MyArtworkDelete = NextDynamic(() => import('@/components/my-artwork-delete'), { ssr: false })
+import MyArtworkDelete from '@/components/my-artwork-delete'
 
 export const dynamic = 'force-dynamic'
 
