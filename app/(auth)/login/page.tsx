@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { loginSchema } from "@/lib/auth/validation"
+import { loginSchema } from "@/lib/schemas/auth"
 
 // Ensure redirect paths are safe (avoid open redirects and path traversal)
 function isSafeRedirectPath(path: string) {
@@ -37,14 +37,8 @@ function isSafeRedirectPath(path: string) {
   return true
 }
 
-// Define form validation schema using Zod
-const formSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-})
-
 // Type for form data based on the schema
-type LoginFormData = z.infer<typeof formSchema>
+type LoginFormData = z.infer<typeof loginSchema>
 
 /**
  * LoginPage Component

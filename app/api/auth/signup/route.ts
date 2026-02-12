@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
-import { registerSchema } from '@/lib/auth/validation';
+import { registerSchema } from '@/lib/schemas/auth';
 import { getMongoDatabase } from '@/lib/db';
 import { sanitizeInput } from '@/lib/utils';
 
