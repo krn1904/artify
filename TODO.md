@@ -1,133 +1,65 @@
 # Artify – MVP Roadmap (Vercel + Free stack)
 
-## P0 — Launchable MVP (step-by-step)
+---
 
-1) Deployment & Environment
-- [x] Add `.env.example` with `MONGODB_URI`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`
-- [x] Verify Vercel env vars and project build on a preview deployment
-- [x] Health endpoint: implement `app/api/health/db/route.ts` to ping Mongo and return 200
+## 🔴 PENDING - High Priority
 
+### P0 - Cleanup & Production Readiness
+- [ ] **Tighten `next.config.js`**: Stop ignoring TS/ESLint errors before production
+- [ ] **Pin dependency versions** and run security audit (`npm audit`)
 
-2) Data layer (MongoDB via `lib/db.ts`)
-- [x] Define collections + indexes:
-  - `artworks` (title, description, price, imageUrl, artistId, tags[], createdAt)
-  - `commissions` (customerId, artistId, brief, budget, status, createdAt, updatedAt)
-  - `favorites` (userId, artworkId, createdAt)
-- [x] Seed demo data: imported ~20 artworks and ~6 artists via Atlas/Compass (manual import)
-- [x] Minimal typed helpers for CRUD using `mongodb` driver (no ORM)
+### P0 - Performance & Image Optimization
+- [ ] **Next.js image optimization decision**:
+  - Current: `images.unoptimized = true` (flexible but misses optimization benefits)
+  - Recommended: Enable optimization with `images.remotePatterns` for Unsplash and other hosts
+  - Action: Update `next.config.js` with remote patterns, remove `unoptimized: true`
+  - First host to add: `images.unsplash.com`
 
-3) Public pages wired to DB
-- [x] Explore page: fetch paginated artworks from DB (replace mock data)
-- [x] Artists page (`app/artists/page.tsx`): list users with role=ARTIST (no filters in MVP)
-- [x] Artwork detail (`app/artwork/[id]/page.tsx`): show image, description, artist, price, favorite button
-- [x] Artist profile (`app/artist/[id]/page.tsx`): bio from user, portfolio grid (their artworks), “Request commission” CTA
+### P0 - Acceptance Criteria (Core MVP)
+- [ ] **Browse artworks and artists without login** (verify guest access)
+- [ ] **Sign up, log in, update profile** (verify complete flow)
+- [ ] **Submit commission requests** and view in `/commissions` hub
+- [ ] **Artists can view incoming requests** and accept/decline
+- [ ] **`/api/health/db`** returns 200 when DB is reachable
+- [ ] **Deployed on Vercel** with seed data producing visible demo content
 
-4) Commission request flow
- - [x] API: `POST /api/commissions` to create a commission (auth required)
- - [x] Page: commission form (from artwork or artist profile) → creates doc with status `REQUESTED`
- - [x] Form upgrades (MVP polish): add optional `title`, optional `referenceUrls[]`, optional `dueDate`; add searchable artist picker when not prefilled
- - [x] Commissions hub (`/commissions`): role-aware tabs with SSR lists
-   - Customer: “My Requests” + “New Request”
-   - Artist: “Incoming” + “Archive”
- - [x] Status lifecycle: REQUESTED → ACCEPTED/DECLINED → COMPLETED (API + UI actions)
- - [x] API for status/detail:
-   - [x] `GET /api/commissions/[id]` (authorized)
-   - [x] `PATCH /api/commissions/[id]` (artist accept/decline)
- - [x] In-app notifications: use toasts and hub badges (no external email)
+---
 
- - [x] Decide on `/commissions` route/link: keep as role-aware hub (guest explainer; logged-in land on role tab)
+## 🟡 PENDING - Medium Priority
 
-5) User profile & settings
-- [x] Profile settings page (`/dashboard/profile`): update name, avatarUrl, optional bio
- - [x] Role switching: temporarily disabled; enable later with session refresh strategy
-- [x] Extend guards: ensure settings and commission APIs require session (API handlers validate session)
+### P1 - Search & Filters
+- [ ] **Search + basic filters** powered by Mongo queries and indexes
+- [ ] **Add filters to Explore**: tags, price range
+- [ ] **Add filters to Artists**: role/keyword search
 
-6) Navigation & UX
- - [x] Navbar: role-aware links and active state highlighting
- - [x] Navbar: avatar account menu with Dashboard/Profile/Favorites/Commissions + Logout
- - [x] Dashboard UI polish: hero with avatar, quick actions grid, tips
- - [x] Loading skeletons and empty states for lists/detail pages
- - [x] Friendly error UX: custom `not-found` and `error` pages in `app/`
+### P1 - Polish & UX
+- [ ] **Bulk favorite status** for grids (avoid N client fetches)
+- [ ] **Demo users + README walkthrough** with screenshots
+- [ ] **Accessibility sweep**: landmarks, alt text, keyboard nav, color contrast (WCAG AA)
 
-7) SEO & Discoverability (free only)
-- [x] Per-page metadata (title/description)
-- [x] `sitemap.xml` and `robots.txt` routes
+### Structure & Consistency
+- [ ] **Move ad-hoc schemas** into `lib/schemas` (auth register/login schemas)
 
-8) Testing & CI (lean)
-- [ ] Unit tests for zod validation (`registerSchema`, `loginSchema`)
-- [ ] API tests for signup and health
-- [ ] GitHub Actions: install, lint, typecheck, build (tests optional if time-constrained)
+---
 
-9) Cleanup
-- [x] Remove unused Prisma and Supabase files (project uses Mongo driver)
-- [ ] Tighten `next.config.js` later (stop ignoring TS/ESLint errors before production)
-- [ ] Pin dependency versions and run a quick audit
+## 🟢 PENDING - Nice to Have (P1.5 & P2)
 
-10) Performance
-- [ ] Next.js image optimization (free)
-  - Description: Serve remote images via `next/image` with on-the-fly resizing, modern formats, and Vercel caching for better LCP/CLS.
-  - Why: Smaller payloads and faster pages without adding any paid service.
-  - Current implementation: `images.unoptimized = true` in `next.config.js` (keeps things flexible while image sources are undecided; simplest MVP path).
-  - Choose one now, switch later if needed:
-    - [ ] Keep `images.unoptimized = true` (maximum flexibility while image sources are undecided)
-    - [ ] Enable optimization by allowlisting hosts with `images.remotePatterns` (recommended once sources stabilize)
-  - Change required (when enabling optimization):
-    - Update `next.config.js` → set `images.remotePatterns` with each remote host you use (e.g., `images.unsplash.com`), and remove `unoptimized: true`.
-    - Add new hosts to `remotePatterns` as you introduce them.
-  - Current usage hint: Explore page uses Unsplash; first host to add would be `images.unsplash.com`.
+### P1.5 - Commission Features
+- [ ] **Commission detail page** `/commissions/[id]` with status history and action buttons
+- [ ] **Simple message thread** on commission (no realtime required)
 
-## P1 — Portfolio polish (free-friendly)
- - [x] Artist portfolio management (URL-based uploads, free)
-  - [x] Listing: via Explore “My Artworks” filter for artists (`/explore?my=1`)
-  - [x] Page: `/dashboard/artworks/new` (create)
-  - [x] API: `POST /api/my/artworks` (create), `GET /api/my/artworks` (list), optional `DELETE /api/my/artworks/[id]`
-  - [x] Validation: title ≥ 3, price ≥ 0, `imageUrl` is a valid URL; sanitize description; tags ≤ 5
-  - [x] AuthZ: artist-only; ownership checks per user id
-  - [x] UX: preview image, toasts, loading skeletons; auto-refresh on focus
-  - [x] Note: no binary uploads in P1; paste remote image URLs (Unsplash, etc.)
-- [x] Favorites/likes MVP with optimistic UI
-  - [x] API: `POST /api/favorites/toggle`, `GET /api/favorites/status`
-  - [x] UI: Favorite buttons on Explore, Artwork detail, Artist grid (red heart)
-  - [x] Page: `/dashboard/favorites` with paginated list
-  - [x] Navbar: add Favorites in account menu
-  - [ ] Optional: bulk status for grids (avoid client fetches)
-- [ ] Search + basic filters powered by Mongo queries and indexes (post-launch)
-- [ ] Add filters to Explore (tags, price) and Artists (role/keyword) pages
-- [ ] Demo users + README walkthrough with screenshots
-- [ ] Accessibility sweep (landmarks, alt text, keyboard, color contrast)
-
-## P1.5 — Commission details (nice-to-have)
-- [ ] Commission detail page `/commissions/[id]` with status history and actions
-- [ ] Simple message thread on commission (no realtime)
-
-## Structure & Consistency
-- [x] Apply `lib/authz` helpers across APIs (reduce inline guards)
-- [ ] Move remaining ad-hoc schemas into `lib/schemas` (e.g., auth register/login)
-- [x] Co-locate route UI under `app/<route>/_components/*` (e.g., profile CTAs)
-- [x] Promote shared UI utilities to `components/shared/*` (standardize imports)
-- [x] Add `error.tsx` to `app/commissions` and `app/explore` for friendlier failures
-- [ ] Add light tests for `lib/schemas/*` and status transition map
-
-## P2 — Optional later (skip paid services)
-- [ ] Social auth (Google/GitHub) via NextAuth if desired (free)
-- [ ] Image uploads (binary): pick a free storage option (one):
-  - Vercel Blob (simple, generous free tier) or Cloudinary free plan
-  - Add `POST /api/upload` with signed URLs; persist `imageUrl` of uploaded asset
+### P2 - Optional Future Enhancements
+- [ ] **Social auth** (Google/GitHub) via NextAuth (free)
+- [ ] **Binary image uploads**: Choose free storage option:
+  - Vercel Blob (generous free tier) OR Cloudinary free plan
+  - Add `POST /api/upload` with signed URLs
   - Update forms to support drag-and-drop; keep URL-paste fallback
-- [ ] Payments: mock checkout flow (no external gateway) for portfolio demo
-- [ ] Email: skip; rely on in-app notifications and dashboard views
-- [ ] Analytics: skip paid services; consider adding later if a free/self-hosted option fits
- - [ ] Enable role switching: re-open UI, persist change, and refresh session (e.g., call `signIn('credentials', { redirect: false })` or `unstable_update` post-patch) so role applies immediately
+- [ ] **Role switching**: Re-enable UI, persist change, refresh session with `unstable_update`
+- [ ] **Payments mock**: Mock checkout flow (no real gateway) for portfolio demo
+- [ ] **Email notifications**: Skip for now; rely on in-app notifications only
+- [ ] **Analytics**: Consider free/self-hosted option later
 
-## Acceptance criteria (MVP)
-- [ ] Browse artworks and artists without login
-- [ ] Sign up, log in, update profile
-- [ ] Submit commission requests and view them in the `/commissions` hub
-- [ ] Artists can view incoming requests and accept/decline
- - [x] Artists can add artworks via URL (title, price, tags)
-- [ ] `/api/health/db` returns 200 when DB is reachable
-- [ ] Deployed on Vercel with seed data producing visible demo content
-
-## Notes
-- Keep everything within Vercel + MongoDB (free tiers acceptable); avoid features requiring paid subscriptions.
-- No external email, payments, or storage are required for MVP; use in-app flows and seeded images.
+## 📋 Notes
+- Keep everything within Vercel + MongoDB (free tiers)
+- No external email, payments, or storage required for MVP
+- Use in-app flows and seeded images only
