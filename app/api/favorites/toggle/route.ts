@@ -1,15 +1,10 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
-import { z } from 'zod'
-import { ObjectId } from 'mongodb'
 import { toggleFavorite, countFavoritesForArtwork } from '@/lib/db/favorites'
+import { FavoriteToggleSchema } from '@/lib/schemas/favorite'
 
 export const dynamic = 'force-dynamic'
-
-const ToggleSchema = z.object({
-  artworkId: z.string().refine((v) => ObjectId.isValid(v), 'Invalid artworkId')
-})
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
@@ -18,7 +13,7 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json().catch(() => null)
-  const parsed = ToggleSchema.safeParse(body)
+  const parsed = FavoriteToggleSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: 'Validation failed' }, { status: 400 })
   }
