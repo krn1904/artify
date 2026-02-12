@@ -2,7 +2,7 @@
 
 # 🎨 Artify
 
-### AI-Powered Custom Artwork Marketplace
+### Custom Artwork Marketplace
 
 A modern, full-stack marketplace connecting artists with customers for custom artwork commissions. Built with Next.js 15, MongoDB, and TypeScript.
 
@@ -11,7 +11,7 @@ A modern, full-stack marketplace connecting artists with customers for custom ar
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.3-green?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](./DOCUMENTATION.md)
+[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](./DOCUMENTATION.md) • [User Guide](./WORKING.md)
 
 </div>
 
