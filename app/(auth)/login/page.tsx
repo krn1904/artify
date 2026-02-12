@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { signIn, signOut } from "next-auth/react"
 import { Palette } from "lucide-react"
@@ -213,4 +213,14 @@ function LoginPage() {
   )
 }
 
-export default LoginPage
+export default function LoginPageWrapper() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center py-12">
+        <div className="text-sm text-muted-foreground">Loading...</div>
+      </div>
+    }>
+      <LoginPage />
+    </Suspense>
+  )
+}

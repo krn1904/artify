@@ -36,12 +36,13 @@ function parseIntOr<T extends number>(value: string | undefined, fallback: T, mi
 // no-op helper removed (filters deferred)
 
 // Public Explore page: lists artworks with optional tag filter and pagination.
-export default async function ExplorePage({ searchParams }: { searchParams: SearchParams }) {
+export default async function ExplorePage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const session = await getServerSession(authOptions)
-  const page = parseIntOr(searchParams.page, 1, 1)
-  const pageSize = parseIntOr(searchParams.pageSize, 12, 1, 100)
-  const activeTag = typeof searchParams.tags === 'string' ? searchParams.tags : undefined
-  const myOnly = searchParams.my === '1' && session?.user?.role === 'ARTIST'
+  const params = await searchParams
+  const page = parseIntOr(params.page, 1, 1)
+  const pageSize = parseIntOr(params.pageSize, 12, 1, 100)
+  const activeTag = typeof params.tags === 'string' ? params.tags : undefined
+  const myOnly = params.my === '1' && session?.user?.role === 'ARTIST'
 
   const { items, total } = await listArtworks(
     { tags: activeTag ? [activeTag] : undefined, artistId: myOnly ? session!.user.id : undefined },

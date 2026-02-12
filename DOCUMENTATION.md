@@ -397,25 +397,84 @@ Submit a contact form message.
 
 ### Next.js Configuration
 
-Key configurations in `next.config.js`:
+Key configurations in `next.config.js` (Next.js 15):
 
 ```javascript
 {
-  eslint: { ignoreDuringBuilds: true },
   images: { unoptimized: true },
+  serverExternalPackages: ['mongodb'],
   experimental: {
-    serverActions: true,
-    serverComponentsExternalPackages: ['mongodb']
-  },
-  typescript: { ignoreBuildErrors: true }
+    serverActions: {
+      bodySizeLimit: '2mb'
+    }
+  }
 }
 ```
 
-**MongoDB Driver:** Configured as external package for server components to prevent bundling issues.
+**MongoDB Driver:** Configured as external package for server components to prevent bundling issues. In Next.js 15, this moved from `experimental.serverComponentsExternalPackages` to the top-level `serverExternalPackages` config.
+
+**Server Actions:** In Next.js 15, Server Actions are enabled by default. The configuration now uses an object format instead of a boolean, allowing you to set options like `bodySizeLimit`.
 
 **Image Optimization:** Currently disabled (`unoptimized: true`). To enable:
 - Add `images.remotePatterns` for allowed image hosts (e.g., Unsplash)
 - Remove `unoptimized: true` flag
+
+### Next.js 15 Migration Notes
+
+This project has been upgraded to Next.js 15, which includes several breaking changes:
+
+**Async Route Parameters:**
+- `params` in route handlers and page components are now asynchronous
+- `searchParams` in page components are now asynchronous
+- Must be awaited: `const { id } = await params`
+
+**Example - Route Handler:**
+```typescript
+export async function GET(
+  _req: Request, 
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+  // ... use id
+}
+```
+
+**Example - Page Component:**
+```typescript
+export default async function Page({ 
+  params, 
+  searchParams 
+}: { 
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ page?: string }>
+}) {
+  const { id } = await params
+  const { page } = await searchParams
+  // ... use id and page
+}
+```
+
+**Suspense Boundaries:**
+- Client components using `useSearchParams()` must be wrapped in `<Suspense>`
+- This prevents build-time errors related to dynamic rendering
+
+**Example:**
+```tsx
+import { Suspense } from 'react'
+
+function LoginForm() {
+  const searchParams = useSearchParams() // Uses search params
+  // ... component logic
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  )
+}
+```
 
 ### MongoDB Connection Pooling
 

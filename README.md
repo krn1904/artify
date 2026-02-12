@@ -2,16 +2,16 @@
 
 # 🎨 Artify
 
-### AI-Powered Custom Artwork Marketplace
+### Custom Artwork Marketplace
 
-A modern, full-stack marketplace connecting artists with customers for custom artwork commissions. Built with Next.js 14, MongoDB, and TypeScript.
+A modern, full-stack marketplace connecting artists with customers for custom artwork commissions. Built with Next.js 15, MongoDB, and TypeScript.
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.3-green?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](./DOCUMENTATION.md)
+[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](./DOCUMENTATION.md) • [User Guide](./WORKING.md)
 
 </div>
 
@@ -61,7 +61,7 @@ A modern, full-stack marketplace connecting artists with customers for custom ar
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Framework:** [Next.js 14](https://nextjs.org/) (App Router, RSC, Server Actions)
+- **Framework:** [Next.js 15](https://nextjs.org/) (App Router, RSC, Server Actions)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components:** [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/)

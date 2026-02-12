@@ -4,9 +4,10 @@ import { getUserById } from '@/lib/db/users'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const art = await getArtworkById(params.id)
+    const { id } = await params
+    const art = await getArtworkById(id)
     if (!art) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
     const artist = await getUserById(art.artistId)

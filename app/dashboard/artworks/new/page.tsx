@@ -18,7 +18,7 @@ export default async function NewArtworkPage() {
   return (
     <div className="container mx-auto py-8 max-w-2xl">
       <h1 className="text-3xl font-bold mb-2">Add artwork</h1>
-      <p className="text-muted-foreground mb-6">Paste an image URL and details. You can upload images later.</p>
+      <p className="text-muted-foreground mb-6">Paste a direct image URL and add details to showcase your work.</p>
       <ArtworkForm />
     </div>
   )

@@ -25,9 +25,10 @@ function parseIntOr<T extends number>(value: string | undefined, fallback: T, mi
   return v
 }
 
-export default async function ArtistsPage({ searchParams }: { searchParams: SearchParams }) {
-  const page = parseIntOr(searchParams.page, 1, 1)
-  const pageSize = parseIntOr(searchParams.pageSize, 12, 1, 100)
+export default async function ArtistsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const params = await searchParams
+  const page = parseIntOr(params.page, 1, 1)
+  const pageSize = parseIntOr(params.pageSize, 12, 1, 100)
 
   const { items, total } = await listArtists(page, pageSize)
   const totalPages = Math.max(1, Math.ceil(total / pageSize))

@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Image from 'next/image'
 import { toast } from '@/hooks/use-toast'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { Info } from 'lucide-react'
 
 // Using shared form schema from lib/schemas
 
@@ -51,13 +53,48 @@ export function ArtworkForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-2">
-        <label className="text-sm font-medium">Image URL</label>
-        <Input placeholder="https://..." value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium">Image URL</label>
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <button type="button" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Info className="h-4 w-4" />
+              </button>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80">
+              <div className="space-y-2">
+                <h4 className="font-semibold text-sm">How to get a direct image URL</h4>
+                <div className="text-sm text-muted-foreground space-y-2">
+                  <p>You need the <strong>direct image URL</strong>, not the webpage URL:</p>
+                  <ol className="list-decimal ml-4 space-y-1">
+                    <li>Open the image in your browser</li>
+                    <li>Right-click on the image</li>
+                    <li>Select &quot;Copy image address&quot; or &quot;Copy image location&quot;</li>
+                    <li>Paste that URL here</li>
+                  </ol>
+                  <p className="text-xs pt-1">✓ Correct: <code className="text-xs">https://images.example.com/photo.jpg</code></p>
+                  <p className="text-xs">✗ Wrong: <code className="text-xs">https://example.com/photos/123</code></p>
+                </div>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+        <Input 
+          placeholder="https://example.com/image.jpg" 
+          value={imageUrl} 
+          onChange={(e) => setImageUrl(e.target.value)} 
+          required 
+        />
         {imageUrl ? (
           <Card className="mt-2 p-2">
             <div className="relative aspect-video w-full">
-              {/* Basic preview; relies on remote URL */}
-              <Image src={imageUrl} alt="Preview" fill className="object-cover rounded" />
+              <Image 
+                src={imageUrl} 
+                alt="Preview" 
+                fill 
+                className="object-cover rounded"
+                onError={() => setError('Failed to load image. Please verify the URL is a direct link to an image file.')}
+              />
             </div>
           </Card>
         ) : null}

@@ -11,17 +11,16 @@ import { Button } from '@/components/ui/button'
 import { Share2, SearchX } from 'lucide-react'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { CloseBack } from '@/components/close-back'
-import NextDynamic from 'next/dynamic'
 import { FavoriteButton } from '@/components/favorite-button'
 import { getFavoritesCollection } from '@/lib/db/favorites'
 import { ObjectId } from 'mongodb'
-
-const MyArtworkDelete = NextDynamic(() => import('@/components/my-artwork-delete'), { ssr: false })
+import MyArtworkDelete from '@/components/my-artwork-delete'
 
 export const dynamic = 'force-dynamic'
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const artist = await getUserById(params.id)
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const artist = await getUserById(id)
   if (!artist) return { title: 'Artist Not Found | Artify' }
   return {
     title: `${artist.name} | Artify`,
@@ -29,7 +28,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   }
 }
 
-interface PageProps { params: { id: string } }
+interface PageProps { params: Promise<{ id: string }> }
 
 function getInitials(name?: string) {
   if (!name) return 'A'
@@ -41,14 +40,15 @@ function getInitials(name?: string) {
 
 // Artist Profile page: shows bio and a portfolio grid of artworks by artistId.
 export default async function ArtistProfilePage({ params }: PageProps) {
+  const { id } = await params
   const [session, artist] = await Promise.all([
     getServerSession(authOptions),
-    getUserById(params.id),
+    getUserById(id),
   ])
   if (!artist) return notFound()
-  const isSelf = session?.user?.id === params.id
+  const isSelf = session?.user?.id === id
 
-  const { items: artworks, total } = await listArtworks({ artistId: params.id }, { page: 1, pageSize: 24 })
+  const { items: artworks, total } = await listArtworks({ artistId: id }, { page: 1, pageSize: 24 })
 
   // SSR-hydrate favorited state for the logged-in user
   let favoritedSet = new Set<string>()
@@ -82,7 +82,7 @@ export default async function ArtistProfilePage({ params }: PageProps) {
           {artist.bio ? (
             <p className="mt-3 max-w-3xl text-sm leading-relaxed whitespace-pre-line">{artist.bio}</p>
           ) : (
-            <p className="mt-3 text-sm text-muted-foreground">This artist hasn't added a bio yet.</p>
+            <p className="mt-3 text-sm text-muted-foreground">This artist hasn&apos;t added a bio yet.</p>
           )}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {isSelf ? (
@@ -120,7 +120,7 @@ export default async function ArtistProfilePage({ params }: PageProps) {
             </div>
             <div>
               <h3 className="text-lg font-semibold">No artworks yet</h3>
-              <p className="text-sm text-muted-foreground mt-1">This artist hasn't added any artworks to their portfolio.</p>
+              <p className="text-sm text-muted-foreground mt-1">This artist hasn&apos;t added any artworks to their portfolio.</p>
             </div>
           </div>
         </div>

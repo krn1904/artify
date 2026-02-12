@@ -98,7 +98,7 @@ export default function DashboardPage() {
             {avatarUrl ? (
               <Avatar className="h-12 w-12">
                 <AvatarImage src={avatarUrl} alt={session.user.name || 'Profile'} />
-                <AvatarFallback>{getInitials(session.user.name)}</AvatarFallback>
+                <AvatarFallback>{getInitials(session.user.name ?? undefined)}</AvatarFallback>
               </Avatar>
             ) : (
               <div className="h-12 w-12 flex items-center justify-center rounded-full bg-primary/10">
