@@ -18,8 +18,9 @@ import MyArtworkDelete from '@/components/my-artwork-delete'
 
 export const dynamic = 'force-dynamic'
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const artist = await getUserById(params.id)
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const artist = await getUserById(id)
   if (!artist) return { title: 'Artist Not Found | Artify' }
   return {
     title: `${artist.name} | Artify`,
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   }
 }
 
-interface PageProps { params: { id: string } }
+interface PageProps { params: Promise<{ id: string }> }
 
 function getInitials(name?: string) {
   if (!name) return 'A'
@@ -39,14 +40,15 @@ function getInitials(name?: string) {
 
 // Artist Profile page: shows bio and a portfolio grid of artworks by artistId.
 export default async function ArtistProfilePage({ params }: PageProps) {
+  const { id } = await params
   const [session, artist] = await Promise.all([
     getServerSession(authOptions),
-    getUserById(params.id),
+    getUserById(id),
   ])
   if (!artist) return notFound()
-  const isSelf = session?.user?.id === params.id
+  const isSelf = session?.user?.id === id
 
-  const { items: artworks, total } = await listArtworks({ artistId: params.id }, { page: 1, pageSize: 24 })
+  const { items: artworks, total } = await listArtworks({ artistId: id }, { page: 1, pageSize: 24 })
 
   // SSR-hydrate favorited state for the logged-in user
   let favoritedSet = new Set<string>()
