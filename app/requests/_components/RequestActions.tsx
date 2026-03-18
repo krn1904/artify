@@ -18,7 +18,7 @@ import { toast } from '@/hooks/use-toast'
 
 type Status = 'REQUESTED' | 'ACCEPTED' | 'DECLINED' | 'COMPLETED'
 
-export default function CommissionActions({ id, status }: { id: string; status?: Status }) {
+export default function RequestActions({ id, status }: { id: string; status?: Status }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [err, setErr] = useState<string | null>(null)
@@ -26,7 +26,7 @@ export default function CommissionActions({ id, status }: { id: string; status?:
   async function setStatus(status: 'ACCEPTED' | 'DECLINED' | 'COMPLETED') {
     setErr(null)
     try {
-      const res = await fetch(`/api/commissions/${id}`, {
+      const res = await fetch(`/api/requests/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
@@ -37,10 +37,10 @@ export default function CommissionActions({ id, status }: { id: string; status?:
       }
       const msg =
         status === 'ACCEPTED'
-          ? 'Commission accepted'
+          ? 'Request accepted'
           : status === 'DECLINED'
-          ? 'Commission declined'
-          : 'Commission marked as completed'
+          ? 'Request declined'
+          : 'Request marked as completed'
       toast({ title: msg })
       startTransition(() => router.refresh())
     } catch (e) {
@@ -59,7 +59,7 @@ export default function CommissionActions({ id, status }: { id: string; status?:
             <AlertDialogHeader>
               <AlertDialogTitle>Mark as completed?</AlertDialogTitle>
               <AlertDialogDescription>
-                This will move the commission to Completed. You can’t change it back.
+                This will move the request to Completed. You can’t change it back.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

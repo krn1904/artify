@@ -8,14 +8,14 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-4">
           <div className="space-y-2">
             <Link href="/" className="text-lg font-semibold">Artify</Link>
-            <p className="text-sm text-muted-foreground">Discover, commission, and showcase original art from talented creators worldwide.</p>
+            <p className="text-sm text-muted-foreground">Discover, request, and showcase original art from talented creators worldwide.</p>
           </div>
           <div>
             <h4 className="text-sm font-semibold mb-3">Product</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/explore" className="hover:text-foreground">Explore</Link></li>
               <li><Link href="/artists" className="hover:text-foreground">Artists</Link></li>
-              <li><Link href="/commissions" className="hover:text-foreground">Commissions</Link></li>
+              <li><Link href="/requests" className="hover:text-foreground">Requests</Link></li>
             </ul>
           </div>
           <div>

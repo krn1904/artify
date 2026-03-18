@@ -16,7 +16,7 @@ export default function PrivacyPage() {
         <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
           <li>Account details: name, email, password (hashed).</li>
           <li>Profile information: role, avatar URL, bio.</li>
-          <li>Content you create: artworks, tags, commission requests.</li>
+          <li>Content you create: artworks, tags, and custom requests.</li>
           <li>Technical data: basic logs for reliability and security.</li>
         </ul>
       </section>

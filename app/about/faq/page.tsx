@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata = {
   title: 'FAQ | Artify',
-  description: 'Answers to common questions about Artify, commissions, and accounts.'
+  description: 'Answers to common questions about Artify, requests, and accounts.'
 }
 
 export default function FAQPage() {
@@ -19,13 +19,13 @@ export default function FAQPage() {
         <AccordionItem value="what-is-artify">
           <AccordionTrigger>What is Artify?</AccordionTrigger>
           <AccordionContent>
-            Artify is a marketplace for discovering original art and requesting custom commissions directly from artists. It focuses on a clean, lightweight experience.
+            Artify is a marketplace for discovering original art and requesting custom artwork directly from artists. It focuses on a clean, lightweight experience.
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="how-commissions-work">
-          <AccordionTrigger>How do commissions work?</AccordionTrigger>
+        <AccordionItem value="how-requests-work">
+          <AccordionTrigger>How do requests work?</AccordionTrigger>
           <AccordionContent>
-            Browse artists, submit a commission request with your brief and budget, and the selected artist can accept or decline. Once accepted, you can track progress in your dashboard.
+            Browse artists or artworks, submit a custom artwork request with your brief and budget, and the selected artist can accept or decline. Once accepted, you can track the request status in your dashboard.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="pricing">
@@ -37,17 +37,16 @@ export default function FAQPage() {
         <AccordionItem value="account">
           <AccordionTrigger>Do I need an account to browse?</AccordionTrigger>
           <AccordionContent>
-            Browsing is open to everyone. You’ll need an account to favorite works, request commissions, or manage your profile.
+            Browsing is open to everyone. You’ll need an account to favorite works, request custom artwork, or manage your profile.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="artist">
           <AccordionTrigger>Can I become an artist on Artify?</AccordionTrigger>
           <AccordionContent>
-            Yes. Sign up and set your role to Artist in your profile. You can add artworks via URL and start accepting commissions.
+            Yes. Sign up and set your role to Artist in your profile. You can add artworks via URL and start accepting requests.
           </AccordionContent>
         </AccordionItem>
       </Accordion>
     </div>
   )
 }
-

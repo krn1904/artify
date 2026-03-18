@@ -84,8 +84,8 @@ export default function Navbar() {
               <Link href="/artists" className={linkClass("/artists")}>
                 Artists
               </Link>
-              <Link href="/commissions" className={linkClass("/commissions")}>
-                Commissions
+              <Link href="/requests" className={linkClass("/requests")}>
+                Requests
               </Link>
               {session?.user?.role === 'ARTIST' ? (
                 <Button asChild size="sm">
@@ -124,7 +124,7 @@ export default function Navbar() {
                       <Link href="/dashboard/favorites" prefetch={false}>My favorites</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/commissions">Commissions</Link>
+                      <Link href="/requests">Requests</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/' })}>Logout</DropdownMenuItem>
@@ -157,8 +157,8 @@ export default function Navbar() {
                   <Link href="/artists" className={linkClass("/artists")}>
                     Artists
                   </Link>
-                  <Link href="/commissions" className={linkClass("/commissions")}>
-                    Commissions
+                  <Link href="/requests" className={linkClass("/requests")}>
+                    Requests
                   </Link>
                   {session ? (
                     <>
@@ -172,8 +172,8 @@ export default function Navbar() {
                       <Link href="/dashboard/favorites" className={linkClass("/dashboard/favorites")}>
                         My favorites
                       </Link>
-                      <Link href="/commissions" className={linkClass("/commissions")}>
-                        Commissions
+                      <Link href="/requests" className={linkClass("/requests")}>
+                        Requests
                       </Link>
                     </>
                   ) : null}

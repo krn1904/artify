@@ -29,7 +29,7 @@ function startOfToday() {
   return today
 }
 
-export const CommissionCreateSchema = z.object({
+export const RequestCreateSchema = z.object({
   artistId: z.string().trim().regex(objectIdPattern, 'Invalid artist id'),
   title: z.string().trim().min(3).max(120).optional(),
   brief: z.string().trim().min(10, 'Please provide a short brief (min 10 chars)').max(2000),
@@ -66,10 +66,9 @@ export const CommissionCreateSchema = z.object({
         return parseDateInput(v)
       }
       return v
-    }, z.date().refine((d) => d >= startOfToday(), 'Due date cannot be before today'))
-    .optional(),
+    }, z.date().refine((d) => d >= startOfToday(), 'Due date cannot be before today').optional()),
 })
 
-export const CommissionStatusSchema = z.object({
+export const RequestStatusSchema = z.object({
   status: z.enum(['REQUESTED', 'ACCEPTED', 'DECLINED', 'COMPLETED']),
 })

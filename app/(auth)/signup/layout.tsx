@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Create Account | Artify',
-  description: 'Join Artify to discover and commission artwork.',
+  description: 'Join Artify to discover and request artwork.',
 }
 
 export default function SignupLayout({ children }: { children: React.ReactNode }) {

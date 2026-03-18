@@ -11,13 +11,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { listArtworks, getArtworksCollection } from "@/lib/db/artworks";
 import { getUsersCollection } from "@/lib/db/users";
-import { getCommissionsCollection } from "@/lib/db/commissions";
+import { getRequestsCollection } from "@/lib/db/requests";
 import { ArtMarquee } from "@/components/landing/art-marquee";
 import { FeatureFlow } from "@/components/landing/feature-flow";
 
 export const metadata: Metadata = {
-  title: "Artify — Discover and Commission Custom Artwork",
-  description: "Browse unique artwork or commission custom pieces from artists.",
+  title: "Artify — Discover and Request Custom Artwork",
+  description: "Browse unique artwork or request custom pieces from artists.",
 };
 
 export default async function Home() {
@@ -28,10 +28,10 @@ export default async function Home() {
   const marquee = recent.map((a) => ({ src: a.imageUrl, alt: a.title }));
 
   // Lightweight counts for social proof
-  const [artworksCount, artistsCount, commissionsCount] = await Promise.all([
+  const [artworksCount, artistsCount, requestsCount] = await Promise.all([
     (await getArtworksCollection()).countDocuments({}),
     (await getUsersCollection()).countDocuments({ role: "ARTIST" }),
-    (await getCommissionsCollection()).countDocuments({}),
+    (await getRequestsCollection()).countDocuments({}),
   ]);
 
   return (
@@ -42,7 +42,7 @@ export default async function Home() {
           <div className="flex flex-col items-center text-center gap-6">
             <div className="space-y-3">
               <h1 className="text-3xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-                Discover Unique Artwork & Commission
+                Discover Unique Artwork & Request
                 <span className="block bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
                   Custom Pieces
                 </span>
@@ -83,7 +83,7 @@ export default async function Home() {
             <div className="mt-2 grid grid-cols-3 gap-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2"><BadgeCheck className="h-4 w-4" />{artworksCount} artworks</div>
               <div className="flex items-center gap-2"><Brush className="h-4 w-4" />{artistsCount} artists</div>
-              <div className="flex items-center gap-2"><Sparkles className="h-4 w-4" />{commissionsCount} commissions</div>
+              <div className="flex items-center gap-2"><Sparkles className="h-4 w-4" />{requestsCount} requests</div>
             </div>
           </div>
         </div>

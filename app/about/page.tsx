@@ -13,7 +13,7 @@ export default function AboutPage() {
       <header className="space-y-3">
         <h1 className="text-3xl md:text-4xl font-bold">About Artify</h1>
         <p className="text-muted-foreground md:text-lg">
-          Artify is a simple marketplace to discover original artwork and collaborate directly with artists on custom commissions.
+          Artify is a simple marketplace to discover original artwork and collaborate directly with artists on custom requests.
         </p>
       </header>
 
@@ -38,7 +38,7 @@ export default function AboutPage() {
           <div className="relative">
             <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20"><Users className="h-5 w-5" /></div>
             <h3 className="font-semibold mb-1">Connect</h3>
-            <p className="text-sm text-muted-foreground">Message artists and request commissions with your brief, budget, and timeline.</p>
+            <p className="text-sm text-muted-foreground">Message artists and request custom artwork with your brief, budget, and timeline.</p>
           </div>
         </div>
         <div className="group relative overflow-hidden rounded-xl border p-6 bg-background">
@@ -54,7 +54,7 @@ export default function AboutPage() {
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">For Artists</h2>
         <ul className="space-y-2 text-muted-foreground">
-          {["Share your portfolio with simple, URL‑based uploads.","Receive commission requests with clear briefs and expectations.","Manage requests and communicate status from one place."].map((t) => (
+          {["Share your portfolio with simple, URL‑based uploads.","Receive custom requests with clear briefs and expectations.","Manage requests and communicate status from one place."].map((t) => (
             <li key={t} className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" /><span>{t}</span></li>
           ))}
         </ul>
@@ -63,7 +63,7 @@ export default function AboutPage() {
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">For Collectors</h2>
         <ul className="space-y-2 text-muted-foreground">
-          {["Explore curated work and discover new artists and styles.","Commission custom pieces tailored to your space and story.","Track progress and keep everything organized in your dashboard."].map((t) => (
+          {["Explore curated work and discover new artists and styles.","Request custom pieces tailored to your space and story.","Track progress and keep everything organized in your dashboard."].map((t) => (
             <li key={t} className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" /><span>{t}</span></li>
           ))}
         </ul>
