@@ -6,13 +6,13 @@ This guide explains what you can do and how to get around.
 ### What you can do
 - Browse artwork without creating an account.
 - Open an artwork to see details and visit the artist’s profile.
-- Contact an artist by sending a commission request (requires login).
+- Contact an artist by sending a custom request (requires login).
 - After logging in, access your dashboard and manage requests.
 
 ### Getting started
 1) Go to the homepage.
 2) If you just want to explore, click Explore to browse artworks and categories.
-3) If you want to commission an artist or save progress, log in or sign up.
+3) If you want to request custom artwork or save progress, log in or sign up.
 
 ### Browsing artwork
 - Explore shows a grid of artworks with images, titles, prices, and tags.
@@ -23,28 +23,29 @@ This guide explains what you can do and how to get around.
 
 ### Viewing artwork details
 - On an artwork page you’ll see a large image, title, price, tags, and description.
+- You can start a custom artwork request directly from the artwork page; the form pre-fills the artist and adds that artwork as a reference.
 - You can jump to the artist’s profile from here.
  - Use the heart button to favorite/unfavorite; your state renders accurately on revisit.
 
 ### Meeting artists
 - On an artist’s profile you’ll see their name, bio, and a portfolio of their artworks.
-- Ready to collaborate? Click “Request commission” to contact the artist.- When viewing your own artist profile, you'll see an "Edit profile" button to update your details and an "Add artwork" button for your portfolio. - Favorite/unfavorite artworks directly from the profile grid.
+- Ready to collaborate? Click “Request custom artwork” to contact the artist.- When viewing your own artist profile, you'll see an "Edit profile" button to update your details and an "Add artwork" button for your portfolio. - Favorite/unfavorite artworks directly from the profile grid.
 
-### Requesting a commission (login required)
-- Click “Request commission” on an artist profile, or go to the Commissions hub → New Request.
+### Requesting custom artwork (login required)
+- Click “Request custom artwork” on an artwork page, in artwork quick view, on an artist profile, or go to the Requests hub → New Request.
 - The form includes:
-  - Artist (search by name; pre‑filled from profile when applicable)
-  - Title (optional)
+  - Artist (search by name; pre‑filled from the selected artist or artwork when applicable)
+  - Title (optional; pre-filled when starting from an artwork)
   - Brief (minimum 10 characters)
-  - Budget (optional)
-  - Reference URLs (optional; one link per line)
+  - Budget (required)
+  - Reference URLs (optional; one link per line, with the artwork URL pre-filled when starting from an artwork)
   - Due date (optional)
-- After submitting, you’ll see a toast confirmation and be taken to the Commissions hub.
-- Note: You cannot request a commission from your own artist profile.
+- After submitting, you’ll see a toast confirmation and be taken to the Requests hub.
+- Note: You cannot create a request from your own artist profile.
 
-### Commissions hub
-- Visit `/commissions` to manage requests.
-- Customer: “My Requests” shows your commissions; “New Request” starts a new one.
+### Requests hub
+- Visit `/requests` to manage requests.
+- Customer: “My Requests” shows your requests; “New Request” starts a new one.
 - Artist: “Incoming” shows new requests; “Archive” shows accepted/declined/completed.
 - The page auto‑updates on focus (and for artists every ~15s). Use the Refresh button if needed.
 
@@ -69,11 +70,11 @@ This guide explains what you can do and how to get around.
 
 ### In‑app notifications
 - The app shows small toast messages for key actions (request created, accepted, declined, completed).
-- Tab badges in the Commissions hub show counts for Incoming and My Requests.
+- Tab badges in the Requests hub show counts for Incoming and My Requests.
 
 ### Signing in and out
 - Use the Login or Sign Up buttons in the navigation when you’re not signed in.
-- After you sign in, an avatar menu appears with Dashboard, Profile, My favorites, Commissions, and Logout.- Clicking "Profile" takes you to your public artist profile page where you can see how others view your profile.
+- After you sign in, an avatar menu appears with Dashboard, Profile, My favorites, Requests, and Logout.- Clicking "Profile" takes you to your public artist profile page where you can see how others view your profile.
 ### Profile settings
 - Click "Profile" in the navbar to view your public profile page.
 - From your profile, click "Edit profile" to update your name, avatar image URL, and bio.

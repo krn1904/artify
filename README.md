@@ -4,7 +4,7 @@
 
 ### Custom Artwork Marketplace
 
-A modern, full-stack marketplace connecting artists with customers for custom artwork commissions. Built with Next.js 15, MongoDB, and TypeScript.
+A modern, full-stack marketplace connecting artists with customers for custom artwork requests. Built with Next.js 15, MongoDB, and TypeScript.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
@@ -19,13 +19,13 @@ A modern, full-stack marketplace connecting artists with customers for custom ar
 
 ## 📖 Overview
 
-**Artify** is a comprehensive marketplace platform that bridges artists and art enthusiasts. Whether you're an artist looking to showcase your portfolio and accept commissions, or a customer searching for unique artwork and custom pieces, Artify provides an intuitive, feature-rich experience.
+**Artify** is a comprehensive marketplace platform that bridges artists and art enthusiasts. Whether you're an artist looking to showcase your portfolio and accept requests, or a customer searching for unique artwork and custom pieces, Artify provides an intuitive, feature-rich experience.
 
 ### What It Does
 
 - **🖼️ Artwork Discovery** - Browse and explore curated artworks from talented artists
 - **👨‍🎨 Artist Profiles** - Showcase portfolios with detailed artist bios and collections
-- **📝 Commission Management** - Seamless request-accept-complete workflow for custom art
+- **📝 Request Management** - Seamless request-accept-complete workflow for custom art
 - **❤️ Favorites System** - Bookmark and manage your favorite artworks
 - **🔐 Secure Authentication** - Role-based access for customers and artists
 - **📱 Responsive Design** - Beautiful UI that works on all devices
@@ -37,14 +37,14 @@ A modern, full-stack marketplace connecting artists with customers for custom ar
 ### For Customers
 - 🔍 **Browse & Discover** - Explore paginated artwork collections with tag filtering
 - ❤️ **Favorites** - Save artworks you love to your personal collection
-- 📋 **Commission Requests** - Request custom artwork from your favorite artists
-- 👤 **Personal Dashboard** - Manage your profile, favorites, and commission requests
-- 🔔 **Status Notifications** - Get in-app toast notifications about commission updates
+- 📋 **Custom Requests** - Request custom artwork from your favorite artists
+- 👤 **Personal Dashboard** - Manage your profile, favorites, and custom requests
+- 🔔 **Status Notifications** - Get in-app toast notifications about request updates
 
 ### For Artists
 - 🎨 **Portfolio Management** - Upload and manage your artwork collection
-- 📬 **Commission Hub** - View incoming commission requests in a centralized dashboard
-- ✅ **Request Workflow** - Accept, decline, or mark commissions as completed
+- 📬 **Requests Hub** - View incoming custom requests in a centralized dashboard
+- ✅ **Request Workflow** - Accept, decline, or mark requests as completed
 - 💼 **Artist Profile** - Showcase your bio, skills, and portfolio
 - 🎯 **Role-based Features** - Access artist-specific tools and dashboards
 
@@ -144,15 +144,15 @@ Before you begin, ensure you have the following installed:
 1. **Sign Up** as an artist
 2. **Complete your profile** with bio and avatar
 3. **Add artworks** to your portfolio via Dashboard → Add Artwork
-4. **Manage commissions** in the Commissions hub
+4. **Manage requests** in the Requests hub
 
 ### For Customers
 
 1. **Browse artworks** on the Explore page
 2. **Favorite** artworks you love
 3. **Visit artist profiles** to see their full portfolio
-4. **Request commissions** from any artist
-5. **Track requests** in your Commissions dashboard
+4. **Request custom artwork** from any artist
+5. **Track requests** in your Requests dashboard
 
 ### API Health Check
 
@@ -179,7 +179,7 @@ artify/
 │   ├── api/               # API endpoints
 │   ├── explore/           # Artwork discovery page
 │   ├── artists/           # Artist listing page
-│   ├── commissions/       # Commission management
+│   ├── requests/       # Request management
 │   └── dashboard/         # User dashboard & settings
 ├── components/            # React components
 │   ├── ui/               # shadcn/ui components
@@ -187,7 +187,7 @@ artify/
 │   └── shared/           # Reusable components
 ├── lib/                   # Utilities & configurations
 │   ├── db/               # MongoDB repositories
-│   ├── schemas/          # Zod validation schemas (auth, artwork, commission, favorite, user)
+│   ├── schemas/          # Zod validation schemas (auth, artwork, request, favorite, user)
 │   └── authOptions.ts    # NextAuth configuration
 ├── hooks/                 # Custom React hooks
 ├── types/                 # TypeScript type definitions
