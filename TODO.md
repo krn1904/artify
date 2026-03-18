@@ -26,9 +26,9 @@
 
 ## 🟢 Nice to Have
 
-### Enhanced Commission Features
-- [ ] Commission detail page at `/commissions/[id]`
-- [ ] Commission status history
+### Enhanced Request Features
+- [ ] Request detail page at `/requests/[id]`
+- [ ] Request status history
 - [ ] Simple messaging system (no realtime)
 
 ### Future Enhancements

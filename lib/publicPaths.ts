@@ -6,7 +6,7 @@ export const PUBLIC_PATHS: RegExp[] = [
   /^\/signup$/,
   /^\/explore(\/.*)?$/,
   /^\/artists(\/.*)?$/,
-  /^\/commissions(\/.*)?$/,
+  /^\/requests(\/.*)?$/,
   /^\/about(\/.*)?$/,
   /^\/privacy$/,
   /^\/terms$/,

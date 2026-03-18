@@ -96,7 +96,7 @@ export default async function ArtistProfilePage({ params }: PageProps) {
               </>
             ) : (
               <Button asChild>
-                <Link href={`/commissions/new?artistId=${String(artist._id)}`}>Request commission</Link>
+                <Link href={`/requests/new?artistId=${String(artist._id)}`}>Request custom artwork</Link>
               </Button>
             )}
             <Button asChild variant="outline">

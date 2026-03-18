@@ -168,10 +168,10 @@ export function ArtworkQuickView({ id, title, imageUrl, price, description, tags
             </Button>
             {display.artistId ? (
               isSelf ? (
-                <Button disabled title="You can’t request a commission from your own profile">Request commission</Button>
+                <Button disabled title="You can’t create a request from your own profile">Request custom artwork</Button>
               ) : (
                 <Button asChild>
-                  <Link href={`/artist/${display.artistId}`}>Request commission</Link>
+                  <Link href={`/requests/new?artworkId=${id}`}>Request custom artwork</Link>
                 </Button>
               )
             ) : null}

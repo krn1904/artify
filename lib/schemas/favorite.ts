@@ -1,6 +1,7 @@
 import { z } from 'zod'
-import { ObjectId } from 'mongodb'
+
+const objectIdPattern = /^[a-f\d]{24}$/i
 
 export const FavoriteToggleSchema = z.object({
-  artworkId: z.string().refine((v) => ObjectId.isValid(v), 'Invalid artworkId')
+  artworkId: z.string().trim().regex(objectIdPattern, 'Invalid artworkId')
 })

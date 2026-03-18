@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Artify - AI-Powered Custom Artwork Marketplace',
-  description: 'Discover and commission unique artwork from talented artists worldwide',
+  description: 'Discover and request unique artwork from talented artists worldwide',
 };
 
 export default function RootLayout({

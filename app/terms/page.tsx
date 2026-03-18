@@ -27,8 +27,8 @@ export default function TermsPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-2">4. Commissions</h2>
-        <p className="text-muted-foreground">Commission requests help connect customers and artists. Any agreements, timelines, or deliverables are between the customer and the artist. Respect intellectual property and only upload content you have rights to use.</p>
+        <h2 className="text-xl font-semibold mb-2">4. Requests</h2>
+        <p className="text-muted-foreground">Request requests help connect customers and artists. Any agreements, timelines, or deliverables are between the customer and the artist. Respect intellectual property and only upload content you have rights to use.</p>
       </section>
 
       <section>

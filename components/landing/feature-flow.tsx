@@ -22,16 +22,16 @@ const STEPS: Step[] = [
   },
   {
     eyebrow: "Collaborate",
-    title: "Request a Commission",
+    title: "Request Custom Artwork",
     description: "Share a brief and budget to work one‑on‑one with an artist.",
-    href: "/commissions",
+    href: "/requests",
     icon: <Users className="h-5 w-5" />,
   },
   {
     eyebrow: "Deliver",
     title: "Track to Completion",
     description: "Follow progress from concept to delivery with clear updates.",
-    href: "/commissions",
+    href: "/requests",
     icon: <Sparkles className="h-5 w-5" />,
   },
 ]

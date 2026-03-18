@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { ObjectId } from 'mongodb'
 import { authOptions } from '@/lib/authOptions'
-import { createCommission } from '@/lib/db/commissions'
+import { createRequest } from '@/lib/db/requests'
 import { getUserById } from '@/lib/db/users'
-import { CommissionCreateSchema } from '@/lib/schemas/commission'
+import { RequestCreateSchema } from '@/lib/schemas/request'
 import { requireAuth } from '@/lib/authz'
 
 export const dynamic = 'force-dynamic'
@@ -21,13 +21,7 @@ export async function POST(req: Request) {
   const raw = await req.clone().json().catch(() => null)
     if (!raw) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
 
-    // Normalize: if budget is empty string or null, drop it before validation
-    const normalized = { ...raw }
-    if (Object.prototype.hasOwnProperty.call(normalized, 'budget')) {
-      const b = normalized.budget
-      if (b == null || (typeof b === 'string' && b.trim() === '')) delete normalized.budget
-    }
-    const body = CommissionCreateSchema.safeParse(normalized)
+    const body = RequestCreateSchema.safeParse(raw)
     if (!body.success) {
       const flat = body.error.flatten()
       return NextResponse.json({ error: 'Validation failed', details: flat }, { status: 400 })
@@ -39,12 +33,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Artist not found' }, { status: 404 })
     }
 
-    // Prevent self-commission: an artist/customer cannot request themself
+    // Prevent self-request: an artist/customer cannot request themself
     if ((session as any).user.id === body.data.artistId) {
-      return NextResponse.json({ error: 'You cannot request a commission from yourself' }, { status: 400 })
+      return NextResponse.json({ error: 'You cannot create a request for yourself' }, { status: 400 })
     }
 
-    const doc = await createCommission({
+    const doc = await createRequest({
       artistId: new ObjectId(body.data.artistId),
       customerId: new ObjectId((session as any).user.id),
       title: body.data.title,
