@@ -44,7 +44,7 @@ function RequestRow({ c }: { c: RequestDoc }) {
 }
 
 async function attachCustomerNames(requests: RequestDoc[]) {
-  const customerIds = [...new Set(requests.map((request) => String(request.customerId)))]
+  const customerIds = Array.from(new Set(requests.map((request) => String(request.customerId))))
   const customers = await Promise.all(
     customerIds.map(async (customerId) => [customerId, await getUserById(customerId)] as const)
   )
