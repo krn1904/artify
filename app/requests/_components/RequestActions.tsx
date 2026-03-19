@@ -18,7 +18,15 @@ import { toast } from '@/hooks/use-toast'
 
 type Status = 'REQUESTED' | 'ACCEPTED' | 'DECLINED' | 'COMPLETED'
 
-export default function RequestActions({ id, status }: { id: string; status?: Status }) {
+export default function RequestActions({
+  id,
+  status,
+  onSuccess,
+}: {
+  id: string
+  status?: Status
+  onSuccess?: () => void
+}) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [err, setErr] = useState<string | null>(null)
@@ -42,6 +50,7 @@ export default function RequestActions({ id, status }: { id: string; status?: St
           ? 'Request declined'
           : 'Request marked as completed'
       toast({ title: msg })
+      onSuccess?.()
       startTransition(() => router.refresh())
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Failed to update')
@@ -115,4 +124,3 @@ export default function RequestActions({ id, status }: { id: string; status?: St
     </div>
   )
 }
-
