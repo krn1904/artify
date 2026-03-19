@@ -1,14 +1,11 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import Navbar from '@/components/navbar';
 import AuthSessionProvider from '@/components/auth-session-provider';
 import FooterController from '@/components/footer-controller';
 import { Analytics } from '@vercel/analytics/react';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Artify - AI-Powered Custom Artwork Marketplace',
@@ -22,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body>
         <AuthSessionProvider>
           <ThemeProvider
             attribute="class"

@@ -2,12 +2,14 @@ import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { listArtistRequests, listCustomerRequests, type RequestDoc } from '@/lib/db/requests'
+import { getUserById } from '@/lib/db/users'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Inbox, Archive as ArchiveIcon } from 'lucide-react'
 import RouteRefresher from '@/components/shared/route-refresher'
 import RefreshHint from '@/components/shared/refresh-hint'
+import SellerRequestDetailsDialog from './_components/SellerRequestDetailsDialog'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,6 +43,21 @@ function RequestRow({ c }: { c: RequestDoc }) {
   )
 }
 
+async function attachCustomerNames(requests: RequestDoc[]) {
+  const customerIds = Array.from(new Set(requests.map((request) => String(request.customerId))))
+  const customers = await Promise.all(
+    customerIds.map(async (customerId) => [customerId, await getUserById(customerId)] as const)
+  )
+  const customerNameMap = new Map(
+    customers.map(([customerId, customer]) => [customerId, customer?.name || 'Unknown buyer'])
+  )
+
+  return requests.map((request) => ({
+    ...request,
+    customerName: customerNameMap.get(String(request.customerId)) || 'Unknown buyer',
+  }))
+}
+
 export default async function RequestsHubPage() {
   const session = await getServerSession(authOptions)
 
@@ -72,6 +89,9 @@ export default async function RequestsHubPage() {
     const incoming = await listArtistRequests(session.user.id, 'REQUESTED', 1, 20)
     const archiveAll = await listArtistRequests(session.user.id, undefined, 1, 20)
     const archive = archiveAll.items.filter((c) => c.status !== 'REQUESTED')
+    const allRequests = await attachCustomerNames([...incoming.items, ...archive])
+    const incomingWithCustomerNames = allRequests.filter((c) => c.status === 'REQUESTED')
+    const archiveWithCustomerNames = allRequests.filter((c) => c.status !== 'REQUESTED')
 
     return (
       <div className="container mx-auto max-w-3xl py-10">
@@ -103,14 +123,22 @@ export default async function RequestsHubPage() {
               </div>
             ) : (
               <div className="divide-y rounded-md border">
-                {incoming.items.map((c) => (
-                  <div key={String(c._id)} className="px-4">
-                    <RequestRow c={c} />
-                    {/* Actions: include accept/decline client buttons */}
-                    <div className="pb-4">
-                      <RequestActions id={String(c._id)} status={c.status} />
-                    </div>
-                  </div>
+                {incomingWithCustomerNames.map((c) => (
+                  <SellerRequestDetailsDialog
+                    key={String(c._id)}
+                    request={{
+                      id: String(c._id),
+                      title: c.title,
+                      brief: c.brief,
+                      budget: c.budget,
+                      referenceUrls: c.referenceUrls,
+                      dueDate: c.dueDate?.toISOString() ?? null,
+                      status: c.status,
+                      createdAt: c.createdAt.toISOString(),
+                      updatedAt: c.updatedAt.toISOString(),
+                      customerName: c.customerName,
+                    }}
+                  />
                 ))}
               </div>
             )}
@@ -126,15 +154,22 @@ export default async function RequestsHubPage() {
               </div>
             ) : (
               <div className="divide-y rounded-md border">
-                {archive.map((c) => (
-                  <div key={String(c._id)} className="px-4">
-                    <RequestRow c={c} />
-                    {c.status === 'ACCEPTED' ? (
-                      <div className="pb-4">
-                        <RequestActions id={String(c._id)} status={c.status} />
-                      </div>
-                    ) : null}
-                  </div>
+                {archiveWithCustomerNames.map((c) => (
+                  <SellerRequestDetailsDialog
+                    key={String(c._id)}
+                    request={{
+                      id: String(c._id),
+                      title: c.title,
+                      brief: c.brief,
+                      budget: c.budget,
+                      referenceUrls: c.referenceUrls,
+                      dueDate: c.dueDate?.toISOString() ?? null,
+                      status: c.status,
+                      createdAt: c.createdAt.toISOString(),
+                      updatedAt: c.updatedAt.toISOString(),
+                      customerName: c.customerName,
+                    }}
+                  />
                 ))}
               </div>
             )}
@@ -196,7 +231,3 @@ export default async function RequestsHubPage() {
     </div>
   )
 }
-
-// Client actions for artist: Accept/Decline
-// Placed at bottom to keep file server by default
-import RequestActions from './_components/RequestActions'
