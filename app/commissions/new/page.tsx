@@ -26,7 +26,11 @@ export default async function NewCommissionPage({ searchParams }: PageProps) {
       <p className="text-muted-foreground mb-6">Share your idea and budget. The artist will review and respond.</p>
 
       <CommissionRequestForm
-        presetArtist={artist ? { id: String(artist._id), name: artist.name } : undefined}
+        presetArtist={artist ? {
+          id: String(artist._id),
+          name: artist.name,
+          openToCommissions: (artist as any).openToCommissions ?? true,
+        } : undefined}
         viewerId={session.user.id}
       />
     </div>

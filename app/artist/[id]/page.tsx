@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/authOptions'
 import { getUserById } from '@/lib/db/users'
 import { listArtworks } from '@/lib/db/artworks'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Share2, SearchX } from 'lucide-react'
@@ -15,6 +16,7 @@ import { FavoriteButton } from '@/components/favorite-button'
 import { getFavoritesCollection } from '@/lib/db/favorites'
 import { ObjectId } from 'mongodb'
 import MyArtworkDelete from '@/components/my-artwork-delete'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,6 +49,7 @@ export default async function ArtistProfilePage({ params }: PageProps) {
   ])
   if (!artist) return notFound()
   const isSelf = session?.user?.id === id
+  const openToCommissions = (artist as any).openToCommissions ?? true
 
   const { items: artworks, total } = await listArtworks({ artistId: id }, { page: 1, pageSize: 24 })
 
@@ -77,7 +80,12 @@ export default async function ArtistProfilePage({ params }: PageProps) {
           <AvatarFallback>{getInitials(artist.name)}</AvatarFallback>
         </Avatar>
         <div>
-          <h1 className="text-3xl font-bold">{artist.name}</h1>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-3xl font-bold">{artist.name}</h1>
+            <Badge variant={openToCommissions ? 'default' : 'secondary'}>
+              {openToCommissions ? 'Open to commissions' : 'Not accepting commissions'}
+            </Badge>
+          </div>
           <p className="text-sm text-muted-foreground">{artist.email}</p>
           {artist.bio ? (
             <p className="mt-3 max-w-3xl text-sm leading-relaxed whitespace-pre-line">{artist.bio}</p>
@@ -94,10 +102,23 @@ export default async function ArtistProfilePage({ params }: PageProps) {
                   <Link href="/dashboard/artworks/new">Add artwork</Link>
                 </Button>
               </>
-            ) : (
+            ) : openToCommissions ? (
               <Button asChild>
                 <Link href={`/commissions/new?artistId=${String(artist._id)}`}>Request commission</Link>
               </Button>
+            ) : (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0}>
+                      <Button disabled>Request commission</Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>This artist is not accepting new commissions right now.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
             <Button asChild variant="outline">
               <Link href="/explore">Browse more artwork</Link>

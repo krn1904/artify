@@ -9,6 +9,7 @@ export const UserProfileUpdateSchema = z.object({
     .optional()
     .or(z.literal('')),
   bio: z.string().trim().max(1000, 'Bio must be 1000 characters or fewer').optional().or(z.literal('')),
+  openToCommissions: z.boolean().optional(),
   role: z.enum(['CUSTOMER', 'ARTIST']).optional(),
 })
 

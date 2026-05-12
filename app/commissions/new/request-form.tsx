@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from '@/hooks/use-toast'
 import { CommissionCreateSchema } from '@/lib/schemas/commission'
 
-type PresetArtist = { id: string; name: string }
+type PresetArtist = { id: string; name: string; openToCommissions?: boolean }
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
@@ -27,7 +27,7 @@ export function CommissionRequestForm({ presetArtist, viewerId }: { presetArtist
   const [dueDate, setDueDate] = useState('') // yyyy-mm-dd
   const [error, setError] = useState<string | null>(null)
   const [query, setQuery] = useState('')
-  const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string; avatarUrl: string | null }>>([])
+  const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string; avatarUrl: string | null; openToCommissions?: boolean }>>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
 
   const Schema = CommissionCreateSchema
@@ -106,6 +106,14 @@ export function CommissionRequestForm({ presetArtist, viewerId }: { presetArtist
           </AlertDescription>
         </Alert>
       ) : null}
+      {presetArtist && presetArtist.openToCommissions === false ? (
+        <Alert variant="destructive">
+          <AlertTitle>Artist not accepting commissions</AlertTitle>
+          <AlertDescription>
+            This artist is not accepting new commissions right now. You can still submit, but they may decline.
+          </AlertDescription>
+        </Alert>
+      ) : null}
       <div className="space-y-2">
         <label className="text-sm font-medium">Artist</label>
         {presetArtist ? (
@@ -148,6 +156,9 @@ export function CommissionRequestForm({ presetArtist, viewerId }: { presetArtist
                         <AvatarFallback>{(s.name?.[0] || 'A').toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <span className="text-sm">{s.name}</span>
+                      {s.openToCommissions === false && (
+                        <span className="ml-auto text-xs text-muted-foreground">Closed</span>
+                      )}
                     </li>
                   ))}
                 </ul>
