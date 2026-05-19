@@ -13,7 +13,7 @@
 
 ## Quick Reference
 
-**For setup, installation, and general project information, see [README.md](./README.md)**
+**For setup, installation, and general project information, see [README.md](../README.md)**
 
 This document focuses on:
 - **API Endpoints** - Complete endpoint reference with request/response examples
@@ -509,7 +509,7 @@ The middleware (`middleware.ts`) handles:
 
 ## Additional Resources
 
-- **[README.md](./README.md)** - Project overview, setup guide, and getting started
+- **[README.md](../README.md)** - Project overview, setup guide, and getting started
 - **[TODO.md](./TODO.md)** - Development roadmap and pending tasks
 
 ---
