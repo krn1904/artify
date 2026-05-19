@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
-import { getMongoDatabase } from './db';
+import { getMongoDatabase } from '../db';
 
 export const authOptions: NextAuthOptions = {
   providers: [
