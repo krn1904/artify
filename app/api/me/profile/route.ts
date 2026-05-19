@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { authOptions } from '@/lib/auth/authOptions'
 import { getUsersCollection } from '@/lib/db/users'
 import { ObjectId } from 'mongodb'
 import { sanitizeInput } from '@/lib/utils'
 import { UserProfileUpdateSchema } from '@/lib/schemas/user'
-import { requireAuth } from '@/lib/authz'
+import { requireAuth } from '@/lib/auth/authz'
 
 export const dynamic = 'force-dynamic'
 

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { authOptions } from '@/lib/auth/authOptions'
 import { getUserById } from '@/lib/db/users'
 import { getArtworkById } from '@/lib/db/artworks'
 import { ArtworkRequestForm } from '@/app/requests/new/request-form'

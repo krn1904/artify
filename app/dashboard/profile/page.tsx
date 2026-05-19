@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { authOptions } from '@/lib/auth/authOptions'
 import { redirect } from 'next/navigation'
 import { getUserById } from '@/lib/db/users'
 import ProfileForm from './profile-form'
