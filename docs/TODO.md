@@ -14,8 +14,9 @@
 ## 🟡 Medium Priority
 
 ### Search & Discovery
-- [ ] Implement basic search functionality
-- [ ] Add filters to Explore page (tags, price range)
+- [ ] Implement basic artwork search functionality
+- [x] Add tag filters to Explore page
+- [ ] Add price range filters to Explore page
 - [ ] Add artist search with filters
 
 ### Code Organization
@@ -26,16 +27,18 @@
 
 ## 🟢 Nice to Have
 
-### Enhanced Commission Features
-- [ ] Commission detail page at `/commissions/[id]`
-- [ ] Commission status history
+### Enhanced Request Features
+- [ ] Request detail page at `/requests/[id]`
+- [ ] Request status history
 - [ ] Simple messaging system (no realtime)
 
 ### Future Enhancements
 - [ ] Social authentication (Google/GitHub)
 - [ ] File upload system (Vercel Blob or Cloudinary)
 - [ ] Role switching functionality
-- [ ] Mock payment checkout flow
+- [ ] Stripe payment integration for custom requests
+- [ ] Payment intent / checkout flow for accepted requests
+- [ ] Payment status tracking and webhook handling
 - [ ] Email notifications system
 ---
 
@@ -43,5 +46,5 @@
 - Vercel hosting (free tier)
 - MongoDB Atlas (free tier)
 - No external email service for MVP
-- No real payment gateway
+- Stripe not integrated yet
 - URL-based images only

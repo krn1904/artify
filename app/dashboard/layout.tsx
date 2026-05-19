@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Dashboard | Artify',
-  description: 'Manage your profile, artworks, and commissions.',
+  description: 'Manage your profile, artworks, and requests.',
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

@@ -8,6 +8,25 @@ const nextConfig = {
       bodySizeLimit: '2mb',
     },
   },
+  async redirects() {
+    return [
+      {
+        source: '/commissions',
+        destination: '/requests',
+        permanent: true,
+      },
+      {
+        source: '/commissions/new',
+        destination: '/requests/new',
+        permanent: true,
+      },
+      {
+        source: '/commissions/:path*',
+        destination: '/requests/:path*',
+        permanent: true,
+      },
+    ]
+  },
   webpack: (config, { isServer }) => {
     // Prevent client bundles from trying to polyfill Node core modules
     if (!isServer) {

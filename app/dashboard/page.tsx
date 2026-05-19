@@ -82,8 +82,8 @@ export default function DashboardPage() {
       desc: 'See everything you’ve favorited in one place.'
     },
     {
-      title: 'Commissions',
-      href: '/commissions',
+      title: 'Requests',
+      href: '/requests',
       icon: ClipboardList,
       desc: isArtist ? 'Review incoming requests and manage status.' : 'Track your requests or start a new one.'
     },
@@ -109,7 +109,7 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Welcome, {session.user.name}</h1>
             <p className="text-sm md:text-base text-muted-foreground mt-1">
-              {isArtist ? 'Manage your portfolio and commission requests.' : 'Manage your profile, favorites, and commissions.'}
+              {isArtist ? 'Manage your portfolio and incoming requests.' : 'Manage your profile, favorites, and requests.'}
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {isArtist ? (
@@ -128,7 +128,7 @@ export default function DashboardPage() {
                 </Button>
               )}
               <Button asChild variant="outline" size="sm">
-                <Link href="/commissions">Commissions</Link>
+                <Link href="/requests">Requests</Link>
               </Button>
             </div>
           </div>

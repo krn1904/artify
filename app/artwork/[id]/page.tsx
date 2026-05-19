@@ -93,8 +93,17 @@ export default async function ArtworkDetailPage({ params }: PageProps) {
             </Card>
           ) : null}
 
-          <div className="mt-6">
-            <Button asChild>
+          <div className="mt-6 flex flex-wrap gap-3">
+            {session?.user?.id === String(art.artistId) ? (
+              <Button disabled title="You can’t create a request from your own artwork">
+                Request custom artwork
+              </Button>
+            ) : (
+              <Button asChild>
+                <Link href={`/requests/new?artworkId=${String(art._id)}`}>Request custom artwork</Link>
+              </Button>
+            )}
+            <Button asChild variant="outline">
               <Link href={`/artist/${String(art.artistId)}`}>View artist profile</Link>
             </Button>
           </div>

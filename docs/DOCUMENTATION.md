@@ -13,7 +13,7 @@
 
 ## Quick Reference
 
-**For setup, installation, and general project information, see [README.md](./README.md)**
+**For setup, installation, and general project information, see [README.md](../README.md)**
 
 This document focuses on:
 - **API Endpoints** - Complete endpoint reference with request/response examples
@@ -142,17 +142,17 @@ Delete an artwork (Artist only, authenticated).
 
 ---
 
-### Commissions
+### Requests
 
-#### POST `/api/commissions`
-Create a new commission request (authenticated).
+#### POST `/api/requests`
+Create a new custom request (authenticated).
 
 **Request Body:**
 ```json
 {
   "artistId": "artist_id",
   "title": "Optional title",
-  "brief": "Commission description (min 10 chars)",
+  "brief": "Request description (min 10 chars)",
   "budget": 500.00,
   "referenceUrls": ["https://...", "https://..."], // max 10
   "dueDate": "2026-03-15T00:00:00.000Z"
@@ -162,20 +162,20 @@ Create a new commission request (authenticated).
 **Response:**
 ```json
 {
-  "id": "commission_id"
+  "id": "request_id"
 }
 ```
 
-#### GET `/api/commissions/[id]`
-Get commission details (authenticated, only artist or customer).
+#### GET `/api/requests/[id]`
+Get request details (authenticated, only artist or customer).
 
 **Response:**
 ```json
 {
-  "_id": "commission_id",
+  "_id": "request_id",
   "customerId": "customer_id",
   "artistId": "artist_id",
-  "title": "Commission Title",
+  "title": "Request Title",
   "brief": "Description",
   "budget": 500.00,
   "status": "REQUESTED", // REQUESTED | ACCEPTED | DECLINED | COMPLETED
@@ -185,8 +185,8 @@ Get commission details (authenticated, only artist or customer).
 }
 ```
 
-#### PATCH `/api/commissions/[id]`
-Update commission status (Artist only, authenticated).
+#### PATCH `/api/requests/[id]`
+Update request status (Artist only, authenticated).
 
 **Request Body:**
 ```json
@@ -202,7 +202,7 @@ Update commission status (Artist only, authenticated).
 **Response:**
 ```json
 {
-  "id": "commission_id"
+  "id": "request_id"
 }
 ```
 
@@ -340,7 +340,7 @@ All validation schemas are located in `lib/schemas/` for consistency:
 - `auth.ts` - Registration and login schemas
 - `user.ts` - User profile update schema
 - `artwork.ts` - Artwork creation and form schemas
-- `commission.ts` - Commission creation and status schemas
+- `request.ts` - Request creation and status schemas
 - `favorite.ts` - Favorite toggle schema
 
 ### User
@@ -371,7 +371,7 @@ All validation schemas are located in `lib/schemas/` for consistency:
 }
 ```
 
-### Commission
+### Request
 ```typescript
 {
   _id: ObjectId
@@ -496,7 +496,7 @@ The middleware (`middleware.ts`) handles:
 
 **Protected Routes:**
 - `/dashboard/*`
-- `/commissions/*` (except guest view)
+- `/requests/*` (except guest view)
 - `/api/my/*`
 - `/api/me/*`
 
@@ -509,7 +509,7 @@ The middleware (`middleware.ts`) handles:
 
 ## Additional Resources
 
-- **[README.md](./README.md)** - Project overview, setup guide, and getting started
+- **[README.md](../README.md)** - Project overview, setup guide, and getting started
 - **[TODO.md](./TODO.md)** - Development roadmap and pending tasks
 
 ---

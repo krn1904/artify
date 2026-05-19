@@ -12,7 +12,7 @@ export default function FooterController() {
     /^\/signup$/,
     /^\/explore(\/.*)?$/,
     /^\/artists(\/.*)?$/,
-    /^\/commissions(\/.*)?$/,
+    /^\/requests(\/.*)?$/,
   ]
   if (!isPublicPath(pathname) || EXCLUDE.some((rx) => rx.test(pathname))) return null
   return <Footer />

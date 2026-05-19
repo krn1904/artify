@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { ObjectId } from 'mongodb'
 import { authOptions } from '@/lib/authOptions'
-import { getCommissionById, updateCommissionStatus, type CommissionStatus } from '@/lib/db/commissions'
-import { CommissionStatusSchema } from '@/lib/schemas/commission'
+import { getRequestById, updateRequestStatus, type RequestStatus } from '@/lib/db/requests'
+import { RequestStatusSchema } from '@/lib/schemas/request'
 import { requireAuth } from '@/lib/authz'
 
 export const dynamic = 'force-dynamic'
@@ -15,14 +15,14 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
     const { id } = await params
     if (!ObjectId.isValid(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
-    const c = await getCommissionById(id)
+    const c = await getRequestById(id)
     if (!c) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
     const uid = (session as any).user.id
     const isParty = String(c.artistId) === uid || String(c.customerId) === uid
     if (!isParty) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    return NextResponse.json({ commission: {
+    return NextResponse.json({ request: {
       id: String(c._id),
       artistId: String(c.artistId),
       customerId: String(c.customerId),
@@ -48,7 +48,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     const { id } = await params
     if (!ObjectId.isValid(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
-    const c = await getCommissionById(id)
+    const c = await getRequestById(id)
     if (!c) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
     // Only the artist can change status (accept/decline) for now
@@ -57,9 +57,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     }
 
     const body = await req.json().catch(() => null)
-    const parsed = CommissionStatusSchema.safeParse(body)
+    const parsed = RequestStatusSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
-    const status = parsed.data.status as CommissionStatus
+    const status = parsed.data.status as RequestStatus
     if (!['ACCEPTED', 'DECLINED', 'COMPLETED', 'REQUESTED'].includes(status)) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
     }
@@ -80,7 +80,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: `Invalid transition from ${from} to ${status}` }, { status: 400 })
     }
 
-    const res = await updateCommissionStatus(id, status)
+    const res = await updateRequestStatus(id, status)
     if (res.matchedCount === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     return NextResponse.json({ ok: true })
   } catch (err) {
