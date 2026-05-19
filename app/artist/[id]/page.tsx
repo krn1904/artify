@@ -2,16 +2,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { authOptions } from '@/lib/auth/authOptions'
 import { getUserById } from '@/lib/db/users'
 import { listArtworks } from '@/lib/db/artworks'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Share2, SearchX } from 'lucide-react'
+import { Share2, SearchX, Palette, ShoppingBag, ImageIcon } from 'lucide-react'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
-import { CloseBack } from '@/components/close-back'
 import { FavoriteButton } from '@/components/favorite-button'
 import { getFavoritesCollection } from '@/lib/db/favorites'
 import { ObjectId } from 'mongodb'
@@ -66,142 +65,234 @@ export default async function ArtistProfilePage({ params }: PageProps) {
     } catch {}
   }
 
+  const isArtist = artist.role === 'ARTIST'
+
   return (
-    <div className="container mx-auto py-8 relative">
-      {/* Back/Close button */}
-      <div className="absolute right-4 top-4 z-10">
-        <CloseBack label="Close profile" />
+    <div className="min-h-screen">
+
+      {/* ── Profile hero card ─────────────────────────────── */}
+      <div className="border-b bg-muted/30">
+        <div className="container mx-auto px-4 py-10 max-w-5xl">
+          <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+
+            {/* Avatar */}
+            <Avatar className="h-24 w-24 ring-4 ring-background shadow-md shrink-0">
+              <AvatarImage src={artist.avatarUrl || ''} alt={artist.name} />
+              <AvatarFallback className="text-2xl">{getInitials(artist.name)}</AvatarFallback>
+            </Avatar>
+
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-3xl font-bold tracking-tight">{artist.name}</h1>
+                {isArtist ? (
+                  <Badge variant={openToCommissions ? 'default' : 'secondary'}>
+                    {openToCommissions ? 'Open to commissions' : 'Not accepting commissions'}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="gap-1">
+                    <ShoppingBag className="h-3 w-3" />
+                    Art Collector
+                  </Badge>
+                )}
+              </div>
+
+              <p className="text-sm text-muted-foreground mt-1">{artist.email}</p>
+
+              {artist.bio ? (
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground max-w-2xl whitespace-pre-line">
+                  {artist.bio}
+                </p>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground italic">
+                  {isSelf ? 'Add a bio from your profile settings.' : 'No bio yet.'}
+                </p>
+              )}
+
+              {/* Stats row — artists only */}
+              {isArtist && (
+                <div className="mt-4 flex items-center gap-4">
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <ImageIcon className="h-4 w-4" />
+                    <span><strong className="text-foreground">{total}</strong> {total === 1 ? 'artwork' : 'artworks'}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Palette className="h-4 w-4" />
+                    <span>Artist</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Action buttons */}
+              <div className="mt-5 flex flex-wrap gap-2">
+                {isSelf ? (
+                  <>
+                    <Button asChild size="sm">
+                      <Link href="/dashboard/profile">Edit profile</Link>
+                    </Button>
+                    {session?.user?.role === 'ARTIST' && (
+                      <Button asChild variant="outline" size="sm">
+                        <Link href="/dashboard/artworks/new">Add artwork</Link>
+                      </Button>
+                    )}
+                  </>
+                ) : isArtist && openToCommissions ? (
+                  <>
+                    <Button asChild size="sm">
+                      <Link href={`/requests/new?artistId=${String(artist._id)}`}>Request commission</Link>
+                    </Button>
+                    <Button asChild variant="outline" size="sm">
+                      <Link href="/explore">Browse artwork</Link>
+                    </Button>
+                  </>
+                ) : isArtist ? (
+                  <>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span tabIndex={0}>
+                            <Button size="sm" disabled>Request commission</Button>
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>This artist is not accepting new commissions right now.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <Button asChild variant="outline" size="sm">
+                      <Link href="/explore">Browse artwork</Link>
+                    </Button>
+                  </>
+                ) : (
+                  <Button asChild variant="outline" size="sm">
+                    <Link href="/explore">Browse artwork</Link>
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-        <Avatar className="h-16 w-16">
-          <AvatarImage src={artist.avatarUrl || ''} alt={artist.name} />
-          <AvatarFallback>{getInitials(artist.name)}</AvatarFallback>
-        </Avatar>
-        <div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-3xl font-bold">{artist.name}</h1>
-            <Badge variant={openToCommissions ? 'default' : 'secondary'}>
-              {openToCommissions ? 'Open to commissions' : 'Not accepting commissions'}
-            </Badge>
-          </div>
-          <p className="text-sm text-muted-foreground">{artist.email}</p>
-          {artist.bio ? (
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed whitespace-pre-line">{artist.bio}</p>
-          ) : (
-            <p className="mt-3 text-sm text-muted-foreground">This artist hasn&apos;t added a bio yet.</p>
-          )}
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            {isSelf ? (
-              <>
-                <Button asChild>
-                  <Link href="/dashboard/profile">Edit profile</Link>
-                </Button>
-                <Button asChild variant="outline">
+      {/* ── Portfolio (artists only) ───────────────────────── */}
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
+        {isArtist ? (
+          <>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-semibold">Portfolio</h2>
+                <p className="text-sm text-muted-foreground mt-0.5">{total} {total === 1 ? 'piece' : 'pieces'} of work</p>
+              </div>
+              {isSelf && (
+                <Button asChild variant="outline" size="sm">
                   <Link href="/dashboard/artworks/new">Add artwork</Link>
                 </Button>
-              </>
-            ) : openToCommissions ? (
-              <Button asChild>
-                <Link href={`/commissions/new?artistId=${String(artist._id)}`}>Request commission</Link>
-              </Button>
-            ) : (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span tabIndex={0}>
-                      <Button disabled>Request commission</Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>This artist is not accepting new commissions right now.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-            <Button asChild variant="outline">
-              <Link href="/explore">Browse more artwork</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Portfolio */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Portfolio</h2>
-        <div className="text-sm text-muted-foreground">{total} {total === 1 ? 'item' : 'items'}</div>
-      </div>
-
-      {artworks.length === 0 ? (
-        <div className="mt-12 min-h-[40vh] flex items-center justify-center">
-          <div className="flex flex-col items-center text-center gap-4">
-            <div className="rounded-full bg-muted w-16 h-16 flex items-center justify-center">
-              <SearchX className="h-8 w-8 text-muted-foreground" />
+              )}
             </div>
-            <div>
-              <h3 className="text-lg font-semibold">No artworks yet</h3>
-              <p className="text-sm text-muted-foreground mt-1">This artist hasn&apos;t added any artworks to their portfolio.</p>
-            </div>
-          </div>
-        </div>
-      ) : (
-  <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
-          {artworks.map((art) => (
-            <Card key={String(art._id)} className="overflow-hidden">
-              <ArtworkQuickView
-                id={String(art._id)}
-                title={art.title}
-                imageUrl={art.imageUrl}
-                price={art.price}
-                description={art.description}
-                tags={art.tags}
-                artistId={String(art.artistId)}
-                trigger={
-                  <div className="aspect-square relative cursor-pointer">
-                    <Image
-                      src={art.imageUrl}
-                      alt={art.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover hover:scale-105 transition-transform duration-300"
-                      priority={false}
-                    />
+
+            {artworks.length === 0 ? (
+              <div className="border border-dashed rounded-xl min-h-[40vh] flex items-center justify-center">
+                <div className="flex flex-col items-center text-center gap-3 p-8">
+                  <div className="rounded-full bg-muted w-14 h-14 flex items-center justify-center">
+                    <SearchX className="h-7 w-7 text-muted-foreground" />
                   </div>
-                }
-              />
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-lg">
-                  <ArtworkQuickView
-                    id={String(art._id)}
-                    title={art.title}
-                    imageUrl={art.imageUrl}
-                    price={art.price}
-                    description={art.description}
-                    tags={art.tags}
-                    artistId={String(art.artistId)}
-                    trigger={<span className="cursor-pointer underline-offset-4 hover:underline">{art.title}</span>}
-                  />
-                </h3>
-                <p className="font-bold mt-2">${art.price}</p>
-                {art.tags?.length ? (
-                  <p className="text-xs text-muted-foreground mt-1">{art.tags.join(', ')}</p>
-                ) : null}
-              </CardContent>
-              <CardFooter className="p-4 pt-0 flex justify-between">
-                <FavoriteButton artworkId={String(art._id)} size="sm" initialFavorited={favoritedSet.has(String(art._id))} />
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm">
-                    <Share2 className="h-4 w-4 mr-2" />
-                    Share
-                  </Button>
-                  {isSelf ? <MyArtworkDelete id={String(art._id)} /> : null}
+                  <div>
+                    <h3 className="font-semibold">No artworks yet</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {isSelf ? 'Start building your portfolio by adding your first artwork.' : 'This artist hasn\'t added any artworks yet.'}
+                    </p>
+                  </div>
+                  {isSelf && (
+                    <Button asChild size="sm" className="mt-2">
+                      <Link href="/dashboard/artworks/new">Add your first artwork</Link>
+                    </Button>
+                  )}
                 </div>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
+                {artworks.map((art) => (
+                  <Card key={String(art._id)} className="overflow-hidden group">
+                    <ArtworkQuickView
+                      id={String(art._id)}
+                      title={art.title}
+                      imageUrl={art.imageUrl}
+                      price={art.price}
+                      description={art.description}
+                      tags={art.tags}
+                      artistId={String(art.artistId)}
+                      trigger={
+                        <div className="aspect-square relative cursor-pointer overflow-hidden">
+                          <Image
+                            src={art.imageUrl}
+                            alt={art.title}
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            priority={false}
+                          />
+                        </div>
+                      }
+                    />
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold truncate">
+                        <ArtworkQuickView
+                          id={String(art._id)}
+                          title={art.title}
+                          imageUrl={art.imageUrl}
+                          price={art.price}
+                          description={art.description}
+                          tags={art.tags}
+                          artistId={String(art.artistId)}
+                          trigger={<span className="cursor-pointer hover:underline underline-offset-4">{art.title}</span>}
+                        />
+                      </h3>
+                      <p className="font-bold text-sm mt-1">${art.price}</p>
+                      {art.tags?.length ? (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {art.tags.map((tag) => (
+                            <span key={tag} className="text-xs bg-muted rounded-full px-2 py-0.5 text-muted-foreground">{tag}</span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </CardContent>
+                    <CardFooter className="p-4 pt-0 flex justify-between">
+                      <FavoriteButton artworkId={String(art._id)} size="sm" initialFavorited={favoritedSet.has(String(art._id))} />
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm">
+                          <Share2 className="h-4 w-4 mr-1" />
+                          Share
+                        </Button>
+                        {isSelf ? <MyArtworkDelete id={String(art._id)} /> : null}
+                      </div>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          /* ── Customer / Buyer view ── */
+          <div className="border border-dashed rounded-xl min-h-[30vh] flex items-center justify-center">
+            <div className="flex flex-col items-center text-center gap-3 p-8">
+              <div className="rounded-full bg-muted w-14 h-14 flex items-center justify-center">
+                <ShoppingBag className="h-7 w-7 text-muted-foreground" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Art Collector</h3>
+                <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+                  {isSelf
+                    ? 'You\'re browsing as a collector. Explore artworks and send commission requests to artists.'
+                    : `${artist.name} is an art collector on Artify.`}
+                </p>
+              </div>
+              <Button asChild size="sm" variant="outline" className="mt-2">
+                <Link href="/explore">Explore artwork</Link>
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
