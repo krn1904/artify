@@ -4,15 +4,15 @@ import { notFound } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/authOptions'
 import { getUserById } from '@/lib/db/users'
-import { listArtworks } from '@/lib/db/artworks'
+import { listArtworks, getArtworksByIds } from '@/lib/db/artworks'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Share2, SearchX, Palette, ShoppingBag, ImageIcon } from 'lucide-react'
+import { Share2, SearchX, Palette, ShoppingBag, ImageIcon, Heart } from 'lucide-react'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { FavoriteButton } from '@/components/favorite-button'
-import { getFavoritesCollection } from '@/lib/db/favorites'
+import { getFavoritesCollection, listFavoritesByUser } from '@/lib/db/favorites'
 import { ObjectId } from 'mongodb'
 import MyArtworkDelete from '@/components/my-artwork-delete'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -62,6 +62,17 @@ export default async function ArtistProfilePage({ params }: PageProps) {
         .find({ userId: new ObjectId(session.user.id), artworkId: { $in: ids } }, { projection: { artworkId: 1 } })
         .toArray()
       favoritedSet = new Set(favs.map((f: any) => String(f.artworkId)))
+    } catch {}
+  }
+
+  // Fetch the profile user's favorited artworks — only when viewing your own profile
+  let favoriteArtworks: Awaited<ReturnType<typeof getArtworksByIds>> = []
+  if (isSelf) {
+    try {
+      const { items: favDocs } = await listFavoritesByUser(id)
+      if (favDocs.length > 0) {
+        favoriteArtworks = await getArtworksByIds(favDocs.map((f) => f.artworkId))
+      }
     } catch {}
   }
 
@@ -273,26 +284,197 @@ export default async function ArtistProfilePage({ params }: PageProps) {
           </>
         ) : (
           /* ── Customer / Buyer view ── */
-          <div className="border border-dashed rounded-xl min-h-[30vh] flex items-center justify-center">
-            <div className="flex flex-col items-center text-center gap-3 p-8">
-              <div className="rounded-full bg-muted w-14 h-14 flex items-center justify-center">
-                <ShoppingBag className="h-7 w-7 text-muted-foreground" />
+          <>
+            {/* Public-facing placeholder for non-self visitors */}
+            {!isSelf && (
+              <div className="border border-dashed rounded-xl min-h-[30vh] flex items-center justify-center">
+                <div className="flex flex-col items-center text-center gap-3 p-8">
+                  <div className="rounded-full bg-muted w-14 h-14 flex items-center justify-center">
+                    <ShoppingBag className="h-7 w-7 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Art Collector</h3>
+                    <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+                      {artist.name} is an art collector on Artify.
+                    </p>
+                  </div>
+                  <Button asChild size="sm" variant="outline" className="mt-2">
+                    <Link href="/explore">Explore artwork</Link>
+                  </Button>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold">Art Collector</h3>
-                <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-                  {isSelf
-                    ? 'You\'re browsing as a collector. Explore artworks and send commission requests to artists.'
-                    : `${artist.name} is an art collector on Artify.`}
-                </p>
-              </div>
-              <Button asChild size="sm" variant="outline" className="mt-2">
-                <Link href="/explore">Explore artwork</Link>
-              </Button>
-            </div>
-          </div>
+            )}
+
+            {/* My Collection — self only */}
+            {isSelf && (
+              <>
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-xl font-semibold">My Collection</h2>
+                    <p className="text-sm text-muted-foreground mt-0.5">
+                      {favoriteArtworks.length} {favoriteArtworks.length === 1 ? 'piece' : 'pieces'} saved
+                    </p>
+                  </div>
+                  {favoriteArtworks.length > 0 && (
+                    <Button asChild variant="outline" size="sm">
+                      <Link href="/dashboard/favorites">View all</Link>
+                    </Button>
+                  )}
+                </div>
+
+                {favoriteArtworks.length === 0 ? (
+                  <div className="border border-dashed rounded-xl min-h-[30vh] flex items-center justify-center">
+                    <div className="flex flex-col items-center text-center gap-3 p-8">
+                      <div className="rounded-full bg-muted w-14 h-14 flex items-center justify-center">
+                        <Heart className="h-7 w-7 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">No artworks saved yet</h3>
+                        <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+                          Heart artworks while browsing and they&apos;ll appear here.
+                        </p>
+                      </div>
+                      <Button asChild size="sm" variant="outline" className="mt-2">
+                        <Link href="/explore">Browse artwork</Link>
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
+                    {favoriteArtworks.map((art) => (
+                      <Card key={String(art._id)} className="overflow-hidden group">
+                        <ArtworkQuickView
+                          id={String(art._id)}
+                          title={art.title}
+                          imageUrl={art.imageUrl}
+                          price={art.price}
+                          description={art.description}
+                          tags={art.tags}
+                          artistId={String(art.artistId)}
+                          trigger={
+                            <div className="aspect-square relative cursor-pointer overflow-hidden">
+                              <Image
+                                src={art.imageUrl}
+                                alt={art.title}
+                                fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                priority={false}
+                              />
+                            </div>
+                          }
+                        />
+                        <CardContent className="p-4">
+                          <h3 className="font-semibold truncate">
+                            <ArtworkQuickView
+                              id={String(art._id)}
+                              title={art.title}
+                              imageUrl={art.imageUrl}
+                              price={art.price}
+                              description={art.description}
+                              tags={art.tags}
+                              artistId={String(art.artistId)}
+                              trigger={<span className="cursor-pointer hover:underline underline-offset-4">{art.title}</span>}
+                            />
+                          </h3>
+                          <p className="font-bold text-sm mt-1">${art.price}</p>
+                          {art.tags?.length ? (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {art.tags.map((tag) => (
+                                <span key={tag} className="text-xs bg-muted rounded-full px-2 py-0.5 text-muted-foreground">{tag}</span>
+                              ))}
+                            </div>
+                          ) : null}
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex justify-between">
+                          <FavoriteButton artworkId={String(art._id)} size="sm" initialFavorited={true} />
+                          <Button variant="outline" size="sm">
+                            <Share2 className="h-4 w-4 mr-1" />
+                            Share
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </>
         )}
       </div>
+
+      {/* ── Liked artworks — Artist, self only ────────────── */}
+      {isArtist && isSelf && (
+        <div className="border-t">
+          <div className="container mx-auto px-4 py-8 max-w-5xl">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-semibold">Liked artworks</h2>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {favoriteArtworks.length} {favoriteArtworks.length === 1 ? 'piece' : 'pieces'}
+                </p>
+              </div>
+              {favoriteArtworks.length > 6 && (
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/dashboard/favorites">View all</Link>
+                </Button>
+              )}
+            </div>
+
+            {favoriteArtworks.length === 0 ? (
+              <div className="border border-dashed rounded-xl py-12 flex items-center justify-center">
+                <div className="flex flex-col items-center text-center gap-2">
+                  <Heart className="h-7 w-7 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Artworks you heart will appear here.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
+                {favoriteArtworks.slice(0, 6).map((art) => (
+                  <Card key={String(art._id)} className="overflow-hidden group">
+                    <ArtworkQuickView
+                      id={String(art._id)}
+                      title={art.title}
+                      imageUrl={art.imageUrl}
+                      price={art.price}
+                      description={art.description}
+                      tags={art.tags}
+                      artistId={String(art.artistId)}
+                      trigger={
+                        <div className="aspect-square relative cursor-pointer overflow-hidden">
+                          <Image
+                            src={art.imageUrl}
+                            alt={art.title}
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            priority={false}
+                          />
+                        </div>
+                      }
+                    />
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold truncate">
+                        <ArtworkQuickView
+                          id={String(art._id)}
+                          title={art.title}
+                          imageUrl={art.imageUrl}
+                          price={art.price}
+                          description={art.description}
+                          tags={art.tags}
+                          artistId={String(art.artistId)}
+                          trigger={<span className="cursor-pointer hover:underline underline-offset-4">{art.title}</span>}
+                        />
+                      </h3>
+                      <p className="font-bold text-sm mt-1">${art.price}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
