@@ -13,6 +13,7 @@ export interface UserDoc {
   role: 'CUSTOMER' | 'ARTIST'
   avatarUrl?: string
   bio?: string
+  openToCommissions?: boolean
   loginAttempts?: number | null
   lastLoginAttempt?: Date | null
   createdAt: Date
@@ -51,10 +52,10 @@ export async function getUserById(id: string | ObjectId) {
   return col.findOne({ _id }, { projection: { password: 0 } })
 }
 
-/** Update profile fields (name, avatarUrl, bio). */
+/** Update profile fields (name, avatarUrl, bio, openToCommissions). */
 export async function updateUserProfile(
   id: string | ObjectId,
-  patch: Partial<Pick<UserDoc, 'name' | 'avatarUrl' | 'bio'>>
+  patch: Partial<Pick<UserDoc, 'name' | 'avatarUrl' | 'bio' | 'openToCommissions'>>
 ) {
   const col = await getUsersCollection()
   const _id = typeof id === 'string' ? (ObjectId.isValid(id) ? new ObjectId(id) : undefined) : id
