@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from '@/hooks/use-toast'
-import { CommissionCreateSchema } from '@/lib/schemas/commission'
+import { RequestCreateSchema } from '@/lib/schemas/request'
 
 type PresetArtist = { id: string; name: string; openToCommissions?: boolean }
 
@@ -30,7 +30,7 @@ export function CommissionRequestForm({ presetArtist, viewerId }: { presetArtist
   const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string; avatarUrl: string | null; openToCommissions?: boolean }>>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
 
-  const Schema = CommissionCreateSchema
+  const Schema = RequestCreateSchema
 
   // Debounced artist suggestions
   useEffect(() => {
