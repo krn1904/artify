@@ -18,9 +18,9 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const db = await getMongoDatabase();
-          
-          const user = await db.collection('users').findOne({ 
-            email: credentials.email.toLowerCase() 
+
+          const user = await db.collection('users').findOne({
+            email: credentials.email.toLowerCase()
           });
 
           if (!user) {
@@ -73,4 +73,4 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === 'development' // Enable debug logs in development
-}; 
+};

@@ -3,13 +3,14 @@ import Link from 'next/link'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Share2, SearchX } from 'lucide-react'
-import { listArtworks } from '@/lib/db/artworks'
+import { listArtworks, ArtworkSort } from '@/lib/db/artworks'
 import { ArtworkQuickView } from '@/components/artwork-quick-view'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/authOptions'
 import { FavoriteButton } from '@/components/favorite-button'
 import { getFavoritesCollection } from '@/lib/db/favorites'
 import { ObjectId } from 'mongodb'
+import { ExploreFilters } from './explore-filters'
 
 export const dynamic = 'force-dynamic'
 export const metadata = {
@@ -22,6 +23,10 @@ type SearchParams = {
   pageSize?: string
   tags?: string | string[]
   my?: string
+  search?: string
+  sort?: string
+  minPrice?: string
+  maxPrice?: string
 }
 
 function parseIntOr<T extends number>(value: string | undefined, fallback: T, min?: number, max?: number): number {
@@ -44,9 +49,20 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   const activeTag = typeof params.tags === 'string' ? params.tags : undefined
   const myOnly = params.my === '1' && session?.user?.role === 'ARTIST'
 
+  const search = typeof params.search === 'string' ? params.search : undefined
+  const sort = (params.sort as ArtworkSort | undefined) ?? 'new'
+  const minPrice = params.minPrice ? Number(params.minPrice) : undefined
+  const maxPrice = params.maxPrice ? Number(params.maxPrice) : undefined
+
   const { items, total } = await listArtworks(
-    { tags: activeTag ? [activeTag] : undefined, artistId: myOnly ? session!.user.id : undefined },
-    { page, pageSize }
+    {
+      tags: activeTag ? [activeTag] : undefined,
+      artistId: myOnly ? session!.user.id : undefined,
+      search,
+      minPrice: minPrice && !isNaN(minPrice) ? minPrice : undefined,
+      maxPrice: maxPrice && !isNaN(maxPrice) ? maxPrice : undefined,
+    },
+    { page, pageSize, sort }
   )
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
@@ -66,11 +82,25 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
 
   const makeHref = (overrides: Partial<SearchParams> = {}) => {
     const sp = new URLSearchParams()
-    const next = { page, pageSize, tags: activeTag, my: myOnly ? '1' : undefined, ...overrides }
+    const next = {
+      page,
+      pageSize,
+      tags: activeTag,
+      my: myOnly ? '1' : undefined,
+      search,
+      sort: sort !== 'new' ? sort : undefined,
+      minPrice: params.minPrice,
+      maxPrice: params.maxPrice,
+      ...overrides,
+    }
     if (next.page && next.page !== 1) sp.set('page', String(next.page))
     if (next.pageSize && next.pageSize !== 12) sp.set('pageSize', String(next.pageSize))
     if (next.tags) sp.set('tags', String(next.tags))
     if (next.my === '1') sp.set('my', '1')
+    if (next.search) sp.set('search', String(next.search))
+    if (next.sort) sp.set('sort', String(next.sort))
+    if (next.minPrice) sp.set('minPrice', String(next.minPrice))
+    if (next.maxPrice) sp.set('maxPrice', String(next.maxPrice))
     const qs = sp.toString()
     return qs ? `/explore?${qs}` : '/explore'
   }
@@ -85,6 +115,16 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
           </Button>
         ) : null}
       </div>
+
+      {/* Search, price range, and sort filters */}
+      <ExploreFilters
+        search={search}
+        sort={sort}
+        minPrice={params.minPrice}
+        maxPrice={params.maxPrice}
+        tags={activeTag}
+        my={myOnly ? '1' : undefined}
+      />
 
       {/* Category Chips (single-select) */}
       <div className="mb-6 flex flex-wrap gap-2">
@@ -126,10 +166,12 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
           <div>
             <h2 className="text-xl font-semibold">No artworks found</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              {activeTag ? (
-                <>We couldn’t find any items for “{activeTag}”. Try another category or clear the filter.</>
+              {search ? (
+                <>No artworks matched &ldquo;{search}&rdquo;. Try different keywords or clear the search.</>
+              ) : activeTag ? (
+                <>We couldn&apos;t find any items for &ldquo;{activeTag}&rdquo;. Try another category or clear the filter.</>
               ) : (
-                <>There’s nothing to show right now. Try browsing all artwork or check back later.</>
+                <>There&apos;s nothing to show right now. Try browsing all artwork or check back later.</>
               )}
             </p>
           </div>

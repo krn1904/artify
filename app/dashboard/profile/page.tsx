@@ -28,6 +28,7 @@ export default async function ProfileSettingsPage() {
           avatarUrl: user.avatarUrl || '',
           bio: user.bio || '',
           role: user.role,
+          openToCommissions: (user as any).openToCommissions ?? true,
         }}
       />
     </div>

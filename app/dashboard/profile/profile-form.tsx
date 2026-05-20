@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
 import { toast } from '@/hooks/use-toast'
 import { Info } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -15,6 +16,7 @@ type Props = {
     avatarUrl: string
     bio: string
     role: 'CUSTOMER' | 'ARTIST'
+    openToCommissions: boolean
   }
 }
 
@@ -24,17 +26,20 @@ export default function ProfileForm({ initial }: Props) {
   const [avatarUrl, setAvatarUrl] = useState(initial.avatarUrl)
   const [bio, setBio] = useState(initial.bio)
   const [role] = useState<'CUSTOMER' | 'ARTIST'>(initial.role)
+  const [openToCommissions, setOpenToCommissions] = useState(initial.openToCommissions)
   const [error, setError] = useState<string | null>(null)
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
     try {
+      const body: Record<string, unknown> = { name, avatarUrl, bio }
+      if (role === 'ARTIST') body.openToCommissions = openToCommissions
       const res = await fetch('/api/me/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         // Role changes are restricted for now; omit `role` from the payload
-        body: JSON.stringify({ name, avatarUrl, bio }),
+        body: JSON.stringify(body),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data?.error || 'Failed to update profile')
@@ -65,6 +70,22 @@ export default function ProfileForm({ initial }: Props) {
         <label className="text-sm font-medium">Bio</label>
         <Textarea rows={4} value={bio} onChange={(e) => setBio(e.target.value)} />
       </div>
+      {role === 'ARTIST' && (
+        <div className="flex items-center justify-between rounded-lg border p-4">
+          <div className="space-y-0.5">
+            <label className="text-sm font-medium">Open to commissions</label>
+            <p className="text-xs text-muted-foreground">
+              {openToCommissions
+                ? 'Customers can request commissions from you.'
+                : 'Your profile will show you are not accepting new commissions.'}
+            </p>
+          </div>
+          <Switch
+            checked={openToCommissions}
+            onCheckedChange={setOpenToCommissions}
+          />
+        </div>
+      )}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium">Role</label>
