@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { authOptions } from '@/lib/auth/authOptions'
 import { getUsersCollection } from '@/lib/db/users'
 import { ObjectId } from 'mongodb'
 import { sanitizeInput } from '@/lib/utils'
 import { UserProfileUpdateSchema } from '@/lib/schemas/user'
-import { requireAuth } from '@/lib/authz'
+import { requireAuth } from '@/lib/auth/authz'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,6 +23,7 @@ export async function GET() {
       role: user.role,
       avatarUrl: user.avatarUrl || '',
       bio: user.bio || '',
+      openToCommissions: user.openToCommissions ?? true,
     },
   })
 }
@@ -43,6 +44,7 @@ export async function PATCH(req: Request) {
   if (parsed.data.name !== undefined) patch.name = sanitizeInput(parsed.data.name)
   if (parsed.data.avatarUrl !== undefined) patch.avatarUrl = parsed.data.avatarUrl || null
   if (parsed.data.bio !== undefined) patch.bio = sanitizeInput(parsed.data.bio || '')
+  if (parsed.data.openToCommissions !== undefined) patch.openToCommissions = parsed.data.openToCommissions
   // Role changes are currently disabled; ignore incoming role updates
   patch.updatedAt = new Date()
 

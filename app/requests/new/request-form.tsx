@@ -1,62 +1,36 @@
 "use client"
 
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+ 
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from '@/hooks/use-toast'
 import { RequestCreateSchema } from '@/lib/schemas/request'
 
-type PresetArtist = { id: string; name: string }
-type PresetArtwork = {
-  id: string
-  title: string
-  imageUrl: string
-  price: number
-  url: string
-}
+type PresetArtist = { id: string; name: string; openToCommissions?: boolean }
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
-function formatDateInput(date: Date) {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-export function ArtworkRequestForm({
-  presetArtist,
-  presetArtwork,
-  viewerId,
-}: {
-  presetArtist?: PresetArtist
-  presetArtwork?: PresetArtwork
-  viewerId?: string
-}) {
+export function CommissionRequestForm({ presetArtist, viewerId }: { presetArtist?: PresetArtist, viewerId?: string }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [artistId, setArtistId] = useState(presetArtist?.id ?? '')
   const [artistName, setArtistName] = useState(presetArtist?.name ?? '')
   const [brief, setBrief] = useState('')
   const [budget, setBudget] = useState<string>('')
-  const [title, setTitle] = useState(
-    presetArtwork ? `Custom artwork inspired by ${presetArtwork.title}` : ''
-  )
-  const [referenceText, setReferenceText] = useState(presetArtwork?.url ?? '') // one URL per line
+  const [title, setTitle] = useState('')
+  const [referenceText, setReferenceText] = useState('') // one URL per line
   const [dueDate, setDueDate] = useState('') // yyyy-mm-dd
   const [error, setError] = useState<string | null>(null)
   const [query, setQuery] = useState('')
-  const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string; avatarUrl: string | null }>>([])
+  const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string; avatarUrl: string | null; openToCommissions?: boolean }>>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
 
   const Schema = RequestCreateSchema
-  const minDueDate = formatDateInput(new Date())
 
   // Debounced artist suggestions
   useEffect(() => {
@@ -83,18 +57,16 @@ export function ArtworkRequestForm({
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
-    if (!presetArtist && !artistId) {
-      setError('Please select an artist from the suggestions')
-      return
-    }
     if (viewerId && artistId && viewerId === artistId) {
-      setError("You cannot create a request for yourself")
+      setError("You cannot request a commission from yourself")
       return
     }
-    // Build payload for validation and submission
+    // Build payload and omit budget when empty so it remains truly optional
     const payloadRaw: Record<string, any> = { artistId, brief }
     if (title.trim()) payloadRaw.title = title
-    payloadRaw.budget = budget
+    if (typeof budget === 'string' ? budget.trim() !== '' : budget != null) {
+      payloadRaw.budget = budget
+    }
     if (referenceText.trim()) payloadRaw.referenceUrls = referenceText
     if (dueDate) payloadRaw.dueDate = dueDate
     const parsed = Schema.safeParse(payloadRaw)
@@ -105,20 +77,20 @@ export function ArtworkRequestForm({
     }
     const payload = parsed.data
     try {
-      const res = await fetch('/api/requests', {
+      const res = await fetch('/api/commissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        const msg = data?.error || 'Failed to create request'
-        setError(typeof msg === 'string' ? msg : 'Failed to create request')
+        const msg = data?.error || 'Failed to create commission'
+        setError(typeof msg === 'string' ? msg : 'Failed to create commission')
         return
       }
-      // Notify and redirect to the requests hub
+      // Notify and redirect to the commissions hub
       toast({ title: 'Request sent', description: 'We\'ve notified the artist.' })
-      startTransition(() => router.push('/requests'))
+      startTransition(() => router.push('/commissions'))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     }
@@ -130,37 +102,17 @@ export function ArtworkRequestForm({
         <Alert variant="destructive">
           <AlertTitle>Action not allowed</AlertTitle>
           <AlertDescription>
-            You cannot create a request from your own artist profile.
+            You cannot request a commission from your own artist profile.
           </AlertDescription>
         </Alert>
       ) : null}
-      {presetArtwork ? (
-        <Card className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="relative h-16 w-16 overflow-hidden rounded-md bg-muted">
-              <Image
-                src={presetArtwork.imageUrl}
-                alt={presetArtwork.title}
-                fill
-                sizes="64px"
-                className="object-cover"
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-medium">Based on artwork</div>
-              <div className="truncate text-sm text-foreground">{presetArtwork.title}</div>
-              <div className="text-xs text-muted-foreground">Listed at ${presetArtwork.price}</div>
-              <div className="text-xs text-muted-foreground">
-                We pre-filled the artist and added this artwork as a reference link.
-              </div>
-              <div className="mt-2">
-                <Link href={`/artwork/${presetArtwork.id}`} className="text-xs underline">
-                  View artwork details
-                </Link>
-              </div>
-            </div>
-          </div>
-        </Card>
+      {presetArtist && presetArtist.openToCommissions === false ? (
+        <Alert variant="destructive">
+          <AlertTitle>Artist not accepting commissions</AlertTitle>
+          <AlertDescription>
+            This artist is not accepting new commissions right now. You can still submit, but they may decline.
+          </AlertDescription>
+        </Alert>
       ) : null}
       <div className="space-y-2">
         <label className="text-sm font-medium">Artist</label>
@@ -176,13 +128,7 @@ export function ArtworkRequestForm({
               placeholder="Search artist by name..."
               value={query}
               onChange={(e) => {
-                const nextQuery = e.target.value
-                setQuery(nextQuery)
-                setError(null)
-                if (artistId && nextQuery !== artistName) {
-                  setArtistId('')
-                  setArtistName('')
-                }
+                setQuery(e.target.value)
                 setShowSuggestions(true)
               }}
               onFocus={() => setShowSuggestions(true)}
@@ -210,6 +156,9 @@ export function ArtworkRequestForm({
                         <AvatarFallback>{(s.name?.[0] || 'A').toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <span className="text-sm">{s.name}</span>
+                      {s.openToCommissions === false && (
+                        <span className="ml-auto text-xs text-muted-foreground">Closed</span>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -226,7 +175,7 @@ export function ArtworkRequestForm({
       <div className="space-y-2">
         <label className="text-sm font-medium">Title (optional)</label>
         <Input
-          placeholder="Short title for your custom artwork request"
+          placeholder="Short title for your commission"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -234,7 +183,7 @@ export function ArtworkRequestForm({
       <div className="space-y-2">
         <label className="text-sm font-medium">Brief</label>
         <Textarea
-          placeholder="Describe the custom artwork you'd like the artist to create..."
+          placeholder="Describe what you'd like the artist to create..."
           value={brief}
           onChange={(e) => setBrief(e.target.value)}
           required
@@ -243,7 +192,7 @@ export function ArtworkRequestForm({
         <p className="text-xs text-muted-foreground">Minimum 10 characters.</p>
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium">Budget</label>
+        <label className="text-sm font-medium">Budget (optional)</label>
         <Input
           type="number"
           inputMode="decimal"
@@ -251,7 +200,6 @@ export function ArtworkRequestForm({
           value={budget}
           onChange={(e) => setBudget(e.target.value)}
           min={0}
-          required
         />
       </div>
       <div className="space-y-2">
@@ -270,9 +218,7 @@ export function ArtworkRequestForm({
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          min={minDueDate}
         />
-        <p className="text-xs text-muted-foreground">You can select today or any future date.</p>
       </div>
       {error ? (
         <p className="text-sm text-red-600">{error}</p>

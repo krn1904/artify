@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { authOptions } from '@/lib/auth/authOptions'
 import { createArtwork, listArtworks } from '@/lib/db/artworks'
 import { ObjectId } from 'mongodb'
 import { sanitizeInput } from '@/lib/utils'
 import { ArtworkCreateBodySchema } from '@/lib/schemas/artwork'
-import { requireArtist } from '@/lib/authz'
+import { requireArtist } from '@/lib/auth/authz'
 
 export const dynamic = 'force-dynamic'
 

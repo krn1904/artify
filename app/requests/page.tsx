@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { authOptions } from '@/lib/auth/authOptions'
 import { listArtistRequests, listCustomerRequests, type RequestDoc } from '@/lib/db/requests'
 import { getUserById } from '@/lib/db/users'
 import { Button } from '@/components/ui/button'
