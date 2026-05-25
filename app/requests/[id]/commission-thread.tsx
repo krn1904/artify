@@ -274,7 +274,6 @@ export function CommissionThread({
               <Send className="h-4 w-4" />
             </Button>
           </div>
-          <p className="text-[11px] text-muted-foreground">Enter to send &bull; Shift+Enter for new line</p>
         </div>
       ) : (
         <div className="border-t px-5 py-3 text-sm text-muted-foreground">
