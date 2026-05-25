@@ -158,15 +158,15 @@ export default async function RequestDetailPage({ params }: PageProps) {
 
       {/* Artist-only status actions */}
       {isArtist && (request.status === 'REQUESTED' || request.status === 'ACCEPTED') && (
-        <div className="flex flex-col gap-3 mb-6 p-4 rounded-lg border bg-muted/30">
-          <div className="flex items-center gap-3">
+        <div className="mb-6 rounded-lg border bg-muted/30 overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-3">
             <span className="text-sm text-muted-foreground flex-1">
               {request.status === 'REQUESTED' ? 'Respond to this request:' : 'Ready to wrap up?'}
             </span>
             <RequestActions id={String(request._id)} status={request.status} />
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground flex-1">Budget negotiation:</span>
+          <Separator />
+          <div className="px-4 py-3">
             <BidProposalButton
               requestId={String(request._id)}
               hasPendingBid={hasPendingBid}

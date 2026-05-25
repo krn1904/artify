@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Send, DollarSign, Check, X } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 type BidProposalStatus = 'pending' | 'accepted' | 'declined'
 
@@ -159,37 +160,43 @@ export function CommissionThread({
 
               if (m.type === 'bid_proposal' && m.bidProposal) {
                 const bp = m.bidProposal
-                const statusColor =
+                const cardClass =
                   bp.status === 'accepted'
-                    ? 'text-green-600'
+                    ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/30'
                     : bp.status === 'declined'
-                    ? 'text-red-600'
-                    : 'text-muted-foreground'
+                    ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/30'
+                    : 'border bg-card'
+                const badgeVariant =
+                  bp.status === 'accepted' ? 'default' : bp.status === 'declined' ? 'destructive' : 'secondary'
                 return (
-                  <div key={m.id} className="flex justify-center">
-                    <div className="rounded-lg border bg-card shadow-sm w-full max-w-sm p-4 space-y-3">
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm font-semibold">Budget Proposal</span>
-                        <span className={`ml-auto text-xs font-medium capitalize ${statusColor}`}>
+                  <div key={m.id} className="flex justify-center py-1">
+                    <div className={`rounded-xl w-full max-w-xs p-4 space-y-3 ${cardClass}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            Budget Proposal
+                          </span>
+                        </div>
+                        <Badge variant={badgeVariant} className="capitalize text-[10px] px-1.5 py-0">
                           {bp.status}
-                        </span>
+                        </Badge>
                       </div>
-                      <div className="text-center">
-                        <p className="text-2xl font-bold">${bp.amount.toLocaleString()}</p>
+                      <div className="text-center py-1">
+                        <p className="text-3xl font-bold tracking-tight">${bp.amount.toLocaleString()}</p>
                         {currentBudget != null && bp.status === 'pending' && (
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            Current budget: ${currentBudget.toLocaleString()}
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Current: ${currentBudget.toLocaleString()}
                           </p>
                         )}
                       </div>
                       <p className="text-[11px] text-center text-muted-foreground">{formatTime(m.createdAt)}</p>
                       {!isArtist && bp.status === 'pending' && canChat && (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 pt-1">
                           <Button
                             size="sm"
                             variant="outline"
-                            className="flex-1 gap-1.5 text-red-600 border-red-200 hover:bg-red-50"
+                            className="flex-1 gap-1.5 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-800 dark:hover:bg-red-950/50"
                             onClick={() => respondToBid(m.id, 'declined')}
                           >
                             <X className="h-3.5 w-3.5" />
@@ -197,13 +204,23 @@ export function CommissionThread({
                           </Button>
                           <Button
                             size="sm"
-                            className="flex-1 gap-1.5 bg-green-600 hover:bg-green-700"
+                            className="flex-1 gap-1.5 bg-green-600 hover:bg-green-700 text-white"
                             onClick={() => respondToBid(m.id, 'accepted')}
                           >
                             <Check className="h-3.5 w-3.5" />
                             Accept
                           </Button>
                         </div>
+                      )}
+                      {bp.status === 'accepted' && (
+                        <p className="text-xs text-center text-green-700 dark:text-green-400 font-medium">
+                          Budget updated to this amount
+                        </p>
+                      )}
+                      {bp.status === 'declined' && (
+                        <p className="text-xs text-center text-red-600 dark:text-red-400 font-medium">
+                          Proposal was declined
+                        </p>
                       )}
                     </div>
                   </div>

@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { DollarSign } from 'lucide-react'
+import { DollarSign, Clock } from 'lucide-react'
 
 interface Props {
   requestId: string
@@ -15,9 +15,15 @@ export function BidProposalButton({ requestId, hasPendingBid }: Props) {
   const router = useRouter()
   const [showForm, setShowForm] = useState(false)
   const [amount, setAmount] = useState('')
-  const [pending, setPending] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [, startTransition] = useTransition()
+
+  function cancel() {
+    setShowForm(false)
+    setAmount('')
+    setError(null)
+  }
 
   async function submit() {
     const num = parseFloat(amount)
@@ -26,7 +32,7 @@ export function BidProposalButton({ requestId, hasPendingBid }: Props) {
       return
     }
     setError(null)
-    setPending(true)
+    setSubmitting(true)
     try {
       const res = await fetch(`/api/requests/${requestId}/messages`, {
         method: 'POST',
@@ -35,53 +41,63 @@ export function BidProposalButton({ requestId, hasPendingBid }: Props) {
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data?.error || 'Failed to submit proposal')
-      setShowForm(false)
-      setAmount('')
+      cancel()
       startTransition(() => router.refresh())
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to submit proposal')
     } finally {
-      setPending(false)
+      setSubmitting(false)
     }
   }
 
   if (hasPendingBid) {
     return (
-      <span className="text-xs text-muted-foreground italic">
-        Awaiting buyer response on budget proposal
-      </span>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium">Budget proposal sent</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Waiting for the buyer to respond.</p>
+        </div>
+        <div className="flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 px-3 py-1 text-amber-700 dark:text-amber-400">
+          <Clock className="h-3 w-3 shrink-0" />
+          <span className="text-xs font-medium whitespace-nowrap">Pending</span>
+        </div>
+      </div>
     )
   }
 
   if (showForm) {
     return (
-      <div className="rounded-lg border bg-background p-3 space-y-2 w-full">
-        <p className="text-xs font-medium">Propose a new budget</p>
-        {error && <p className="text-xs text-red-600">{error}</p>}
-        <div className="flex gap-2 items-center">
-          <span className="text-sm text-muted-foreground">$</span>
+      <div className="space-y-3">
+        <div>
+          <p className="text-sm font-medium">Suggest a budget adjustment</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            The buyer will see this in the chat and can accept or decline.
+          </p>
+        </div>
+        {error && <p className="text-xs text-destructive">{error}</p>}
+        <div className="relative">
+          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground select-none">
+            $
+          </span>
           <Input
             type="number"
             inputMode="decimal"
-            placeholder="Enter amount"
+            placeholder="0"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             min={0}
-            className="h-8 text-sm"
-            disabled={pending}
+            className="pl-7"
+            disabled={submitting}
+            autoFocus
+            onKeyDown={(e) => { if (e.key === 'Enter') submit() }}
           />
         </div>
-        <div className="flex gap-2 justify-end">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => { setShowForm(false); setAmount(''); setError(null) }}
-            disabled={pending}
-          >
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" className="flex-1" onClick={cancel} disabled={submitting}>
             Cancel
           </Button>
-          <Button size="sm" onClick={submit} disabled={pending}>
-            {pending ? 'Sending…' : 'Send proposal'}
+          <Button size="sm" className="flex-1" onClick={submit} disabled={submitting}>
+            {submitting ? 'Sending…' : 'Send to buyer'}
           </Button>
         </div>
       </div>
@@ -89,14 +105,17 @@ export function BidProposalButton({ requestId, hasPendingBid }: Props) {
   }
 
   return (
-    <Button
-      size="sm"
-      variant="outline"
-      onClick={() => setShowForm(true)}
-      className="gap-1.5"
-    >
-      <DollarSign className="h-4 w-4" />
-      Propose budget
-    </Button>
+    <div className="flex items-center justify-between gap-3">
+      <div>
+        <p className="text-sm text-muted-foreground">Suggest budget adjustment</p>
+        <p className="text-xs text-muted-foreground/70 mt-0.5">
+          Propose a revised amount after discussing requirements.
+        </p>
+      </div>
+      <Button size="sm" variant="outline" onClick={() => setShowForm(true)} className="shrink-0 gap-2">
+        <DollarSign className="h-3.5 w-3.5" />
+        Propose
+      </Button>
+    </div>
   )
 }
