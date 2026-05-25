@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Send, DollarSign, Check, X } from 'lucide-react'
@@ -62,18 +61,9 @@ export function CommissionThread({
   const [error, setError] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  const [showBidForm, setShowBidForm] = useState(false)
-  const [bidAmount, setBidAmount] = useState('')
-  const [bidPending, setBidPending] = useState(false)
-  const [bidError, setBidError] = useState<string | null>(null)
-
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
-
-  const hasPendingBid = messages.some(
-    (m) => m.type === 'bid_proposal' && m.bidProposal?.status === 'pending'
-  )
 
   // Poll for new messages every 8 seconds
   useEffect(() => {
@@ -121,33 +111,6 @@ export function CommissionThread({
       setError(e instanceof Error ? e.message : 'Failed to send')
       setMessages((prev) => prev.filter((m) => m.id !== optimistic.id))
       setDraft(body)
-    }
-  }
-
-  async function submitBidProposal() {
-    const amount = parseFloat(bidAmount)
-    if (!Number.isFinite(amount) || amount <= 0) {
-      setBidError('Please enter a valid positive amount')
-      return
-    }
-    setBidError(null)
-    setBidPending(true)
-    try {
-      const res = await fetch(`/api/requests/${requestId}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'bid_proposal', amount }),
-      })
-      const data = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(data?.error || 'Failed to submit proposal')
-      setMessages((prev) => [...prev, data.message])
-      setShowBidForm(false)
-      setBidAmount('')
-      startTransition(() => router.refresh())
-    } catch (e) {
-      setBidError(e instanceof Error ? e.message : 'Failed to submit proposal')
-    } finally {
-      setBidPending(false)
     }
   }
 
@@ -273,42 +236,8 @@ export function CommissionThread({
       </ScrollArea>
 
       {canChat ? (
-        <div className="border-t px-4 py-3 space-y-3">
+        <div className="border-t px-4 py-3 space-y-2">
           {error && <p className="text-xs text-red-600">{error}</p>}
-
-          {isArtist && showBidForm && (
-            <div className="rounded-lg border bg-muted/30 p-3 space-y-2">
-              <p className="text-xs font-medium">Propose a new budget</p>
-              {bidError && <p className="text-xs text-red-600">{bidError}</p>}
-              <div className="flex gap-2 items-center">
-                <span className="text-sm text-muted-foreground">$</span>
-                <Input
-                  type="number"
-                  inputMode="decimal"
-                  placeholder="Enter amount"
-                  value={bidAmount}
-                  onChange={(e) => setBidAmount(e.target.value)}
-                  min={0}
-                  className="h-8 text-sm"
-                  disabled={bidPending}
-                />
-              </div>
-              <div className="flex gap-2 justify-end">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => { setShowBidForm(false); setBidAmount(''); setBidError(null) }}
-                  disabled={bidPending}
-                >
-                  Cancel
-                </Button>
-                <Button size="sm" onClick={submitBidProposal} disabled={bidPending}>
-                  {bidPending ? 'Sending…' : 'Send proposal'}
-                </Button>
-              </div>
-            </div>
-          )}
-
           <div className="flex gap-2 items-end">
             <Textarea
               placeholder="Type a message… (Enter to send, Shift+Enter for newline)"
@@ -319,27 +248,14 @@ export function CommissionThread({
               className="resize-none flex-1"
               disabled={isPending}
             />
-            <div className="flex flex-col gap-1.5 shrink-0">
-              {isArtist && !showBidForm && !hasPendingBid && (
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => setShowBidForm(true)}
-                  title="Propose new budget"
-                  className="h-10 w-10"
-                >
-                  <DollarSign className="h-4 w-4" />
-                </Button>
-              )}
-              <Button
-                size="icon"
-                onClick={sendMessage}
-                disabled={isPending || !draft.trim()}
-                className="shrink-0 h-10 w-10"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
+            <Button
+              size="icon"
+              onClick={sendMessage}
+              disabled={isPending || !draft.trim()}
+              className="shrink-0 h-10 w-10"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
           </div>
           <p className="text-[11px] text-muted-foreground">Enter to send &bull; Shift+Enter for new line</p>
         </div>

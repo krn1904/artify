@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 import RequestActions from '../_components/RequestActions'
 import { CommissionThread } from './commission-thread'
+import { BidProposalButton } from './bid-proposal-button'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,6 +66,10 @@ export default async function RequestDetailPage({ params }: PageProps) {
     getUserById(String(request.customerId)),
     listMessages(id),
   ])
+
+  const hasPendingBid = rawMessages.some(
+    (m) => m.type === 'bid_proposal' && m.bidProposal?.status === 'pending'
+  )
 
   const initialMessages = rawMessages.map((m) => ({
     id: String(m._id),
@@ -153,11 +158,20 @@ export default async function RequestDetailPage({ params }: PageProps) {
 
       {/* Artist-only status actions */}
       {isArtist && (request.status === 'REQUESTED' || request.status === 'ACCEPTED') && (
-        <div className="flex items-center gap-3 mb-6 p-4 rounded-lg border bg-muted/30">
-          <span className="text-sm text-muted-foreground flex-1">
-            {request.status === 'REQUESTED' ? 'Respond to this request:' : 'Ready to wrap up?'}
-          </span>
-          <RequestActions id={String(request._id)} status={request.status} />
+        <div className="flex flex-col gap-3 mb-6 p-4 rounded-lg border bg-muted/30">
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground flex-1">
+              {request.status === 'REQUESTED' ? 'Respond to this request:' : 'Ready to wrap up?'}
+            </span>
+            <RequestActions id={String(request._id)} status={request.status} />
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground flex-1">Budget negotiation:</span>
+            <BidProposalButton
+              requestId={String(request._id)}
+              hasPendingBid={hasPendingBid}
+            />
+          </div>
         </div>
       )}
 
