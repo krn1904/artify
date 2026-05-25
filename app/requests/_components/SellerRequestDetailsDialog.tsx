@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from 'react'
-import { ExternalLink } from 'lucide-react'
+import Link from 'next/link'
+import { ExternalLink, MessageSquare } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -185,21 +186,25 @@ export default function SellerRequestDetailsDialog({
           ) : null}
         </div>
 
-        {request.status === 'REQUESTED' || request.status === 'ACCEPTED' ? (
-          <DialogFooter className="border-t px-6 py-4">
+        <DialogFooter className="border-t px-6 py-4 flex-wrap gap-2">
+          <Button asChild variant="outline" size="sm" className="gap-1.5">
+            <Link href={`/requests/${request.id}`} onClick={() => setOpen(false)}>
+              <MessageSquare className="h-4 w-4" />
+              View messages
+            </Link>
+          </Button>
+          {request.status === 'REQUESTED' || request.status === 'ACCEPTED' ? (
             <RequestActions
               id={request.id}
               status={request.status}
               onSuccess={() => setOpen(false)}
             />
-          </DialogFooter>
-        ) : (
-          <DialogFooter className="border-t px-6 py-4">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          ) : (
+            <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)}>
               Close
             </Button>
-          </DialogFooter>
-        )}
+          )}
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

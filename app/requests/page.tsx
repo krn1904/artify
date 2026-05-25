@@ -209,9 +209,9 @@ export default async function RequestsHubPage() {
           ) : (
             <div className="divide-y rounded-md border">
               {my.items.map((c) => (
-                <div key={String(c._id)} className="px-4">
+                <Link key={String(c._id)} href={`/requests/${String(c._id)}`} className="block px-4 hover:bg-muted/40 transition-colors">
                   <RequestRow c={c} />
-                </div>
+                </Link>
               ))}
             </div>
           )}
