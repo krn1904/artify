@@ -123,8 +123,8 @@ export default function SellerRequestDetailsDialog({
         </button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto p-0">
-        <div className="border-b pl-6 pr-14 py-5">
+      <DialogContent className="max-h-[90vh] w-full sm:max-w-2xl overflow-y-auto p-0">
+        <div className="border-b pl-4 pr-12 py-4 sm:pl-6 sm:pr-14 sm:py-5">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div className="min-w-0">
               <DialogHeader className="space-y-2 text-left">
@@ -146,7 +146,7 @@ export default function SellerRequestDetailsDialog({
           </div>
         </div>
 
-        <div className="space-y-6 px-6 py-5">
+        <div className="space-y-6 px-4 py-4 sm:px-6 sm:py-5">
           <section>
             <h3 className="text-sm font-semibold">Request brief</h3>
             <div className="mt-2 whitespace-pre-wrap rounded-md border bg-muted/20 p-4 text-sm leading-6">
@@ -186,8 +186,8 @@ export default function SellerRequestDetailsDialog({
           ) : null}
         </div>
 
-        <DialogFooter className="border-t px-6 py-4 flex-wrap gap-2">
-          <Button asChild variant="outline" size="sm" className="gap-1.5">
+        <DialogFooter className="border-t px-4 py-3 sm:px-6 sm:py-4 flex-wrap gap-2">
+          <Button asChild variant="outline" className="gap-1.5">
             <Link href={`/requests/${request.id}`} onClick={() => setOpen(false)}>
               <MessageSquare className="h-4 w-4" />
               View messages
@@ -200,7 +200,7 @@ export default function SellerRequestDetailsDialog({
               onSuccess={() => setOpen(false)}
             />
           ) : (
-            <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Close
             </Button>
           )}

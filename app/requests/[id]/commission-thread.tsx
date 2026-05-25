@@ -147,9 +147,9 @@ export function CommissionThread({
 
   return (
     <div className="flex flex-col">
-      <ScrollArea className="h-[380px] px-5 py-4">
+      <ScrollArea className="h-[280px] sm:h-[380px] px-5 py-4">
         {messages.length === 0 ? (
-          <div className="flex h-full min-h-[320px] items-center justify-center text-sm text-muted-foreground">
+          <div className="flex h-full min-h-[220px] sm:min-h-[320px] items-center justify-center text-sm text-muted-foreground">
             No messages yet.{canChat ? ' Start the conversation below.' : ''}
           </div>
         ) : (
@@ -232,7 +232,7 @@ export function CommissionThread({
                   <Avatar className="h-7 w-7 shrink-0 mt-0.5">
                     <AvatarFallback className="text-[11px]">{initials(senderName)}</AvatarFallback>
                   </Avatar>
-                  <div className={`flex flex-col gap-1 max-w-[75%] ${isMine ? 'items-end' : 'items-start'}`}>
+                  <div className={`flex flex-col gap-1 max-w-[85%] sm:max-w-[75%] ${isMine ? 'items-end' : 'items-start'}`}>
                     <div
                       className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words ${
                         isMine

@@ -94,10 +94,10 @@ export default async function RequestsHubPage() {
     const archiveWithCustomerNames = allRequests.filter((c) => c.status !== 'REQUESTED')
 
     return (
-      <div className="container mx-auto max-w-3xl py-10">
+      <div className="container mx-auto max-w-3xl px-4 py-6 sm:py-10">
         <RouteRefresher intervalMs={15000} onMount onFocus onInterval />
         <div className="flex items-center justify-between mb-2">
-          <h1 className="text-3xl font-bold">Incoming requests</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Incoming requests</h1>
           <RefreshHint intervalMs={15000} />
         </div>
         <div className="h-4" />
@@ -182,10 +182,10 @@ export default async function RequestsHubPage() {
   // Customer view
   const my = await listCustomerRequests(session.user.id, 1, 20)
   return (
-    <div className="container mx-auto max-w-3xl py-10">
+    <div className="container mx-auto max-w-3xl px-4 py-6 sm:py-10">
       <RouteRefresher intervalMs={0} onMount onFocus onInterval={false} />
       <div className="flex items-center justify-between mb-2">
-        <h1 className="text-3xl font-bold">Your requests</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">Your requests</h1>
         <RefreshHint intervalMs={0} />
       </div>
       <div className="h-4" />
