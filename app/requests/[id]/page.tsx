@@ -69,7 +69,9 @@ export default async function RequestDetailPage({ params }: PageProps) {
   const initialMessages = rawMessages.map((m) => ({
     id: String(m._id),
     senderId: String(m.senderId),
+    type: m.type,
     body: m.body,
+    bidProposal: m.bidProposal ?? null,
     readAt: m.readAt?.toISOString() ?? null,
     createdAt: m.createdAt.toISOString(),
   }))
@@ -176,6 +178,8 @@ export default async function RequestDetailPage({ params }: PageProps) {
           canChat={canChat}
           currentUserName={session.user.name ?? 'You'}
           otherUserName={isArtist ? (customerUser?.name ?? 'Buyer') : (artistUser?.name ?? 'Artist')}
+          isArtist={isArtist}
+          currentBudget={request.budget ?? null}
         />
       </div>
     </div>

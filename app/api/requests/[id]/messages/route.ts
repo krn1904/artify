@@ -4,8 +4,8 @@ import { ObjectId } from 'mongodb'
 import { authOptions } from '@/lib/auth/authOptions'
 import { requireAuth } from '@/lib/auth/authz'
 import { getRequestById } from '@/lib/db/requests'
-import { listMessages, createMessage, markMessagesRead } from '@/lib/db/messages'
-import { MessageCreateSchema } from '@/lib/schemas/message'
+import { listMessages, createMessage, markMessagesRead, hasPendingBidProposal } from '@/lib/db/messages'
+import { TextMessageSchema, BidProposalCreateSchema } from '@/lib/schemas/message'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,7 +32,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       messages: raw.map((m) => ({
         id: String(m._id),
         senderId: String(m.senderId),
+        type: m.type,
         body: m.body,
+        bidProposal: m.bidProposal ?? null,
         readAt: m.readAt?.toISOString() ?? null,
         createdAt: m.createdAt.toISOString(),
       })),
@@ -63,7 +65,47 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
 
     const body = await req.json().catch(() => null)
-    const parsed = MessageCreateSchema.safeParse(body)
+
+    // Handle bid proposal (artist only)
+    if (body?.type === 'bid_proposal') {
+      if (String(request.artistId) !== uid) {
+        return NextResponse.json({ error: 'Only the artist can propose a new budget' }, { status: 403 })
+      }
+
+      const parsed = BidProposalCreateSchema.safeParse(body)
+      if (!parsed.success) {
+        return NextResponse.json({ error: 'Validation failed', details: parsed.error.flatten() }, { status: 400 })
+      }
+
+      const pending = await hasPendingBidProposal(id)
+      if (pending) {
+        return NextResponse.json({ error: 'There is already a pending bid proposal for this request' }, { status: 409 })
+      }
+
+      const { amount } = parsed.data
+      const message = await createMessage({
+        requestId: request._id!,
+        senderId: new ObjectId(uid),
+        type: 'bid_proposal',
+        body: `Proposed new budget: $${amount.toLocaleString()}`,
+        bidProposal: { amount, status: 'pending' },
+      })
+
+      return NextResponse.json({
+        message: {
+          id: String(message._id),
+          senderId: String(message.senderId),
+          type: message.type,
+          body: message.body,
+          bidProposal: message.bidProposal ?? null,
+          readAt: message.readAt ?? null,
+          createdAt: message.createdAt.toISOString(),
+        },
+      }, { status: 201 })
+    }
+
+    // Handle regular text message
+    const parsed = TextMessageSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json({ error: 'Validation failed', details: parsed.error.flatten() }, { status: 400 })
     }
@@ -71,6 +113,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const message = await createMessage({
       requestId: request._id!,
       senderId: new ObjectId(uid),
+      type: 'text',
       body: parsed.data.body,
     })
 
@@ -78,7 +121,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       message: {
         id: String(message._id),
         senderId: String(message.senderId),
+        type: message.type,
         body: message.body,
+        bidProposal: null,
         readAt: message.readAt ?? null,
         createdAt: message.createdAt.toISOString(),
       },

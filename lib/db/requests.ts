@@ -108,3 +108,11 @@ export async function updateRequestStatus(id: string | ObjectId, status: Request
   if (!_id) return { matchedCount: 0, modifiedCount: 0 }
   return col.updateOne({ _id }, { $set: { status, updatedAt: new Date() } })
 }
+
+/** Update request budget (called when a bid proposal is accepted). */
+export async function updateRequestBudget(id: string | ObjectId, budget: number) {
+  const col = await getRequestsCollection()
+  const _id = typeof id === 'string' ? (ObjectId.isValid(id) ? new ObjectId(id) : undefined) : id
+  if (!_id) return { matchedCount: 0, modifiedCount: 0 }
+  return col.updateOne({ _id }, { $set: { budget, updatedAt: new Date() } })
+}
