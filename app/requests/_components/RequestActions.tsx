@@ -62,7 +62,7 @@ export default function RequestActions({
       <div className="flex items-center gap-2">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button size="sm" disabled={isPending}>Mark as completed</Button>
+            <Button disabled={isPending}>Mark as completed</Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -88,7 +88,7 @@ export default function RequestActions({
     <div className="flex items-center gap-2">
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button size="sm" disabled={isPending}>Accept</Button>
+          <Button disabled={isPending}>Accept</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -105,7 +105,7 @@ export default function RequestActions({
       </AlertDialog>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button size="sm" variant="outline" disabled={isPending}>Decline</Button>
+          <Button variant="outline" disabled={isPending}>Decline</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
