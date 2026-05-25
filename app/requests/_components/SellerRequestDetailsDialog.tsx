@@ -124,7 +124,7 @@ export default function SellerRequestDetailsDialog({
       </DialogTrigger>
 
       <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto p-0">
-        <div className="border-b px-6 py-5">
+        <div className="border-b pl-6 pr-14 py-5">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div className="min-w-0">
               <DialogHeader className="space-y-2 text-left">
