@@ -77,7 +77,7 @@ export function CommissionRequestForm({ presetArtist, viewerId }: { presetArtist
     }
     const payload = parsed.data
     try {
-      const res = await fetch('/api/commissions', {
+      const res = await fetch('/api/requests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -90,7 +90,7 @@ export function CommissionRequestForm({ presetArtist, viewerId }: { presetArtist
       }
       // Notify and redirect to the commissions hub
       toast({ title: 'Request sent', description: 'We\'ve notified the artist.' })
-      startTransition(() => router.push('/commissions'))
+      startTransition(() => router.push('/requests'))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     }

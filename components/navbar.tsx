@@ -172,9 +172,6 @@ export default function Navbar() {
                       <Link href="/dashboard/favorites" className={linkClass("/dashboard/favorites")}>
                         My favorites
                       </Link>
-                      <Link href="/requests" className={linkClass("/requests")}>
-                        Requests
-                      </Link>
                     </>
                   ) : null}
                   {session?.user?.role === 'ARTIST' ? (
