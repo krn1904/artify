@@ -136,6 +136,19 @@ export async function listArtworks(
   return { items, total, page, pageSize }
 }
 
+/** Get multiple artworks by an array of ids in a single query. Preserves order. */
+export async function getArtworksByIds(ids: (string | ObjectId)[]) {
+  if (!ids.length) return []
+  const col = await getArtworksCollection()
+  const objectIds = ids
+    .map((id) => (typeof id === 'string' ? (ObjectId.isValid(id) ? new ObjectId(id) : null) : id))
+    .filter((id): id is ObjectId => id !== null)
+  const items = await col.find({ _id: { $in: objectIds } }).toArray()
+  // Preserve the original order (favorites are sorted newest-first)
+  const map = new Map(items.map((a) => [String(a._id), a]))
+  return objectIds.map((id) => map.get(String(id))).filter((a): a is ArtworkDoc & { _id: ObjectId } => !!a)
+}
+
 /** Get a single artwork by id. Returns null if id is invalid or not found. */
 export async function getArtworkById(id: string | ObjectId) {
   const col = await getArtworksCollection()

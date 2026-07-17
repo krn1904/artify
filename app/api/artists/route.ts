@@ -26,7 +26,12 @@ export async function GET(req: Request) {
       .toArray()
 
     return NextResponse.json({
-      items: items.map((u) => ({ id: String(u._id), name: u.name, avatarUrl: u.avatarUrl || null })),
+      items: items.map((u) => ({
+        id: String(u._id),
+        name: u.name,
+        avatarUrl: u.avatarUrl || null,
+        openToCommissions: (u as any).openToCommissions ?? true,
+      })),
     })
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)

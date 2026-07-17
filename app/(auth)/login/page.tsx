@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { signIn, signOut } from "next-auth/react"
+import { signIn } from "next-auth/react"
 import { Palette } from "lucide-react"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -125,11 +125,6 @@ function LoginPage() {
     }
   }
 
-  // Logout handler
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: '/' }); // Redirect to home after logout
-  };
-
   return (
     <div className="space-y-6">
       {/* Auth required banner */}
@@ -190,11 +185,6 @@ function LoginPage() {
           </Button>
         </form>
       </Form>
-
-      {/* Logout Button */}
-      <Button className="w-full" onClick={handleLogout}>
-        Logout
-      </Button>
 
       {/* Sign up link for new users */}
       <div className="text-center text-sm">

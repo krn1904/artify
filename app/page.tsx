@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Palette, Sparkles, Users, BadgeCheck, Brush } from "lucide-react";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
+import { authOptions } from "@/lib/auth/authOptions";
 import { listArtworks, getArtworksCollection } from "@/lib/db/artworks";
 import { getUsersCollection } from "@/lib/db/users";
 import { getRequestsCollection } from "@/lib/db/requests";

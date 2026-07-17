@@ -9,7 +9,7 @@ import { CloseBack } from '@/components/close-back'
 import { FavoriteButton } from '@/components/favorite-button'
 import { countFavoritesForArtwork, isFavorited } from '@/lib/db/favorites'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { authOptions } from '@/lib/auth/authOptions'
 
 export const dynamic = 'force-dynamic'
 

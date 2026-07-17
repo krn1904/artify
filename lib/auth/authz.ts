@@ -8,4 +8,3 @@ export function requireArtist(session: Session | null) {
   requireAuth(session)
   if (session!.user.role !== 'ARTIST') throw new Error('Forbidden')
 }
-

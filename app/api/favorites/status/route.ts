@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { authOptions } from '@/lib/auth/authOptions'
 import { ObjectId } from 'mongodb'
 import { isFavorited, countFavoritesForArtwork } from '@/lib/db/favorites'
 
